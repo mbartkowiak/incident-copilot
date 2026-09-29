@@ -8,10 +8,10 @@ variable "project" {
   default = "incident-copilot"
 }
 
-variable "github_repo" {
-  description = "owner/name of the repo allowed to deploy via OIDC"
+variable "github_oidc_sub_prefix" {
+  description = "Immutable OIDC subject prefix (owner@id/repo@id) of the repo allowed to deploy; see GET /repos/{repo}/actions/oidc/customization/sub"
   type        = string
-  default     = "mbartkowiak/incident-copilot"
+  default     = "repo:mbartkowiak@1582166/incident-copilot@1396648309"
 }
 
 variable "image_tag" {
