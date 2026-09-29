@@ -1,0 +1,50 @@
+:root {
+  --text: #3f3b46;
+  --text-h: #0b0a10;
+  --bg: #fafaf9;
+  --ok: #15803d;
+  --err: #b91c1c;
+  font: 16px/1.5 system-ui, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #c4c4cc;
+    --text-h: #f4f4f5;
+    --bg: #131318;
+    --ok: #4ade80;
+    --err: #f87171;
+  }
+}
+
+body {
+  margin: 0;
+}
+
+.shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 16px;
+}
+
+h1 {
+  color: var(--text-h);
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.status {
+  margin-top: 24px;
+  font-family: ui-monospace, Consolas, monospace;
+}
+
+.status[data-state='ok'] {
+  color: var(--ok);
+}
+
+.status[data-state='error'] {
+  color: var(--err);
+}

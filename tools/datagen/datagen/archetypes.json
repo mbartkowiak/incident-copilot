@@ -1,0 +1,1258 @@
+[
+  {
+    "id": "sd-password-reset",
+    "group": "Service Desk",
+    "category": "inquiry",
+    "subcategory": "password",
+    "severity": "low",
+    "base_hours": 0.5,
+    "weight": 10,
+    "misroute_to": [],
+    "misroute_rate": 0.0,
+    "ci": ["Active Directory"],
+    "short": [
+      "Password reset needed",
+      "Forgot my Windows password",
+      "Need password reset - expired",
+      "Cannot log in, password expired"
+    ],
+    "description": [
+      "My password expired over the weekend and I can't log into my laptop. Please reset it.",
+      "I forgot my network password after coming back from PTO. The self-service reset link says my security questions are not set up.",
+      "Password expired and the reset portal keeps timing out. I need to get into email for a customer call."
+    ],
+    "resolution": [
+      "Verified caller identity via employee ID and manager name. Reset AD password, set change-at-next-logon, confirmed user logged in.",
+      "Reset password and enrolled user in self-service password reset so they can reset it themselves next time."
+    ],
+    "kb": {
+      "title": "Resetting an expired or forgotten network password",
+      "symptoms": "User cannot log into Windows, VPN, or email because the network password is expired or forgotten.",
+      "cause": "Network passwords expire every 90 days. Users who have not enrolled in self-service password reset (SSPR) cannot reset their own password.",
+      "steps": [
+        "Verify the caller's identity with employee ID plus one additional factor (manager name or last 4 of phone on file).",
+        "In Active Directory Users and Computers, reset the password and check 'User must change password at next logon'.",
+        "Have the user log in while on the phone to confirm.",
+        "If the user is not enrolled in SSPR, walk them through enrollment at the self-service portal."
+      ]
+    }
+  },
+  {
+    "id": "sd-account-locked",
+    "group": "Service Desk",
+    "category": "inquiry",
+    "subcategory": "password",
+    "severity": "low",
+    "base_hours": 0.5,
+    "weight": 7,
+    "misroute_to": [],
+    "misroute_rate": 0.0,
+    "ci": ["Active Directory"],
+    "short": [
+      "Account locked out",
+      "My account keeps getting locked",
+      "Locked out of computer",
+      "AD account locked again"
+    ],
+    "description": [
+      "My account got locked this morning and now it keeps locking every few minutes even after I unlock it.",
+      "I'm locked out of my computer. I think I typed the wrong password too many times.",
+      "Account locked out again. This is the third time this week, I changed my password on Monday."
+    ],
+    "resolution": [
+      "Unlocked account. Lockout source traced to old credentials cached on user's phone mail app. User updated password on phone, no further lockouts.",
+      "Unlocked AD account and cleared stale credentials from Windows Credential Manager. Monitored for 30 min, no repeat lockouts."
+    ],
+    "kb": {
+      "title": "Recurring AD account lockouts after a password change",
+      "symptoms": "User's account locks repeatedly, often within minutes of being unlocked, usually shortly after a password change.",
+      "cause": "A device or saved credential (phone mail app, mapped drive, Credential Manager entry, disconnected RDP session) keeps retrying the old password.",
+      "steps": [
+        "Unlock the account in AD.",
+        "Use the lockout status tool to identify the domain controller and source workstation of the bad password attempts.",
+        "Ask the user to update the password on their mobile mail app and remove stale entries from Windows Credential Manager.",
+        "Log off any disconnected RDP sessions under the user's name.",
+        "Monitor for 30 minutes before resolving."
+      ]
+    }
+  },
+  {
+    "id": "iam-mfa-new-phone",
+    "group": "Identity & Access Management",
+    "category": "software",
+    "subcategory": "authentication",
+    "severity": "medium",
+    "base_hours": 2,
+    "weight": 4,
+    "misroute_to": ["Service Desk"],
+    "misroute_rate": 0.3,
+    "ci": ["Entra ID MFA"],
+    "short": [
+      "Got a new phone, MFA not working",
+      "MFA prompts not arriving",
+      "Authenticator app lost after phone upgrade",
+      "Can't approve sign-in, new phone"
+    ],
+    "description": [
+      "I upgraded my phone yesterday and the Authenticator app didn't transfer. Now I can't approve sign-in requests and I'm blocked from email and Teams.",
+      "MFA push notifications stopped arriving. I reinstalled the app but it doesn't show my work account anymore.",
+      "Traded in my old phone and lost the authenticator. Need to re-register MFA so I can sign in."
+    ],
+    "resolution": [
+      "Verified identity via manager callback. Revoked old MFA registrations and issued a Temporary Access Pass. User re-registered Authenticator on new phone.",
+      "Cleared MFA methods for the user and required re-registration. User completed setup and confirmed sign-in to Outlook and Teams."
+    ],
+    "kb": {
+      "title": "Re-registering MFA after a phone replacement",
+      "symptoms": "User cannot complete MFA because the Authenticator app was lost or not transferred to a new device.",
+      "cause": "Authenticator registrations are bound to the original device and are not always restored from phone backups.",
+      "steps": [
+        "Verify identity using a manager callback. Do not rely on information the caller provides alone.",
+        "In the identity portal, revoke existing MFA sessions and delete the old Authenticator registration.",
+        "Issue a Temporary Access Pass valid for 1 hour.",
+        "Guide the user through registering the Authenticator app at the security info page.",
+        "Confirm a successful sign-in before resolving."
+      ]
+    }
+  },
+  {
+    "id": "iam-shared-drive-access",
+    "group": "Identity & Access Management",
+    "category": "inquiry",
+    "subcategory": "access",
+    "severity": "low",
+    "base_hours": 16,
+    "weight": 5,
+    "misroute_to": ["Service Desk", "End User Computing"],
+    "misroute_rate": 0.25,
+    "ci": ["File Services"],
+    "slots": {"share": ["Finance", "HR", "Operations", "Procurement", "Transportation Planning", "Customer Service"]},
+    "short": [
+      "Need access to {share} shared drive",
+      "Access denied on {share} folder",
+      "Please add me to the {share} share",
+      "Permission request: {share} drive"
+    ],
+    "description": [
+      "I just transferred to the {share} team and need access to the {share} shared drive. My manager approved this.",
+      "Getting 'access denied' when I open the {share} folder. My coworkers on the same team can open it.",
+      "New hire, need read/write on the {share} share to do my job. Manager is copied."
+    ],
+    "resolution": [
+      "Confirmed manager approval. Added user to the {share} RW security group. User must log off and back on for the group membership to apply; confirmed access.",
+      "Access granted via {share} data owner approval. Added to AD group and verified user can open the folder after re-login."
+    ],
+    "kb": {
+      "title": "Granting access to a departmental shared drive",
+      "symptoms": "User receives 'access denied' on a departmental shared folder or requests access after a transfer or new hire.",
+      "cause": "Shared drive permissions are managed through AD security groups. The user is not a member of the group, or their Kerberos token has not refreshed since being added.",
+      "steps": [
+        "Confirm approval from the user's manager AND the share's data owner (listed in the file services catalog).",
+        "Add the user to the correct RO or RW security group. Do not grant permissions directly on the folder.",
+        "Tell the user to log off and log back on (or run klist purge) so the new group membership applies.",
+        "Confirm access and resolve."
+      ]
+    }
+  },
+  {
+    "id": "iam-sso-app-login",
+    "group": "Identity & Access Management",
+    "category": "software",
+    "subcategory": "sso",
+    "severity": "medium",
+    "base_hours": 4,
+    "weight": 3,
+    "misroute_to": ["ERP Applications", "Messaging & Collaboration", "Service Desk"],
+    "misroute_rate": 0.35,
+    "ci": ["Okta SSO"],
+    "slots": {"app": ["Workday", "Concur", "Salesforce", "Power BI", "Tableau", "Coupa"]},
+    "short": [
+      "Can't log into {app}",
+      "{app} SSO error",
+      "{app} says user not assigned",
+      "SSO login loop on {app}"
+    ],
+    "description": [
+      "When I click the {app} tile it redirects back to the login page over and over.",
+      "{app} shows 'user is not assigned to this application' when I try to sign in. I used it last week without a problem.",
+      "I get an SSO error when opening {app}. Tried a different browser, same issue."
+    ],
+    "resolution": [
+      "User was missing the {app} app assignment after a department change reset group memberships. Re-added to the {app} access group; login confirmed.",
+      "Cleared a stale SAML session and corrected the user's email attribute mismatch between the IdP and {app}. Login working."
+    ],
+    "kb": {
+      "title": "Troubleshooting SSO failures for SaaS applications",
+      "symptoms": "User gets redirect loops, 'user not assigned', or SAML errors when opening a SaaS app from the SSO portal.",
+      "cause": "Common causes: the app assignment was removed after an HR department change, the user's email/UPN attribute does not match the app, or a stale browser session.",
+      "steps": [
+        "Check the user's app assignments in the IdP admin console.",
+        "If the assignment is missing, re-add the user to the app's access group (department changes can remove it).",
+        "Compare the user's UPN/email in the IdP with the username in the target app.",
+        "Have the user clear cookies or try an InPrivate window.",
+        "Escalate to the application team only if the IdP shows a successful SAML assertion."
+      ]
+    }
+  },
+  {
+    "id": "net-vpn-connect",
+    "group": "Network Operations",
+    "category": "network",
+    "subcategory": "vpn",
+    "severity": "medium",
+    "base_hours": 4,
+    "weight": 4,
+    "misroute_to": ["Service Desk", "End User Computing"],
+    "misroute_rate": 0.35,
+    "sites": ["Remote"],
+    "ci": ["GlobalProtect VPN"],
+    "slots": {"error_code": ["Gateway not responding", "Portal certificate error", "Authentication failed", "Connection timed out"]},
+    "short": [
+      "VPN won't connect",
+      "GlobalProtect error: {error_code}",
+      "Unable to connect to VPN from home",
+      "VPN keeps disconnecting"
+    ],
+    "description": [
+      "Working from home today and GlobalProtect says '{error_code}'. My internet is fine otherwise.",
+      "VPN connects for a minute and then drops. I can't reach any internal sites or shared drives.",
+      "GlobalProtect is stuck on 'connecting' since this morning. Rebooted twice already."
+    ],
+    "resolution": [
+      "GlobalProtect client was on the new version with a corrupted portal config. Cleared the cached portal settings and re-entered the portal address; VPN connected.",
+      "Rolled back GlobalProtect client to the previous stable version per known issue with the latest build. Connection stable.",
+      "Home router was blocking UDP 4501. Switched the client to SSL fallback; user connected successfully."
+    ],
+    "kb": {
+      "title": "GlobalProtect VPN fails to connect or drops after a client upgrade",
+      "symptoms": "GlobalProtect shows 'Gateway not responding', stays on 'connecting', or disconnects within minutes. Often seen right after an automatic client upgrade.",
+      "cause": "Known issue: the upgraded client can keep a corrupted cached portal configuration. Some home routers also block the UDP 4501 IPSec tunnel.",
+      "steps": [
+        "Confirm the user has general internet access.",
+        "Check the GlobalProtect client version. If it is the latest build, clear the cached portal: Settings > remove portal, then re-add the portal address.",
+        "If the problem persists, force SSL fallback or roll back to the previous stable client via the software portal.",
+        "If multiple users report the issue at the same time, check the gateway status dashboard and link to the parent problem record."
+      ]
+    }
+  },
+  {
+    "id": "net-wifi-drop",
+    "group": "Network Operations",
+    "category": "network",
+    "subcategory": "wireless",
+    "severity": "medium",
+    "base_hours": 6,
+    "weight": 4,
+    "misroute_to": ["End User Computing"],
+    "misroute_rate": 0.3,
+    "sites": ["Chicago HQ", "Dallas DC", "Atlanta DC", "Memphis DC", "Toronto Office"],
+    "ci": ["{site} Wireless"],
+    "slots": {"area": ["3rd floor east conference rooms", "break room", "shipping office", "training room", "cafeteria", "2nd floor open area"]},
+    "short": [
+      "Wi-Fi dropping in {area}",
+      "Wireless keeps disconnecting",
+      "No Wi-Fi signal at {site}",
+      "Wi-Fi very slow in {area}"
+    ],
+    "description": [
+      "Wi-Fi in the {area} at {site} drops every few minutes. Several people are having the same problem.",
+      "My laptop keeps disconnecting from the corporate Wi-Fi. It's fine when I plug into a cable.",
+      "Wireless is extremely slow in the {area}. Teams calls keep freezing."
+    ],
+    "resolution": [
+      "Access point serving the {area} was down after a PoE switch port error. Bounced the port; AP came back online and clients reconnected.",
+      "Found channel interference from a neighboring AP. Adjusted RF channel plan for the {area}; throughput back to normal.",
+      "Laptop wireless driver was outdated. Updated driver via software center; connection stable."
+    ],
+    "kb": {
+      "title": "Diagnosing Wi-Fi drops at a corporate site",
+      "symptoms": "Users in one area lose Wi-Fi intermittently or see very slow speeds. Wired connections work.",
+      "cause": "Usually an offline or overloaded access point, RF channel interference, or an outdated client wireless driver.",
+      "steps": [
+        "Determine scope: one user (likely the client) or many users in one area (likely infrastructure).",
+        "For area-wide issues, check the wireless controller for AP status and client counts in that zone.",
+        "If an AP is down, check the PoE switch port and bounce it.",
+        "For single users, update the wireless driver and forget/rejoin the corporate SSID."
+      ]
+    }
+  },
+  {
+    "id": "net-site-outage",
+    "group": "Network Operations",
+    "category": "network",
+    "subcategory": "lan",
+    "severity": "high",
+    "base_hours": 3,
+    "weight": 0.4,
+    "misroute_to": ["Service Desk"],
+    "misroute_rate": 0.15,
+    "sites": ["Chicago HQ", "Dallas DC", "Atlanta DC", "Memphis DC", "Toronto Office"],
+    "ci": ["{site} Core Switch"],
+    "short": [
+      "Network down at {site}",
+      "No network on whole floor",
+      "Nothing is loading - network outage?",
+      "{site} lost connectivity"
+    ],
+    "description": [
+      "Nobody on our floor at {site} can reach anything, internal or internet. Phones are down too.",
+      "Everything stopped loading about 10 minutes ago. Whole office at {site} is affected.",
+      "Network completely down at {site}. Can't print, can't get email, can't reach any apps."
+    ],
+    "resolution": [
+      "Core switch at {site} failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record.",
+      "Upstream fiber cut on carrier circuit. Traffic failed over to backup circuit; carrier repaired primary. Resolved via parent incident."
+    ],
+    "kb": {
+      "title": "Handling a site-wide network outage",
+      "symptoms": "Many users at one site report no connectivity at the same time: no internal apps, no internet, and often no desk phones.",
+      "cause": "Core switch failure, upstream carrier circuit outage, or power issue in the main distribution frame.",
+      "steps": [
+        "Check the monitoring dashboard for the site's core switch and WAN circuit status.",
+        "Create a single parent incident and relate every new user report as a child. Do not work each ticket separately.",
+        "Engage the on-call network engineer and open a carrier ticket if the WAN circuit is down.",
+        "Post a status update on the service portal banner.",
+        "After restoration, resolve all child incidents through the parent and open a problem record."
+      ]
+    }
+  },
+  {
+    "id": "net-slow-internet",
+    "group": "Network Operations",
+    "category": "network",
+    "subcategory": "wan",
+    "severity": "low",
+    "base_hours": 8,
+    "weight": 2,
+    "misroute_to": ["End User Computing"],
+    "misroute_rate": 0.25,
+    "sites": ["Chicago HQ", "Dallas DC", "Atlanta DC", "Memphis DC", "Toronto Office"],
+    "ci": ["{site} WAN Circuit"],
+    "short": [
+      "Internet very slow",
+      "Websites taking forever to load",
+      "Slow network at {site}",
+      "Downloads extremely slow"
+    ],
+    "description": [
+      "Internet has been very slow all afternoon at {site}. Websites take 30+ seconds to load.",
+      "Downloading anything from SharePoint is crawling. Colleagues say it's slow for them too.",
+      "External websites are slow but internal apps seem OK."
+    ],
+    "resolution": [
+      "WAN circuit at {site} was saturated by a large backup job running during business hours. Rescheduled the job to off-hours; utilization normal.",
+      "Proxy node in the pool was degraded. Removed it from rotation; browsing speed restored."
+    ],
+    "kb": {
+      "title": "Investigating slow internet at a site",
+      "symptoms": "Users at a site report slow web browsing or downloads. Internal applications may be unaffected.",
+      "cause": "WAN circuit saturation (often from backups or large syncs), a degraded proxy node, or ISP issues.",
+      "steps": [
+        "Check WAN circuit utilization for the site in the monitoring tool.",
+        "Identify top talkers. Reschedule backup or sync jobs running during business hours.",
+        "Check proxy pool health and remove degraded nodes.",
+        "Open a carrier ticket if the circuit shows errors or packet loss."
+      ]
+    }
+  },
+  {
+    "id": "euc-laptop-slow",
+    "group": "End User Computing",
+    "category": "hardware",
+    "subcategory": "laptop",
+    "severity": "low",
+    "base_hours": 24,
+    "weight": 6,
+    "misroute_to": ["Service Desk"],
+    "misroute_rate": 0.2,
+    "ci": ["Standard Laptop"],
+    "short": [
+      "Laptop very slow",
+      "Computer freezing constantly",
+      "PC takes 10 minutes to boot",
+      "Laptop fan loud and everything slow"
+    ],
+    "description": [
+      "My laptop has gotten really slow over the last couple weeks. Excel freezes and it takes forever to open anything.",
+      "Computer is freezing multiple times a day. I have to hard restart it.",
+      "Startup takes 10+ minutes and the fan is running loud all the time."
+    ],
+    "resolution": [
+      "Disk was 98% full due to a large local OneDrive cache. Enabled Files On-Demand and cleared temp files; performance restored.",
+      "Laptop had only 8 GB RAM and heavy workloads. Scheduled hardware refresh to 16 GB model; provided loaner in the meantime.",
+      "Endpoint security full scan was stuck in a loop. Updated agent to the current version; CPU usage normal."
+    ],
+    "kb": {
+      "title": "Laptop performance troubleshooting",
+      "symptoms": "Laptop is slow, freezes, boots slowly, or runs the fan constantly.",
+      "cause": "Common causes: low disk space (often OneDrive cache), insufficient RAM for the workload, a stuck security agent scan, or an aging device.",
+      "steps": [
+        "Check free disk space. If below 10%, enable OneDrive Files On-Demand and clear temp files.",
+        "Check Task Manager for processes with high CPU/RAM. Update the endpoint security agent if its scan is stuck.",
+        "Check device age and RAM. Devices older than 4 years or with 8 GB RAM qualify for refresh.",
+        "Run hardware diagnostics if freezes continue."
+      ]
+    }
+  },
+  {
+    "id": "euc-laptop-no-boot",
+    "group": "End User Computing",
+    "category": "hardware",
+    "subcategory": "laptop",
+    "severity": "medium",
+    "base_hours": 16,
+    "weight": 2,
+    "misroute_to": ["Service Desk"],
+    "misroute_rate": 0.15,
+    "ci": ["Standard Laptop"],
+    "short": [
+      "Laptop won't turn on",
+      "Blue screen on startup",
+      "BitLocker recovery key screen",
+      "Computer stuck on boot"
+    ],
+    "description": [
+      "My laptop won't power on at all this morning. Charger light is on but nothing happens.",
+      "Getting a blue screen every time I start my computer. It restarts in a loop.",
+      "Laptop is asking for a BitLocker recovery key and I don't know what that is."
+    ],
+    "resolution": [
+      "Provided BitLocker recovery key after identity verification. Triggered by a BIOS update; suspended and resumed BitLocker to prevent recurrence.",
+      "Motherboard failure confirmed by diagnostics. Swapped for a loaner and opened vendor warranty case; data restored from OneDrive.",
+      "Bad Windows update caused boot loop. Uninstalled update from recovery environment; device boots normally."
+    ],
+    "kb": {
+      "title": "Laptop does not boot or shows BitLocker recovery",
+      "symptoms": "Laptop does not power on, blue-screens during boot, or prompts for a BitLocker recovery key.",
+      "cause": "BitLocker recovery is usually triggered by BIOS/firmware updates or hardware changes. Boot loops are often caused by a failed Windows update. No power usually means a hardware failure.",
+      "steps": [
+        "For BitLocker prompts: verify identity, retrieve the recovery key from the device record, and read it to the user. Afterwards, suspend and resume BitLocker.",
+        "For boot loops: boot to the recovery environment and uninstall the latest quality update.",
+        "For no power: try a known-good charger and a battery reset, then run vendor diagnostics.",
+        "If hardware has failed, provide a loaner and open a warranty case."
+      ]
+    }
+  },
+  {
+    "id": "euc-dock-monitor",
+    "group": "End User Computing",
+    "category": "hardware",
+    "subcategory": "peripherals",
+    "severity": "low",
+    "base_hours": 24,
+    "weight": 3,
+    "misroute_to": ["Service Desk"],
+    "misroute_rate": 0.15,
+    "ci": ["USB-C Dock"],
+    "short": [
+      "External monitors not working",
+      "Docking station not detecting laptop",
+      "Second monitor blank",
+      "Dock keyboard and mouse stopped working"
+    ],
+    "description": [
+      "When I plug into my docking station neither of my monitors turns on. Laptop screen works fine.",
+      "Keyboard and mouse connected to the dock stopped responding. They work if I plug them directly into the laptop.",
+      "Only one of my two external monitors shows anything since yesterday."
+    ],
+    "resolution": [
+      "Updated dock firmware and Thunderbolt driver; both monitors detected.",
+      "Dock power supply was failing. Replaced dock from desk-side stock."
+    ],
+    "kb": {
+      "title": "USB-C dock or external monitor issues",
+      "symptoms": "External monitors are blank or keyboard/mouse on the dock do not work, while the laptop works on its own.",
+      "cause": "Outdated dock firmware or Thunderbolt drivers, a failing dock power supply, or a bad cable.",
+      "steps": [
+        "Power-cycle the dock by unplugging its power for 30 seconds.",
+        "Update dock firmware and the laptop's Thunderbolt/USB-C drivers from the software center.",
+        "Swap the display cable and test each monitor individually.",
+        "Replace the dock if the issue persists."
+      ]
+    }
+  },
+  {
+    "id": "euc-software-install",
+    "group": "End User Computing",
+    "category": "software",
+    "subcategory": "install",
+    "severity": "low",
+    "base_hours": 24,
+    "weight": 5,
+    "misroute_to": ["Service Desk"],
+    "misroute_rate": 0.25,
+    "slots": {"software": ["Visio", "Power BI Desktop", "Adobe Acrobat Pro", "Snagit", "Tableau Desktop", "Python", "Microsoft Project"]},
+    "ci": ["Software Center"],
+    "short": [
+      "Need {software} installed",
+      "{software} install failing",
+      "Request to install {software}",
+      "{software} not in Software Center"
+    ],
+    "description": [
+      "I need {software} for a project. It isn't listed in Software Center.",
+      "Tried installing {software} from Software Center and it fails at 50% with an error.",
+      "Manager approved {software} for me. Please install it on my laptop."
+    ],
+    "resolution": [
+      "Verified license availability and approval. Deployed {software} to user's device via Software Center; confirmed launch.",
+      "Install was failing due to a pending reboot. Rebooted device and re-ran deployment; {software} installed successfully."
+    ],
+    "kb": {
+      "title": "Installing software not available in Software Center",
+      "symptoms": "User requests software that is not self-service, or a Software Center install fails.",
+      "cause": "Licensed software requires approval and a license assignment before deployment. Failed installs are often caused by a pending reboot or low disk space.",
+      "steps": [
+        "Check whether the software is on the approved catalog and whether a license is available.",
+        "Obtain manager approval for licensed software.",
+        "Add the device to the software's deployment collection.",
+        "For failed installs, reboot, confirm at least 10 GB free disk space, and retry."
+      ]
+    }
+  },
+  {
+    "id": "euc-office-printer",
+    "group": "End User Computing",
+    "category": "hardware",
+    "subcategory": "printer",
+    "severity": "low",
+    "base_hours": 8,
+    "weight": 4,
+    "misroute_to": ["Warehouse Systems", "Service Desk"],
+    "misroute_rate": 0.25,
+    "sites": ["Chicago HQ", "Toronto Office", "Dallas DC", "Atlanta DC"],
+    "ci": ["{printer_id}"],
+    "slots": {"printer_id": ["PRN-CHI-04", "PRN-CHI-11", "PRN-CHI-17", "PRN-TOR-01", "PRN-DAL-02", "PRN-ATL-03"]},
+    "short": [
+      "Printer {printer_id} not printing",
+      "Print jobs stuck in queue",
+      "Can't add printer {printer_id}",
+      "Printer offline"
+    ],
+    "description": [
+      "Printer {printer_id} shows offline for everyone on our floor. Jobs just sit in the queue.",
+      "My print jobs to {printer_id} disappear and nothing comes out.",
+      "I can't find printer {printer_id} when I try to add it on my laptop."
+    ],
+    "resolution": [
+      "Print spooler on print server hung. Restarted spooler service and cleared stuck jobs; {printer_id} printing.",
+      "Printer {printer_id} had a paper jam and a stale DHCP lease. Cleared jam and set a DHCP reservation; back online."
+    ],
+    "kb": {
+      "title": "Office printer offline or jobs stuck in queue",
+      "symptoms": "Printer shows offline, jobs stay in the queue, or the printer cannot be added.",
+      "cause": "Hung print spooler on the print server, a printer IP change (no DHCP reservation), or a hardware fault such as a paper jam.",
+      "steps": [
+        "Check the printer panel for errors or jams.",
+        "Ping the printer's IP. If the IP changed, create a DHCP reservation and update the port.",
+        "Restart the print spooler on the print server and clear stuck jobs.",
+        "Have users re-add the printer from the print server if it is missing."
+      ]
+    }
+  },
+  {
+    "id": "msg-outlook-sync",
+    "group": "Messaging & Collaboration",
+    "category": "software",
+    "subcategory": "email",
+    "severity": "medium",
+    "base_hours": 3,
+    "weight": 5,
+    "misroute_to": ["End User Computing", "Service Desk"],
+    "misroute_rate": 0.25,
+    "ci": ["Exchange Online"],
+    "short": [
+      "Outlook not receiving email",
+      "Outlook stuck on 'Updating'",
+      "Emails not syncing",
+      "Outlook disconnected"
+    ],
+    "description": [
+      "Outlook says 'Disconnected' at the bottom and I haven't received any email since 7am.",
+      "My inbox isn't updating. People say they sent me emails but I don't see them. Webmail shows them.",
+      "Outlook is stuck on 'Updating this folder' and won't send anything from my outbox."
+    ],
+    "resolution": [
+      "Corrupted OST file. Rebuilt Outlook profile; mailbox resynced.",
+      "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident.",
+      "Mailbox was over quota. Enabled archive policy and cleared large items; sync resumed."
+    ],
+    "kb": {
+      "title": "Outlook not syncing or disconnected",
+      "symptoms": "Outlook shows Disconnected or 'Updating this folder', new mail does not arrive, or items stay in the Outbox.",
+      "cause": "Corrupted local OST cache, mailbox over quota, or an Exchange Online service incident.",
+      "steps": [
+        "Check the Microsoft 365 service health dashboard for an active Exchange incident. If there is one, link to the parent incident.",
+        "Check whether webmail works. If it does, the problem is local to Outlook.",
+        "Check mailbox quota and enable archiving if the mailbox is near its limit.",
+        "Rebuild the Outlook profile to recreate the OST."
+      ]
+    }
+  },
+  {
+    "id": "msg-teams-audio",
+    "group": "Messaging & Collaboration",
+    "category": "software",
+    "subcategory": "collaboration",
+    "severity": "low",
+    "base_hours": 6,
+    "weight": 4,
+    "misroute_to": ["End User Computing"],
+    "misroute_rate": 0.4,
+    "ci": ["Microsoft Teams"],
+    "short": [
+      "No audio in Teams meetings",
+      "Teams microphone not working",
+      "People can't hear me on Teams",
+      "Teams headset not detected"
+    ],
+    "description": [
+      "In Teams meetings nobody can hear me. My headset works fine in other apps.",
+      "Teams doesn't detect my headset. It only lets me use the laptop speakers.",
+      "Audio cuts in and out on every Teams call since yesterday."
+    ],
+    "resolution": [
+      "Teams was using the wrong default device. Set headset as device in Teams settings and Windows sound settings; audio working.",
+      "Cleared Teams cache and updated headset firmware; microphone detected."
+    ],
+    "kb": {
+      "title": "Teams audio and headset problems",
+      "symptoms": "Others cannot hear the user in Teams, the headset is not detected, or audio drops during calls.",
+      "cause": "Wrong audio device selected in Teams or Windows, outdated headset firmware, or a corrupted Teams cache.",
+      "steps": [
+        "In Teams, go to Settings > Devices and select the headset for both speaker and microphone.",
+        "Check Windows sound settings and microphone privacy permissions.",
+        "Clear the Teams cache and restart Teams.",
+        "Update headset firmware using the vendor utility."
+      ]
+    }
+  },
+  {
+    "id": "msg-shared-mailbox",
+    "group": "Messaging & Collaboration",
+    "category": "inquiry",
+    "subcategory": "access",
+    "severity": "low",
+    "base_hours": 12,
+    "weight": 3,
+    "misroute_to": ["Identity & Access Management", "Service Desk"],
+    "misroute_rate": 0.45,
+    "slots": {"mailbox": ["customerservice@", "claims@", "dispatch@", "ap-invoices@", "carrier-relations@"]},
+    "ci": ["Exchange Online"],
+    "short": [
+      "Need access to {mailbox} mailbox",
+      "Shared mailbox {mailbox} not showing in Outlook",
+      "Add me to {mailbox}",
+      "Can't send as {mailbox}"
+    ],
+    "description": [
+      "I joined the team that manages the {mailbox} mailbox. Please give me access so it shows in Outlook.",
+      "I was given access to {mailbox} but it doesn't appear in my Outlook folder list.",
+      "I can read {mailbox} but I get an error when I try to send as it."
+    ],
+    "resolution": [
+      "Granted Full Access and Send As on {mailbox} with owner approval. Mailbox automapped after Outlook restart.",
+      "Access existed but automapping was disabled. Added mailbox manually in Outlook account settings."
+    ],
+    "kb": {
+      "title": "Shared mailbox access and Send As permissions",
+      "symptoms": "User needs access to a shared mailbox, the mailbox does not appear in Outlook, or 'Send As' fails.",
+      "cause": "Full Access and Send As are separate permissions. Automapping can take up to an hour or may be disabled.",
+      "steps": [
+        "Get approval from the shared mailbox owner.",
+        "Grant Full Access (read) and Send As (send) separately in the Exchange admin center.",
+        "Wait up to 60 minutes for automapping, then restart Outlook.",
+        "If it still does not appear, add the mailbox manually under Account Settings > More Settings > Advanced."
+      ]
+    }
+  },
+  {
+    "id": "sec-phishing-report",
+    "group": "Security Operations",
+    "category": "security",
+    "subcategory": "phishing",
+    "severity": "medium",
+    "base_hours": 2,
+    "weight": 4,
+    "misroute_to": ["Messaging & Collaboration", "Service Desk"],
+    "misroute_rate": 0.3,
+    "ci": ["Email Security Gateway"],
+    "short": [
+      "Suspicious email received",
+      "Possible phishing email",
+      "I clicked a link in a weird email",
+      "Fake invoice email"
+    ],
+    "description": [
+      "Got an email claiming to be from a carrier asking me to log in to view an invoice. The link looks strange.",
+      "I clicked a link in an email about a package delivery before I realized it was probably fake. I didn't enter a password.",
+      "Several of us got an email asking us to update direct deposit info. Looks like phishing."
+    ],
+    "resolution": [
+      "Confirmed phishing. Purged message from all mailboxes, blocked sender domain and URL. User did not enter credentials; no further action.",
+      "User clicked link and entered credentials. Forced password reset, revoked sessions, and reviewed sign-in logs; no malicious activity found."
+    ],
+    "kb": {
+      "title": "Responding to a reported phishing email",
+      "symptoms": "User reports a suspicious email, or says they clicked a link or opened an attachment from one.",
+      "cause": "Phishing campaigns often impersonate carriers, invoices, or HR/payroll.",
+      "steps": [
+        "Ask the user to use the 'Report Phishing' button. Do not forward the email.",
+        "Analyze headers and URLs in the email security console.",
+        "If malicious, purge the message org-wide and block the sender and URL.",
+        "If the user entered credentials: reset the password, revoke sessions, and review sign-in logs.",
+        "If an attachment was opened: isolate the device and run a full EDR scan."
+      ]
+    }
+  },
+  {
+    "id": "sec-malware-alert",
+    "group": "Security Operations",
+    "category": "security",
+    "subcategory": "malware",
+    "severity": "high",
+    "base_hours": 6,
+    "weight": 0.8,
+    "misroute_to": ["End User Computing"],
+    "misroute_rate": 0.2,
+    "ci": ["EDR Platform"],
+    "short": [
+      "Antivirus popup says threat detected",
+      "Security alert on my laptop",
+      "Strange pop-ups and browser redirects",
+      "EDR quarantine notification"
+    ],
+    "description": [
+      "A security popup appeared saying a threat was found and quarantined. Not sure if I need to do anything.",
+      "My browser keeps redirecting to strange sites and I'm getting pop-ups.",
+      "Got a notification from the security software after opening a zip file from email."
+    ],
+    "resolution": [
+      "EDR quarantined adware from a browser extension. Removed extension, full scan clean, reset browser settings.",
+      "Device isolated via EDR after a malicious macro execution. Reimaged laptop and reset user credentials as a precaution."
+    ],
+    "kb": {
+      "title": "Handling endpoint malware alerts",
+      "symptoms": "User sees an EDR/antivirus alert, browser redirects, or unexpected pop-ups.",
+      "cause": "Malicious attachments, macros, or unwanted browser extensions.",
+      "steps": [
+        "Review the alert in the EDR console and determine severity.",
+        "For high severity, isolate the device immediately through EDR.",
+        "Remove the offending files or extensions and run a full scan.",
+        "Reimage if persistence is found, and reset the user's credentials.",
+        "Document indicators of compromise in the security incident."
+      ]
+    }
+  },
+  {
+    "id": "sec-lost-device",
+    "group": "Security Operations",
+    "category": "security",
+    "subcategory": "lost-device",
+    "severity": "high",
+    "base_hours": 4,
+    "weight": 0.8,
+    "misroute_to": ["Service Desk", "End User Computing"],
+    "misroute_rate": 0.3,
+    "ci": ["Intune MDM"],
+    "short": [
+      "Lost my laptop",
+      "Company phone stolen",
+      "Left laptop at the airport",
+      "Laptop stolen from car"
+    ],
+    "description": [
+      "My laptop was stolen from my car last night. I filed a police report.",
+      "I think I left my work phone in a rideshare. It has email and Teams on it.",
+      "Lost my laptop while traveling. It was locked but I'm worried about the data."
+    ],
+    "resolution": [
+      "Issued remote wipe via MDM, disabled device in directory, revoked user sessions and reset password. Replacement device ordered.",
+      "Device located by user before wipe executed. Wipe canceled; sessions revoked and password reset as precaution."
+    ],
+    "kb": {
+      "title": "Lost or stolen company device",
+      "symptoms": "User reports a lost or stolen laptop or phone.",
+      "cause": "N/A. This is a security response procedure.",
+      "steps": [
+        "Record where and when the device was lost and whether a police report was filed.",
+        "Issue a remote lock/wipe through MDM and disable the device object in the directory.",
+        "Revoke all user sessions and reset the password.",
+        "Confirm BitLocker was enabled on the device (for compliance reporting).",
+        "Order a replacement device through End User Computing."
+      ]
+    }
+  },
+  {
+    "id": "erp-month-end-slow",
+    "group": "ERP Applications",
+    "category": "software",
+    "subcategory": "sap",
+    "severity": "high",
+    "base_hours": 8,
+    "weight": 1.0,
+    "misroute_to": ["Database Administration", "Network Operations"],
+    "misroute_rate": 0.35,
+    "ci": ["SAP S/4HANA"],
+    "slots": {"tcode": ["FB50", "F-53", "MIRO", "FBL3N", "KE30", "S_ALR_87012284"]},
+    "short": [
+      "SAP extremely slow",
+      "SAP transaction {tcode} timing out",
+      "SAP freezing during month-end close",
+      "SAP reports won't finish"
+    ],
+    "description": [
+      "SAP is extremely slow today. Transaction {tcode} takes minutes to respond and we're trying to close the month.",
+      "Running {tcode} times out. Finance needs these numbers for close tomorrow.",
+      "The whole accounting team is seeing SAP hang. Nothing is finishing."
+    ],
+    "resolution": [
+      "Heavy month-end batch jobs overlapped with interactive use. Rescheduled non-critical batch jobs and added dialog work processes; response times normal.",
+      "Long-running custom report was locking tables. Terminated the job and scheduled it in background overnight."
+    ],
+    "kb": {
+      "title": "SAP performance degradation during month-end close",
+      "symptoms": "SAP transactions are slow or time out, especially in the last days of the month when finance runs close activities.",
+      "cause": "Month-end batch jobs and heavy reports compete with interactive users for work processes and database resources.",
+      "steps": [
+        "Check SM50/SM66 for long-running work processes and SM37 for active batch jobs.",
+        "Reschedule non-critical batch jobs outside business hours.",
+        "Temporarily increase dialog work processes using operation modes.",
+        "Identify custom reports that lock tables and move them to background execution.",
+        "Engage the DBA team if database wait times are high."
+      ]
+    }
+  },
+  {
+    "id": "erp-po-approval",
+    "group": "ERP Applications",
+    "category": "software",
+    "subcategory": "sap-workflow",
+    "severity": "medium",
+    "base_hours": 12,
+    "weight": 3,
+    "misroute_to": ["Service Desk"],
+    "misroute_rate": 0.3,
+    "ci": ["SAP S/4HANA"],
+    "slots": {"po_number": ["4500018234", "4500019120", "4500020457", "4500021883", "4500022310"]},
+    "short": [
+      "PO {po_number} stuck in approval",
+      "Purchase order not routing to approver",
+      "Can't release PO {po_number}",
+      "PO approval workflow not working"
+    ],
+    "description": [
+      "Purchase order {po_number} has been waiting for approval for 3 days. My manager says they never got it in their inbox.",
+      "PO {po_number} shows 'in release' but no approver is listed.",
+      "The approver for my department left the company and now all our POs are stuck."
+    ],
+    "resolution": [
+      "Approver in release strategy had left the company. Updated release strategy with new approver and restarted workflow for {po_number}.",
+      "Workflow item was in error due to missing cost center. Corrected the cost center and restarted the workflow; PO released."
+    ],
+    "kb": {
+      "title": "Purchase order stuck in SAP release workflow",
+      "symptoms": "PO stays 'in release' with no approver action, or the approver never receives the workitem.",
+      "cause": "The approver in the release strategy left or changed roles, or the workflow errored because of missing master data such as a cost center.",
+      "steps": [
+        "Check the workflow log (SWIA) for the PO's workitem status.",
+        "If the workitem is in error, fix the master data issue and restart the workflow.",
+        "If the approver is invalid, update the release strategy assignment with HR/finance approval.",
+        "Forward or restart the workitem to the correct approver."
+      ]
+    }
+  },
+  {
+    "id": "erp-invoice-posting",
+    "group": "ERP Applications",
+    "category": "software",
+    "subcategory": "sap-finance",
+    "severity": "medium",
+    "base_hours": 16,
+    "weight": 2,
+    "misroute_to": ["Service Desk"],
+    "misroute_rate": 0.2,
+    "ci": ["SAP S/4HANA"],
+    "slots": {"invoice": ["INV-88213", "INV-90144", "INV-90512", "INV-91277"], "sap_error": ["Posting period not open", "Tolerance limit exceeded", "Balance in transaction currency", "GR/IR mismatch"]},
+    "short": [
+      "Invoice posting error: {sap_error}",
+      "Can't post vendor invoice {invoice}",
+      "MIRO error when posting invoice",
+      "Invoice {invoice} blocked for payment"
+    ],
+    "description": [
+      "Trying to post vendor invoice {invoice} in MIRO and getting '{sap_error}'.",
+      "Invoice {invoice} is blocked for payment and the vendor is calling about it.",
+      "Getting error '{sap_error}' on several carrier invoices this morning."
+    ],
+    "resolution": [
+      "Error '{sap_error}': Posting period for the company code was not opened. Opened the period in OB52 with finance approval; invoice posted.",
+      "Price variance exceeded tolerance. Buyer confirmed the correct price; released the blocked invoice in MRBR."
+    ],
+    "kb": {
+      "title": "Common SAP invoice posting errors (MIRO)",
+      "symptoms": "Vendor invoice cannot be posted in MIRO or is blocked for payment.",
+      "cause": "Posting period closed, price/quantity variance beyond tolerance, or goods receipt/invoice receipt mismatch.",
+      "steps": [
+        "'Posting period not open': confirm with finance, then open the period in OB52.",
+        "'Tolerance limit exceeded': confirm the price with the buyer, then release in MRBR.",
+        "'GR/IR mismatch': confirm the goods receipt was posted for the invoiced quantity.",
+        "Document the resolution for audit purposes."
+      ]
+    }
+  },
+  {
+    "id": "db-report-timeout",
+    "group": "Database Administration",
+    "category": "database",
+    "subcategory": "performance",
+    "severity": "medium",
+    "base_hours": 12,
+    "weight": 2,
+    "misroute_to": ["ERP Applications", "Cloud Platform"],
+    "misroute_rate": 0.4,
+    "ci": ["{server}"],
+    "slots": {"server": ["sqlprd-rpt01", "sqlprd-rpt02", "sqlprd-wms02"], "report": ["Daily Shipment Summary", "Carrier Scorecard", "On-Time Delivery", "Inventory Aging"]},
+    "short": [
+      "{report} report timing out",
+      "Report query very slow",
+      "{report} dashboard not loading",
+      "Database timeout on {report}"
+    ],
+    "description": [
+      "The {report} report times out after 5 minutes. It used to run in under 30 seconds.",
+      "Power BI dashboard for {report} shows 'query timeout' when refreshing.",
+      "Our team can't pull the {report} report today. The page just spins."
+    ],
+    "resolution": [
+      "Execution plan regression on {server} after stats update. Forced previous plan via Query Store and updated statistics; report runs in 20s.",
+      "Missing index on shipment date column after table growth. Added covering index on {server}; query time reduced from 6 min to 15s."
+    ],
+    "kb": {
+      "title": "Report queries timing out on reporting SQL servers",
+      "symptoms": "A report or dashboard that used to be fast now times out or takes minutes.",
+      "cause": "Query plan regression after a statistics update, or a missing index as tables grow.",
+      "steps": [
+        "Identify the query in Query Store or with sp_WhoIsActive while the report runs.",
+        "Compare current and historical execution plans. If the plan regressed, force the last known good plan.",
+        "Check for missing index recommendations and table growth.",
+        "Update statistics and test the report.",
+        "Create a change request for any new indexes."
+      ]
+    }
+  },
+  {
+    "id": "db-replication-lag",
+    "group": "Database Administration",
+    "category": "database",
+    "subcategory": "replication",
+    "severity": "high",
+    "base_hours": 6,
+    "weight": 0.7,
+    "misroute_to": ["Cloud Platform"],
+    "misroute_rate": 0.25,
+    "ci": ["sqlprd-erp01"],
+    "short": [
+      "Reporting data is hours behind",
+      "Data not refreshing in reports",
+      "Replication lag alert on reporting DB",
+      "Dashboards showing yesterday's data"
+    ],
+    "description": [
+      "All our dashboards are showing data from yesterday afternoon. Nothing new since then.",
+      "Monitoring alert: replication latency to reporting replica exceeds 2 hours.",
+      "The shipment numbers in reports don't match SAP. Reporting seems several hours behind."
+    ],
+    "resolution": [
+      "Log reader agent stalled after a large batch update. Restarted the agent; replication caught up within 40 minutes.",
+      "Replica disk IO saturated by an index rebuild. Paused the maintenance job; latency back under 1 minute."
+    ],
+    "kb": {
+      "title": "Reporting replica replication lag",
+      "symptoms": "Reports and dashboards show stale data, or monitoring alerts on replication latency.",
+      "cause": "A stalled log reader or distribution agent, large batch transactions, or IO saturation on the replica.",
+      "steps": [
+        "Check replication monitor for latency and agent status.",
+        "Restart stalled log reader or distribution agents.",
+        "Check replica disk IO. Pause maintenance jobs if they are saturating IO.",
+        "Tell reporting users the expected catch-up time."
+      ]
+    }
+  },
+  {
+    "id": "cloud-app-5xx",
+    "group": "Cloud Platform",
+    "category": "software",
+    "subcategory": "web-app",
+    "severity": "high",
+    "base_hours": 4,
+    "weight": 1.2,
+    "misroute_to": ["Database Administration", "Network Operations"],
+    "misroute_rate": 0.3,
+    "ci": ["{web_app}"],
+    "slots": {"web_app": ["Customer Portal", "Carrier Booking Portal", "Shipment Tracking API"]},
+    "short": [
+      "{web_app} returning 500 errors",
+      "{web_app} down for customers",
+      "502 Bad Gateway on {web_app}",
+      "Customers can't load {web_app}"
+    ],
+    "description": [
+      "Customers are calling saying the {web_app} shows a 500 error.",
+      "{web_app} is returning 502 Bad Gateway intermittently. Synthetic monitor is failing.",
+      "Our carriers can't use {web_app} to book loads. It errors out after login."
+    ],
+    "resolution": [
+      "Latest deployment of {web_app} introduced a connection pool leak. Rolled back to previous release; error rate back to baseline.",
+      "Autoscaling hit the max instance count during a traffic spike. Raised the limit and added a CPU-based scaling policy."
+    ],
+    "kb": {
+      "title": "Customer-facing web app returning 5xx errors",
+      "symptoms": "A customer-facing application returns 500/502/503 errors, or synthetic monitors fail.",
+      "cause": "A bad deployment, exhausted connection pools, autoscaling limits, or failing downstream dependencies.",
+      "steps": [
+        "Check the deployment history. If a release happened within the last 24 hours, consider rolling back first.",
+        "Review application logs and APM traces for the failing endpoint.",
+        "Check instance counts against autoscaling limits, and check database connection pool metrics.",
+        "Post customer communication through the status page if the outage lasts more than 15 minutes."
+      ]
+    }
+  },
+  {
+    "id": "cloud-cert-expired",
+    "group": "Cloud Platform",
+    "category": "software",
+    "subcategory": "certificate",
+    "severity": "high",
+    "base_hours": 3,
+    "weight": 0.3,
+    "misroute_to": ["Network Operations", "Security Operations"],
+    "misroute_rate": 0.4,
+    "ci": ["{web_app}"],
+    "slots": {"web_app": ["Customer Portal", "Carrier Booking Portal", "Shipment Tracking API"]},
+    "short": [
+      "Certificate error on {web_app}",
+      "'Your connection is not private' on {web_app}",
+      "SSL certificate expired",
+      "API clients failing TLS handshake"
+    ],
+    "description": [
+      "Browsers show 'Your connection is not private' when opening {web_app}.",
+      "Partner integrations to {web_app} are failing with TLS certificate errors since this morning.",
+      "Customers report a security warning when visiting {web_app}."
+    ],
+    "resolution": [
+      "TLS certificate for {web_app} expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days.",
+      "Intermediate certificate missing from chain after renewal. Deployed full chain; clients validating successfully."
+    ],
+    "kb": {
+      "title": "Expired or misconfigured TLS certificate",
+      "symptoms": "Browsers show certificate warnings or API clients fail TLS handshakes.",
+      "cause": "Certificate expired because auto-renewal failed, or the intermediate chain is incomplete.",
+      "steps": [
+        "Check the certificate expiry and chain with an SSL checker.",
+        "Renew the certificate and deploy it with the full chain to the load balancer.",
+        "Find out why auto-renewal failed (DNS validation, permissions).",
+        "Add expiry monitoring at 30, 14, and 7 days."
+      ]
+    }
+  },
+  {
+    "id": "whs-scanner-sync",
+    "group": "Warehouse Systems",
+    "category": "hardware",
+    "subcategory": "handheld",
+    "severity": "medium",
+    "base_hours": 6,
+    "weight": 4,
+    "misroute_to": ["Network Operations", "End User Computing"],
+    "misroute_rate": 0.4,
+    "sites": ["Dallas DC", "Atlanta DC", "Memphis DC"],
+    "ci": ["{scanner_id}"],
+    "slots": {"scanner_id": ["HH-DAL-117", "HH-DAL-044", "HH-ATL-032", "HH-ATL-190", "HH-MEM-208", "HH-MEM-015"], "dock": ["dock door 7", "dock door 12", "receiving", "pick zone C", "outbound staging"]},
+    "short": [
+      "Handheld scanner {scanner_id} not syncing",
+      "Scanner won't connect to WMS",
+      "RF gun freezing at {dock}",
+      "Scans not uploading from handheld"
+    ],
+    "description": [
+      "Scanner {scanner_id} at {dock} keeps saying 'host not reachable' and scans are not uploading to WMS.",
+      "Several RF guns at {dock} freeze when we scan pallets. We're falling behind on receiving.",
+      "Handheld {scanner_id} shows scans as pending and they never reach the system."
+    ],
+    "resolution": [
+      "Scanner roaming between APs at {dock} dropped the WMS session. Adjusted roaming threshold in the MDM profile; sync stable.",
+      "Handheld {scanner_id} had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded."
+    ],
+    "kb": {
+      "title": "Warehouse handheld scanners not syncing to WMS",
+      "symptoms": "RF handhelds show 'host not reachable', freeze while scanning, or keep scans pending.",
+      "cause": "Aggressive roaming between access points drops the WMS session, the device Wi-Fi certificate expired, or the WMS app server session limit was reached.",
+      "steps": [
+        "Check the device in MDM: last check-in time, certificate expiry, and app version.",
+        "If several devices in one zone are affected, check AP health for that zone with Network Operations.",
+        "Apply the warehouse roaming profile (higher roaming threshold) via MDM.",
+        "Re-enroll devices whose certificates have expired.",
+        "Confirm pending scans uploaded to WMS before resolving."
+      ]
+    }
+  },
+  {
+    "id": "whs-label-printer",
+    "group": "Warehouse Systems",
+    "category": "hardware",
+    "subcategory": "label-printer",
+    "severity": "medium",
+    "base_hours": 4,
+    "weight": 4,
+    "misroute_to": ["End User Computing"],
+    "misroute_rate": 0.35,
+    "sites": ["Dallas DC", "Atlanta DC", "Memphis DC"],
+    "ci": ["{label_printer}"],
+    "slots": {"label_printer": ["ZBR-DAL-D07", "ZBR-DAL-D12", "ZBR-ATL-S02", "ZBR-MEM-D12", "ZBR-MEM-S05"]},
+    "short": [
+      "Shipping label printer {label_printer} not printing",
+      "Labels printing blank",
+      "Label printer printing garbled text",
+      "{label_printer} offline - trucks waiting"
+    ],
+    "description": [
+      "Label printer {label_printer} stopped printing shipping labels. Trucks are waiting at the dock.",
+      "Labels come out blank or half printed from {label_printer}.",
+      "Shipping labels print with garbled characters instead of barcodes."
+    ],
+    "resolution": [
+      "Printhead dirty and ribbon misaligned on {label_printer}. Cleaned printhead, recalibrated media; labels printing correctly.",
+      "Printer lost its ZPL language setting after a firmware reset. Set language to ZPL and recalibrated."
+    ],
+    "kb": {
+      "title": "Shipping label printer issues (Zebra)",
+      "symptoms": "Label printer is offline or prints blank, faded, or garbled labels.",
+      "cause": "Dirty printhead, ribbon or media misalignment, the printer language reset from ZPL, or a network drop.",
+      "steps": [
+        "Check the printer display for errors and confirm media and ribbon are loaded correctly.",
+        "Run media calibration (hold the feed button until it flashes twice).",
+        "For garbled output, confirm the printer language is set to ZPL.",
+        "Clean the printhead with an isopropyl pen.",
+        "If the printer is offline, ping it and check its switch port."
+      ]
+    }
+  },
+  {
+    "id": "whs-wave-release",
+    "group": "Warehouse Systems",
+    "category": "software",
+    "subcategory": "wms",
+    "severity": "high",
+    "base_hours": 5,
+    "weight": 2,
+    "misroute_to": ["ERP Applications", "Database Administration"],
+    "misroute_rate": 0.35,
+    "sites": ["Dallas DC", "Atlanta DC", "Memphis DC"],
+    "ci": ["Manhattan WMS"],
+    "slots": {"wave": ["W-24718", "W-24802", "W-25011", "W-25390"]},
+    "short": [
+      "Wave {wave} failed to release",
+      "WMS wave release stuck",
+      "Pick tasks not generating",
+      "Orders not dropping to the floor"
+    ],
+    "description": [
+      "Wave {wave} failed to release at {site}. No pick tasks were created and pickers are idle.",
+      "Orders from SAP are not dropping into WMS. The afternoon wave has nothing in it.",
+      "Wave release has been stuck 'in progress' for 45 minutes."
+    ],
+    "resolution": [
+      "Wave {wave} failed on an item with missing dimensions. Corrected item master data and re-released the wave.",
+      "SAP-to-WMS order interface queue was stuck. Restarted the integration listener; orders flowed and wave released."
+    ],
+    "kb": {
+      "title": "WMS wave fails to release or pick tasks are not generated",
+      "symptoms": "Wave release fails or hangs, and no pick tasks are created for the floor.",
+      "cause": "Items with missing master data (dimensions/weight), a stuck SAP-to-WMS order interface, or allocation failures from inventory mismatches.",
+      "steps": [
+        "Check the wave's error log in WMS for the failing order or item.",
+        "Fix missing item master data and re-release the wave.",
+        "Check the SAP-to-WMS integration queue depth. Restart the listener if it is stuck.",
+        "Engage the ERP team if orders are not being sent from SAP."
+      ]
+    }
+  },
+  {
+    "id": "sd-how-to",
+    "group": "Service Desk",
+    "category": "inquiry",
+    "subcategory": "how-to",
+    "severity": "low",
+    "base_hours": 1,
+    "weight": 4,
+    "misroute_to": [],
+    "misroute_rate": 0.0,
+    "ci": ["Service Portal"],
+    "slots": {"topic": ["set up an out-of-office reply", "map a network drive", "share a calendar", "connect to a conference room display", "request a new monitor", "set up email on my phone"]},
+    "short": [
+      "How do I {topic}?",
+      "Question: {topic}",
+      "Need help to {topic}",
+      "Instructions to {topic}"
+    ],
+    "description": [
+      "Can someone tell me how to {topic}? I couldn't find it on the portal.",
+      "I need to {topic} before I go on vacation Friday.",
+      "Quick question, what's the process to {topic}?"
+    ],
+    "resolution": [
+      "Walked user through how to {topic} and sent the relevant portal article.",
+      "Provided self-service instructions for how to {topic}; user confirmed complete."
+    ],
+    "kb": {
+      "title": "Common how-to requests: self-service index",
+      "symptoms": "User asks how to do a common task such as out-of-office, mapping drives, sharing calendars, or phone email setup.",
+      "cause": "Self-service articles exist but are hard to find.",
+      "steps": [
+        "Search the service portal knowledge base with the user's own wording.",
+        "Send the article link and walk through it if needed.",
+        "If no article exists, create a knowledge feedback task so one gets written."
+      ]
+    }
+  },
+  {
+    "id": "euc-mobile-email",
+    "group": "End User Computing",
+    "category": "software",
+    "subcategory": "mobile",
+    "severity": "low",
+    "base_hours": 8,
+    "weight": 2,
+    "misroute_to": ["Messaging & Collaboration", "Service Desk"],
+    "misroute_rate": 0.35,
+    "ci": ["Intune MDM"],
+    "short": [
+      "Email not working on my phone",
+      "Company Portal says device not compliant",
+      "Outlook mobile keeps asking to sign in",
+      "Can't enroll new phone"
+    ],
+    "description": [
+      "Outlook on my iPhone stopped syncing and says my device is not compliant.",
+      "Trying to set up my new Android phone and Company Portal enrollment fails.",
+      "Outlook mobile keeps asking me to sign in over and over."
+    ],
+    "resolution": [
+      "Device was non-compliant due to an outdated OS. User updated iOS, device re-checked compliance, and Outlook synced.",
+      "Enrollment failed because device limit reached. Removed old device records from MDM; new phone enrolled."
+    ],
+    "kb": {
+      "title": "Mobile email and MDM compliance issues",
+      "symptoms": "Outlook mobile stops syncing, reports non-compliance, or loops on sign-in. MDM enrollment fails.",
+      "cause": "Outdated OS version below the compliance policy, device enrollment limit reached, or stale device records.",
+      "steps": [
+        "Check the device's compliance status and reason in MDM.",
+        "Have the user update the phone OS to the minimum supported version.",
+        "Remove stale device records if the user is at the enrollment limit.",
+        "Have the user run 'Check status' in Company Portal, then reopen Outlook."
+      ]
+    }
+  }
+]

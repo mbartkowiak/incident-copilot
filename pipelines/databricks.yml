@@ -1,0 +1,17 @@
+bundle:
+  name: incident-copilot
+
+variables:
+  catalog:
+    description: Unity Catalog catalog (Free Edition default is "workspace")
+    default: workspace
+  schema:
+    description: Schema holding all bronze/silver/gold tables
+    default: incident_copilot
+
+include:
+  - resources/*.yml
+
+targets:
+  dev:
+    default: true

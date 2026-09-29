@@ -1,0 +1,16 @@
+resources:
+  pipelines:
+    itsm_medallion:
+      name: itsm-medallion
+      catalog: ${var.catalog}
+      schema: ${resources.schemas.incident_copilot.name}
+      serverless: true
+      configuration:
+        raw_path: /Volumes/${var.catalog}/${var.schema}/raw
+      libraries:
+        - file:
+            path: ../src/bronze.py
+        - file:
+            path: ../src/silver.py
+        - file:
+            path: ../src/gold.py
