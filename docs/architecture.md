@@ -25,10 +25,10 @@
 | Bronze/silver/gold | Lakeflow declarative pipeline via Asset Bundle (`pipelines/`) | Deployed; all 5 planted events detected in `gold_hotspots` |
 | RAG index | Databricks Vector Search (delta-sync on chunk tables) | Phase 3 |
 | Routing model | scikit-learn/LightGBM + MLflow, compared against Claude zero-shot | Phase 3 |
-| API | FastAPI, Pydantic, services behind interfaces | Skeleton |
+| API | FastAPI, Pydantic, services behind interfaces | Metrics endpoints live |
 | Agent | Claude tool calling: similar incidents, KB search, predict group, allowlisted metric queries, ServiceNow writeback | Phase 4 |
-| Frontend | React + TypeScript + Vite | Skeleton |
-| Infra / CI | Terraform (AWS), GitHub Actions with OIDC | CI done; infra Phase 2 |
+| Frontend | React + TypeScript + Vite | Overview dashboard live |
+| Infra / CI | Terraform (AWS), GitHub Actions with OIDC | Live; deploys on every push to main |
 | Quality | pytest/Vitest, eval suite gated in CI, MLflow Tracing | Phase 5 |
 
 ## Data quality rules (silver)

@@ -13,7 +13,7 @@ def get_metrics_service() -> MetricsService:
     settings = get_settings()
     if not settings.databricks_warehouse_id:
         raise RuntimeError("APP_DATABRICKS_WAREHOUSE_ID is not set")
-    client = WorkspaceClient(profile=settings.databricks_profile)
+    client = WorkspaceClient(profile=settings.databricks_profile or None)
     warehouse = DatabricksWarehouse(
         client,
         warehouse_id=settings.databricks_warehouse_id,

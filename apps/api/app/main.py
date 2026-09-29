@@ -14,6 +14,7 @@ from app.routes import metrics
 from app.services.warehouse import WarehouseError
 
 VERSION = "0.2.0"
+logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger(__name__)
 
 
