@@ -19,15 +19,16 @@ TIMEOUT_S = 20
 STATE_CODES = {"New": "1", "In Progress": "2", "On Hold": "3", "Resolved": "6", "Closed": "7"}
 STATE_NAMES = {code: name for name, code in STATE_CODES.items()} | {"8": "Canceled"}
 
-# The app uses the classic resolution codes. Newer ServiceNow releases renamed them, so each
-# maps to the first label the instance actually offers.
+# The app uses the classic resolution codes. Newer ServiceNow releases renamed them; each maps to
+# the newer label when the instance has it, else the classic one. Newer labels come first
+# because an upgraded instance keeps old incidents with classic codes in its data.
 CLOSE_CODE_CANDIDATES: dict[str, list[str]] = {
-    "Solved (Permanently)": ["Solved (Permanently)", "Solution provided"],
-    "Solved Remotely (Permanently)": ["Solved Remotely (Permanently)", "Solution provided"],
-    "Solved (Work Around)": ["Solved (Work Around)", "Workaround provided"],
-    "Solved Remotely (Work Around)": ["Solved Remotely (Work Around)", "Workaround provided"],
-    "Not Solved (Not Reproducible)": ["Not Solved (Not Reproducible)", "No resolution provided"],
-    "Closed/Resolved by Caller": ["Closed/Resolved by Caller", "Resolved by caller"],
+    "Solved (Permanently)": ["Solution provided", "Solved (Permanently)"],
+    "Solved Remotely (Permanently)": ["Solution provided", "Solved Remotely (Permanently)"],
+    "Solved (Work Around)": ["Workaround provided", "Solved (Work Around)"],
+    "Solved Remotely (Work Around)": ["Workaround provided", "Solved Remotely (Work Around)"],
+    "Not Solved (Not Reproducible)": ["No resolution provided", "Not Solved (Not Reproducible)"],
+    "Closed/Resolved by Caller": ["Resolved by caller", "Closed/Resolved by Caller"],
 }
 
 INCIDENT_FIELDS = [
@@ -129,23 +130,43 @@ class ServiceNowClient:
     def close_code(self, app_code: str) -> str:
         """The instance's label for one of the app's resolution codes."""
         if self._close_codes is None:
-            try:
-                rows = self._call(
-                    "GET",
-                    "table/sys_choice",
-                    params={
-                        "sysparm_query": "name=incident^element=close_code^inactive=false",
-                        "sysparm_fields": "value",
-                    },
-                )
-                self._close_codes = [r["value"] for r in rows]
-            except ServiceNowError:
-                log.warning("couldn't read close codes; sending the app's labels")
-                self._close_codes = []
-        for candidate in CLOSE_CODE_CANDIDATES.get(app_code, [app_code]):
-            if not self._close_codes or candidate in self._close_codes:
-                return candidate
-        return self._close_codes[0]
+            self._close_codes = self._known_close_codes()
+        # A release uses one vocabulary: if any newer label appears, use newer labels throughout.
+        # Otherwise send the app's own (classic) label.
+        newer = {c[0] for c in CLOSE_CODE_CANDIDATES.values()}
+        if app_code in CLOSE_CODE_CANDIDATES and newer & set(self._close_codes):
+            return CLOSE_CODE_CANDIDATES[app_code][0]
+        return app_code
+
+    def _known_close_codes(self) -> list[str]:
+        """The instance's resolution codes. The choice table needs more than the `itil` role, so
+        fall back to the codes on resolved incidents, which `itil` can read."""
+        try:
+            rows = self._call(
+                "GET",
+                "table/sys_choice",
+                params={
+                    "sysparm_query": "name=incident^element=close_code^inactive=false",
+                    "sysparm_fields": "value",
+                },
+            )
+            return [r["value"] for r in rows]
+        except ServiceNowError:
+            pass
+        try:
+            rows = self._call(
+                "GET",
+                "table/incident",
+                params={
+                    "sysparm_query": "close_codeISNOTEMPTY^ORDERBYDESCsys_updated_on",
+                    "sysparm_fields": "close_code",
+                    "sysparm_limit": 200,
+                },
+            )
+            return sorted({r["close_code"] for r in rows if r.get("close_code")})
+        except ServiceNowError:
+            log.warning("couldn't learn close codes; sending the app's labels")
+            return []
 
 
 def value(field: Any) -> str:

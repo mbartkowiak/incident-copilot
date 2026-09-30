@@ -316,6 +316,26 @@ def test_close_codes_map_to_the_labels_the_instance_offers(monkeypatch: pytest.M
     assert set(CLOSE_CODE_CANDIDATES) >= {"Closed/Resolved by Caller"}
 
 
+def test_close_codes_are_learned_from_resolved_incidents_without_the_choice_table(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = ServiceNowClient(INSTANCE, "u", "p")
+
+    def call(method: str, path: str, **kwargs: Any) -> Any:
+        if path == "table/sys_choice":  # itil can't read it
+            raise ServiceNowError("GET table/sys_choice: HTTP 403")
+        return [
+            {"close_code": "Solution provided"},
+            {"close_code": "Workaround provided"},
+            {"close_code": "Solution provided"},
+        ]
+
+    monkeypatch.setattr(client, "_call", call)
+
+    assert client.close_code("Solved Remotely (Permanently)") == "Solution provided"
+    assert client.close_code("Solved (Work Around)") == "Workaround provided"
+
+
 def test_status_endpoint_when_not_configured() -> None:
     app = create_app()
     app.dependency_overrides[get_servicenow_connector] = lambda: None
