@@ -12,6 +12,7 @@ About a quarter of incidents at a typical enterprise service desk go to the wron
 2. **Triage → "Scanners down at Memphis":** the routing model and semantic search respond instantly: team, confidence, similar past incidents and their fixes, and KB articles.
 3. **Draft with AI:** watch Claude call its tools live, then edit and approve the draft. Approved drafts become searchable precedents.
 4. **Triage → "Vague: can't log in":** low model confidence triggers a review flag, and the agent asks the caller clarifying questions instead of guessing.
+5. **Quality:** the agent's eval results, the before/after of an eval-driven prompt fix, and the routing benchmark against Claude.
 
 ## Results
 | | |
@@ -65,7 +66,7 @@ Decision records: [docs/adr/](docs/adr/).
 | `pipelines` | Databricks Asset Bundle: medallion pipeline, RAG source tables, Vector Search sync job |
 | `ml` | Routing model training, evaluation vs Claude, MLflow tracking, Unity Catalog registration |
 | `infra/terraform` | AWS: ECS Fargate API behind an ALB, S3 + CloudFront, Secrets Manager, GitHub OIDC deploy role |
-| `docs` | Architecture, decision records, AI workflow |
+| `docs` | Architecture, decision records, AI workflow, demo script |
 
 ## Quick start
 ```bash
