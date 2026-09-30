@@ -27,7 +27,7 @@
 | RAG index | Databricks Vector Search, managed `databricks-gte-large-en` embeddings, delta-sync on precedent + KB tables ([ADR 0003](adr/0003-precedent-level-vector-index.md)) | Live |
 | Routing model | TF-IDF + logistic regression, MLflow tracking, Unity Catalog registry, served in-process ([ADR 0002](adr/0002-in-process-routing-model.md)); benchmarked against Claude Opus 5 and Haiku 4.5 | Live |
 | API | FastAPI, Pydantic, services behind interfaces | Metrics + `/api/triage/suggest` |
-| Agent | Claude tool calling: similar incidents, KB search, predict group, allowlisted metric queries, ServiceNow writeback | Phase 4 |
+| Agent | Claude Opus 5 tool loop: predict team, precedent search, KB search, recent-activity check; structured draft with grounding check; SSE streaming; human approval ([ADR 0004](adr/0004-triage-agent-design.md)) | Live |
 | Frontend | React + TypeScript + Vite | Overview dashboard + Triage workbench |
 | Infra / CI | Terraform (AWS), GitHub Actions with OIDC | Live; deploys on every push to main |
 | Quality | pytest/Vitest, eval suite gated in CI, MLflow Tracing | Phase 5 |
@@ -65,8 +65,8 @@ Same 200-ticket random sample for all three (Claude zero-shot with structured ou
 
 Errors concentrate on vague tickets ("everything is slow", "can't log in"). Predictions below 60% confidence are flagged for human confirmation in the UI.
 
-## Agent memory loop (Phase 4)
-Triage accept/edit/reject → `triage_feedback` → scheduled merge into gold → vector index re-sync. Later triages retrieve the human-corrected answers.
+## Agent memory loop
+Dispatcher approve/edit/reject → `POST /api/triage/feedback` → `triage_feedback` (the only table the API may write) → `refresh-lakehouse` merges approved drafts into `incident_docs` as `FB-` precedents → vector index sync. Later triages retrieve the human-corrected answers.
 
 ## Decisions
 See `docs/adr/`.

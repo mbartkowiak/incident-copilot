@@ -4,7 +4,7 @@ AI-assisted IT incident triage and analytics, built end to end: a Databricks Lak
 
 **Live demo: https://d1fjhcqqwngd2n.cloudfront.net**
 
-> Status: Phase 3 (RAG + ML). The Overview dashboard and the Triage workbench are live: a routing model registered in Unity Catalog (95% accurate vs 76% for today's first-time routing) plus semantic search over past incidents and KB articles with Databricks Vector Search. The Claude-powered triage agent is next. See [docs/architecture.md](docs/architecture.md).
+> Status: Phase 4 (agent) complete. The Triage workbench combines a routing model registered in Unity Catalog (95% accurate vs 76% for today's first-time routing), semantic search with Databricks Vector Search, and a Claude Opus 5 agent that investigates with tools and drafts a cited resolution for a dispatcher to approve. Approved drafts feed back into search. Evals and observability are next. See [docs/architecture.md](docs/architecture.md).
 
 ## Why
 About a quarter of incidents at a typical enterprise service desk are first sent to the wrong team. Every reassignment adds hours to resolution. This project predicts the right team, retrieves how similar incidents were fixed, and drafts a resolution for a human to accept. It also gives IT leaders a view of where incidents are spiking and why.

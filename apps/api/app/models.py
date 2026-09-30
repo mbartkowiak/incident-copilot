@@ -1,6 +1,10 @@
 from datetime import date
+from typing import Literal
+from uuid import UUID
 
 from pydantic import BaseModel, Field
+
+from app.agent.prompt import Group, Priority
 
 
 class PeriodStats(BaseModel):
@@ -93,6 +97,36 @@ class KbArticle(BaseModel):
     text: str
     kb_category: str | None
     score: float
+
+
+class TriageDraft(BaseModel):
+    """The agent's structured output (mirrors app.agent.prompt.DRAFT_SCHEMA)."""
+
+    assignment_group: Group
+    priority: Priority
+    summary: str
+    likely_cause: str
+    resolution_steps: list[str]
+    citations: list[str]
+    routing_rationale: str
+    related_to_active_spike: bool
+    spike_note: str
+    clarifying_questions: list[str]
+
+
+class TriageFeedback(BaseModel):
+    """A dispatcher's decision on an agent draft."""
+
+    run_id: UUID
+    decision: Literal["accepted", "edited", "rejected"]
+    short_description: str = Field(min_length=3, max_length=200)
+    description: str = Field(default="", max_length=4000)
+    suggested_group: Group
+    final_group: Group
+    priority: Priority
+    resolution: str = Field(default="", max_length=4000)
+    citations: list[str] = Field(default_factory=list, max_length=20)
+    agent_model: str = Field(max_length=64)
 
 
 class TriageSuggestion(BaseModel):

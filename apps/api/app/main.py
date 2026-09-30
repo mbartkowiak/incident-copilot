@@ -11,8 +11,9 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from app.config import get_settings
-from app.deps import get_metrics_service, get_routing_model
-from app.routes import metrics, triage
+from app.deps import NotConfigured, get_metrics_service, get_routing_model
+from app.routes import agent, metrics, triage
+from app.services.ratelimit import RateLimited
 from app.services.routing import ModelNotReady
 from app.services.warehouse import WarehouseError
 
@@ -79,6 +80,19 @@ def create_app() -> FastAPI:
             headers={"Retry-After": "10"},
         )
 
+    @app.exception_handler(RateLimited)
+    async def rate_limited(_: Request, exc: RateLimited) -> JSONResponse:
+        return JSONResponse(
+            status_code=429,
+            content={"detail": str(exc)},
+            headers={"Retry-After": str(exc.retry_after_s)},
+        )
+
+    @app.exception_handler(NotConfigured)
+    async def not_configured(_: Request, exc: NotConfigured) -> JSONResponse:
+        log.error("service not configured: %s", exc)
+        return JSONResponse(status_code=503, content={"detail": "AI triage is not configured"})
+
     @app.exception_handler(DatabricksError)
     async def databricks_unavailable(_: Request, exc: DatabricksError) -> JSONResponse:
         log.error("databricks call failed: %s", exc)
@@ -95,6 +109,7 @@ def create_app() -> FastAPI:
 
     app.include_router(metrics.router)
     app.include_router(triage.router)
+    app.include_router(agent.router)
     return app
 
 

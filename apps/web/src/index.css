@@ -594,6 +594,158 @@ details.kb summary {
   cursor: pointer;
 }
 
+/* Agent */
+.agent-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.agent-cta > div {
+  flex: 1 1 280px;
+}
+
+.agent-cta button.primary {
+  margin-top: 0;
+}
+
+.timeline {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+}
+
+.timeline li {
+  position: relative;
+  padding: 4px 0 8px 22px;
+  font-size: 13px;
+}
+
+.timeline li::before {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 14px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.timeline li[data-state='done']::before {
+  content: '✓';
+  color: var(--good);
+}
+
+.timeline li[data-state='error']::before {
+  content: '✗';
+  color: var(--bad);
+}
+
+.timeline li[data-state='active']::before {
+  content: '●';
+  color: var(--series-1);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline li[data-state='active']::before {
+    animation: none;
+  }
+}
+
+.draft {
+  border-top: 1px solid var(--grid);
+  padding-top: 12px;
+}
+
+.draft h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 14px 0 4px;
+}
+
+.draft-summary {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.draft-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0 6px;
+}
+
+.draft-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex: 1 1 180px;
+}
+
+.draft select,
+.draft textarea {
+  font: inherit;
+  color: var(--text-primary);
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.draft textarea {
+  width: 100%;
+  resize: vertical;
+  font-size: 13px;
+}
+
+.questions {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+.citations {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.citation {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.citation[data-grounded='false'] {
+  border-color: var(--bad);
+}
+
+.draft-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.draft-actions button.ghost {
+  margin-top: 10px;
+}
+
 .kb-body {
   white-space: pre-wrap;
   font-size: 13px;

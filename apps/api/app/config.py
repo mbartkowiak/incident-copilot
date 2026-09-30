@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,6 +23,15 @@ class Settings(BaseSettings):
     routing_model_alias: str = "champion"
     incident_index: str = "workspace.incident_copilot.incident_precedents_index"
     kb_index: str = "workspace.incident_copilot.kb_docs_index"
+
+    # Read from ANTHROPIC_API_KEY (no APP_ prefix) so .env, the container and the SDK agree.
+    anthropic_api_key: SecretStr | None = Field(default=None, validation_alias="ANTHROPIC_API_KEY")
+    agent_model: str = "claude-opus-5"
+    agent_effort: str = "medium"
+    agent_max_turns: int = 6
+    agent_runs_per_client: int = 5
+    agent_client_window_s: float = 600
+    agent_runs_per_day: int = 200
     # Serverless warehouses auto-stop; warming absorbs the ~20s cold start before users arrive.
     warm_cache_on_startup: bool = False
     load_routing_model_on_startup: bool = True

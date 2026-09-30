@@ -82,6 +82,55 @@ export type TriageSuggestion = {
   kb_articles: KbArticle[]
 }
 
+export const GROUPS = [
+  'Service Desk',
+  'Identity & Access Management',
+  'Network Operations',
+  'End User Computing',
+  'Messaging & Collaboration',
+  'Security Operations',
+  'ERP Applications',
+  'Database Administration',
+  'Cloud Platform',
+  'Warehouse Systems',
+] as const
+
+export const PRIORITIES = ['1 - Critical', '2 - High', '3 - Moderate', '4 - Low', '5 - Planning'] as const
+
+export type TriageDraft = {
+  assignment_group: string
+  priority: string
+  summary: string
+  likely_cause: string
+  resolution_steps: string[]
+  citations: string[]
+  routing_rationale: string
+  related_to_active_spike: boolean
+  spike_note: string
+  clarifying_questions: string[]
+}
+
+export type AgentUsage = {
+  run_id: string
+  model: string
+  turns: number
+  latency_s: number
+  cost_usd: number
+}
+
+export type TriageFeedback = {
+  run_id: string
+  decision: 'accepted' | 'edited' | 'rejected'
+  short_description: string
+  description: string
+  suggested_group: string
+  final_group: string
+  priority: string
+  resolution: string
+  citations: string[]
+  agent_model: string
+}
+
 async function parse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { detail?: unknown } | null

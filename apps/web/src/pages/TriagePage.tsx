@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { postJson } from '../api'
 import type { KbArticle, RoutingPrediction, SimilarIncident, TriageRequest, TriageSuggestion } from '../api'
+import { AgentPanel } from '../components/AgentPanel'
 import { formatHours, formatPercent } from '../format'
 
 const SCENARIOS: { label: string; ticket: TriageRequest }[] = [
@@ -48,6 +49,7 @@ const EMPTY: TriageRequest = { short_description: '', description: '' }
 export function TriagePage() {
   const [ticket, setTicket] = useState<TriageRequest>(EMPTY)
   const [result, setResult] = useState<TriageSuggestion>()
+  const [submitted, setSubmitted] = useState<{ ticket: TriageRequest; id: number }>()
   const [error, setError] = useState<string>()
   const [loading, setLoading] = useState(false)
   const inFlight = useRef<AbortController | null>(null)
@@ -60,6 +62,7 @@ export function TriagePage() {
     setError(undefined)
     try {
       setResult(await postJson<TriageSuggestion>('/api/triage/suggest', request, controller.signal))
+      setSubmitted((s) => ({ ticket: request, id: (s?.id ?? 0) + 1 }))
     } catch (err) {
       if (!controller.signal.aborted) setError(err instanceof Error ? err.message : String(err))
     } finally {
@@ -82,8 +85,9 @@ export function TriagePage() {
   return (
     <>
       <p className="subtle page-sub">
-        Paste a new ticket. The routing model predicts the resolving team, and semantic search finds how
-        similar incidents were fixed.
+        Paste a new ticket. The routing model predicts the resolving team and semantic search finds how similar
+        incidents were fixed, instantly and at no cost. Then the AI agent can investigate and draft a resolution
+        for you to approve.
       </p>
 
       <div className="triage">
@@ -131,6 +135,7 @@ export function TriagePage() {
           {result && (
             <>
               <RoutingCard routing={result.routing} />
+              {submitted && <AgentPanel key={submitted.id} ticket={submitted.ticket} />}
               <SimilarIncidents incidents={result.similar_incidents} />
               <KbArticles articles={result.kb_articles} />
             </>

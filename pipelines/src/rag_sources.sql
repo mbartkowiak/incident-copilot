@@ -3,6 +3,22 @@
 USE CATALOG workspace;
 USE SCHEMA incident_copilot;
 
+-- Written by the API when a dispatcher accepts, edits or rejects an agent draft. The API's
+-- service principal can write to this table only.
+CREATE TABLE IF NOT EXISTS triage_feedback (
+  run_id STRING NOT NULL,
+  created_at TIMESTAMP,
+  decision STRING COMMENT 'accepted | edited | rejected',
+  short_description STRING,
+  description STRING,
+  suggested_group STRING,
+  final_group STRING,
+  priority STRING,
+  resolution STRING,
+  citations STRING,
+  agent_model STRING
+);
+
 CREATE TABLE IF NOT EXISTS incident_docs (
   number STRING NOT NULL,
   embed_text STRING COMMENT 'Problem statement only: what a new ticket will be compared against',
@@ -37,6 +53,26 @@ USING (
     kb_reference
   FROM gold_incident_facts
   WHERE is_resolved AND close_notes IS NOT NULL
+
+  UNION ALL
+
+  -- Agent memory: dispatcher-approved triage becomes a precedent (number prefix FB-).
+  SELECT
+    concat('FB-', substr(run_id, 1, 8)) AS number,
+    concat_ws('\n', short_description, description) AS embed_text,
+    short_description,
+    resolution AS close_notes,
+    NULL AS category,
+    NULL AS subcategory,
+    final_group AS assignment_group,
+    NULL AS location,
+    NULL AS cmdb_ci,
+    priority AS priority_label,
+    created_at AS opened_at,
+    NULL AS mttr_hours,
+    NULL AS kb_reference
+  FROM triage_feedback
+  WHERE decision IN ('accepted', 'edited')
 ) s
 ON t.number = s.number
 WHEN MATCHED THEN UPDATE SET *

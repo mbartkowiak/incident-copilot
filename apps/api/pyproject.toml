@@ -12,6 +12,7 @@ dependencies = [
     "scikit-learn==1.8.0",
     "pandas>=2.2",
     "skops>=0.16.0",
+    "anthropic>=1.9",
 ]
 
 [dependency-groups]
@@ -29,6 +30,11 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# Prompt and tool-description prose reads better unwrapped.
+"app/agent/prompt.py" = ["E501"]
+"app/agent/tools.py" = ["E501"]
 
 [tool.mypy]
 strict = true
