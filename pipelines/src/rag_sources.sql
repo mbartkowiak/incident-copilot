@@ -4,7 +4,7 @@ USE CATALOG workspace;
 USE SCHEMA incident_copilot;
 
 -- Written by the API when a dispatcher accepts, edits or rejects an agent draft. The API's
--- service principal can write to this table only.
+-- service principal can write here and to kb_drafts only.
 CREATE TABLE IF NOT EXISTS triage_feedback (
   run_id STRING NOT NULL,
   created_at TIMESTAMP,
@@ -132,6 +132,23 @@ WHEN MATCHED AND (
 WHEN NOT MATCHED THEN INSERT *
 WHEN NOT MATCHED BY SOURCE THEN DELETE;
 
+-- Written by the API when an engineer approves or rejects a knowledge draft made from a
+-- resolved ticket. The API's service principal can write here and to triage_feedback only.
+CREATE TABLE IF NOT EXISTS kb_drafts (
+  draft_id STRING NOT NULL,
+  created_at TIMESTAMP,
+  decision STRING COMMENT 'approved | rejected',
+  action STRING COMMENT 'update (revises target_kb) | new (becomes KBD-<draft_id prefix>)',
+  source_number STRING COMMENT 'Resolved incident the draft was written from',
+  target_kb STRING,
+  title STRING,
+  text STRING COMMENT 'Full article markdown, same shape as source articles',
+  kb_category STRING,
+  category STRING,
+  subcategory STRING,
+  agent_model STRING
+);
+
 CREATE TABLE IF NOT EXISTS kb_docs (
   number STRING NOT NULL,
   title STRING,
@@ -142,12 +159,39 @@ CREATE TABLE IF NOT EXISTS kb_docs (
   subcategory STRING
 ) TBLPROPERTIES (delta.enableChangeDataFeed = true);
 
+-- Source articles plus approved new drafts, each overlaid with its latest approved revision.
 MERGE INTO kb_docs t
 USING (
-  SELECT number, title, concat_ws('\n', title, text) AS embed_text, text, kb_category, category, subcategory
-  FROM silver_kb_articles
+  WITH articles AS (
+    SELECT number, title, text, kb_category, category, subcategory
+    FROM silver_kb_articles
+
+    UNION ALL
+
+    SELECT concat('KBD-', substr(draft_id, 1, 8)), title, text, kb_category, category, subcategory
+    FROM kb_drafts
+    WHERE decision = 'approved' AND action = 'new'
+  ),
+  revisions AS (
+    SELECT target_kb, max_by(title, created_at) AS title, max_by(text, created_at) AS text
+    FROM kb_drafts
+    WHERE decision = 'approved' AND action = 'update'
+    GROUP BY target_kb
+  )
+  SELECT
+    a.number,
+    coalesce(r.title, a.title) AS title,
+    concat_ws('\n', coalesce(r.title, a.title), coalesce(r.text, a.text)) AS embed_text,
+    coalesce(r.text, a.text) AS text,
+    a.kb_category,
+    a.category,
+    a.subcategory
+  FROM articles a
+  LEFT JOIN revisions r ON r.target_kb = a.number
 ) s
 ON t.number = s.number
-WHEN MATCHED THEN UPDATE SET *
+-- Only changed articles are rewritten, so a sync re-embeds just those.
+WHEN MATCHED AND (t.embed_text <> s.embed_text OR NOT (t.kb_category <=> s.kb_category))
+  THEN UPDATE SET *
 WHEN NOT MATCHED THEN INSERT *
 WHEN NOT MATCHED BY SOURCE THEN DELETE;

@@ -4,18 +4,11 @@ A single structured-output request, not an agent: everything the model needs is 
 the ticket, so there is nothing to investigate.
 """
 
-import json
-import logging
-import time
-from dataclasses import dataclass
 from typing import Any
 
-from pydantic import ValidationError
-
-from app.agent.runner import MessagesClient, Usage
+from app.agent.runner import MessagesClient
 from app.models import IncidentDetail, TicketSummary
-
-log = logging.getLogger(__name__)
+from app.services.structured import StructuredResult, call_structured
 
 SYSTEM = """You summarize IT incident tickets for Meridian Logistics' service desk. You get one ticket with its SLA status and work-note journal.
 
@@ -41,19 +34,6 @@ SUMMARY_SCHEMA: dict[str, Any] = {
     "required": ["headline", "status", "actions_taken", "next_step", "watch_outs"],
     "additionalProperties": False,
 }
-
-
-class SummaryFailed(RuntimeError):
-    pass
-
-
-@dataclass
-class SummaryResult:
-    summary: TicketSummary
-    model: str
-    cost_usd: float
-    latency_s: float
-    usage: Usage
 
 
 def ticket_prompt(ticket: IncidentDetail) -> str:
@@ -91,34 +71,13 @@ class TicketSummarizer:
         self._model = model
         self._effort = effort
 
-    def summarize(self, ticket: IncidentDetail) -> SummaryResult:
-        started = time.perf_counter()
-        response = self._messages.create(
+    def summarize(self, ticket: IncidentDetail) -> StructuredResult[TicketSummary]:
+        return call_structured(
+            self._messages,
             model=self._model,
-            max_tokens=4000,
-            betas=["server-side-fallback-2026-07-01"],
-            fallbacks="default",
+            effort=self._effort,
             system=SYSTEM,
-            output_config={
-                "effort": self._effort,
-                "format": {"type": "json_schema", "schema": SUMMARY_SCHEMA},
-            },
-            messages=[{"role": "user", "content": ticket_prompt(ticket)}],
-        )
-        usage = Usage()
-        usage.add(response.usage)
-        if response.stop_reason != "end_turn":
-            raise SummaryFailed(f"summary stopped with {response.stop_reason}")
-        text = next((b.text for b in response.content if b.type == "text"), "")
-        try:
-            summary = TicketSummary.model_validate(json.loads(text))
-        except (json.JSONDecodeError, ValidationError) as e:
-            log.error("invalid summary: %s", text[:500])
-            raise SummaryFailed("invalid summary") from e
-        return SummaryResult(
-            summary=summary,
-            model=self._model,
-            cost_usd=round(usage.cost_usd(self._model), 4),
-            latency_s=round(time.perf_counter() - started, 2),
-            usage=usage,
+            schema=SUMMARY_SCHEMA,
+            prompt=ticket_prompt(ticket),
+            output=TicketSummary,
         )

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { postJson } from '../api'
 import type { IncidentDetail, TicketSummaryResponse, TriageSuggestion, WorkNote } from '../api'
+import { KnowledgeCard } from '../components/KnowledgeCard'
 import { formatHours, formatPercent } from '../format'
 import { ROUTING_TRAIN_CUTOFF, describeSla, formatDateTime, routingVerdict } from '../incidents'
 import { useApi } from '../useApi'
@@ -63,6 +64,7 @@ function Ticket({ t }: { t: IncidentDetail }) {
               <p className="prose">{t.close_notes}</p>
             </div>
           )}
+          {resolved && t.close_notes && <KnowledgeCard number={t.number} />}
         </div>
         <aside className="ticket-side">
           <SlaCard t={t} resolved={resolved} />

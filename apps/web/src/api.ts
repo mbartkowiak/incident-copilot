@@ -210,6 +210,40 @@ export type TicketSummaryResponse = {
   cached: boolean
 }
 
+export type KbDraft = {
+  action: 'none' | 'update' | 'new'
+  target_kb: string
+  title: string
+  symptoms: string
+  cause: string
+  steps: string[]
+  rationale: string
+}
+
+export type KbDraftResponse = {
+  number: string
+  draft: KbDraft
+  candidates: KbArticle[]
+  model: string
+  cost_usd: number
+  latency_s: number
+  cached: boolean
+}
+
+export type KbDecision = {
+  source_number: string
+  decision: 'approved' | 'rejected'
+  action: 'update' | 'new'
+  target_kb: string
+  title: string
+  symptoms: string
+  cause: string
+  steps: string[]
+  model: string
+}
+
+export type KbDecisionResult = { status: string; draft_id: string; article: string }
+
 async function parse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { detail?: unknown } | null

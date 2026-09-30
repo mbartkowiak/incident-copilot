@@ -89,9 +89,10 @@ The Incidents tab lists tickets from `gold_incident_facts` (filters: status, pri
 - **Breach history**: how often this subcategory breached at this priority, and at P1/P2 how routing changed the odds. P1/P2 tickets misrouted first breached **70%** of the time vs **11%** when routed right. A trained breach classifier was evaluated and rejected ([ADR 0005](adr/0005-sla-risk-lookup-over-classifier.md)).
 - **Routing check**: the routing model's prediction compared with the first and current teams, plus similar resolved incidents.
 - **AI handoff note / recap**: `POST /api/incidents/{number}/summary`, one structured-output call to Claude Opus 5.5 at low effort (~$0.01, 6-9 s). Summaries are cached per ticket, and only fresh ones count against a per-client and daily limit.
+- **Knowledge check** (resolved tickets): `POST /api/incidents/{number}/kb-draft` compares the fix with the three closest KB articles and returns `none`, `update` (a revised article) or `new`. An approved draft goes to `kb_drafts` via `POST /api/knowledge/drafts`. See the knowledge loop below and [ADR 0006](adr/0006-knowledge-loop.md).
 
 ## Observability
-Each agent run, ticket summary and dispatcher decision writes one JSON line (`app/telemetry.py`) to the ECS task's CloudWatch log group, `/ecs/incident-copilot-api`. Logs Insights discovers the fields automatically:
+Each agent run, ticket summary, knowledge draft and human decision writes one JSON line (`app/telemetry.py`) to the ECS task's CloudWatch log group, `/ecs/incident-copilot-api`. Logs Insights discovers the fields automatically:
 
 ```
 # Cost, latency and outcome per day
@@ -103,15 +104,22 @@ filter event = "agent_run"
 filter event = "triage_feedback"
 | stats count(*) as decisions, sum(team_changed) as team_overrides by decision
 
-# Ticket summaries: volume, spend and failures
-filter event = "ticket_summary"
-| stats count(*) as summaries, sum(cost_usd) as cost, avg(latency_s) as avg_s by outcome
+# Ticket summaries and knowledge drafts: volume, spend and failures
+filter event in ["ticket_summary", "kb_draft"]
+| stats count(*) as calls, sum(cost_usd) as cost, avg(latency_s) as avg_s by event, outcome
+
+# What the knowledge check finds, and what engineers approve
+filter event = "kb_draft" and outcome = "ok" | stats count(*) by action
+filter event = "kb_decision" | stats count(*) by action, decision
 ```
 
 `/health` reports the loaded routing model version. ECS restarts unhealthy tasks, and the deploy circuit breaker rolls back failed releases.
 
 ## Agent memory loop
-Dispatcher approve/edit/reject → `POST /api/triage/feedback` → `triage_feedback` (the only table the API may write) → `refresh-lakehouse` merges approved drafts into `incident_docs` as `FB-` precedents → vector index sync. Later triages retrieve the human-corrected answers.
+Dispatcher approve/edit/reject → `POST /api/triage/feedback` → `triage_feedback` → `refresh-lakehouse` merges approved drafts into `incident_docs` as `FB-` precedents → vector index sync. Later triages retrieve the human-corrected answers.
+
+## Knowledge loop
+Resolved ticket → knowledge check → engineer edits and approves → `POST /api/knowledge/drafts` → `kb_drafts` → `refresh-lakehouse` builds `kb_docs` from source articles + approved new drafts (`KBD-…`), overlaying each article's latest approved revision → KB index sync → the triage agent's knowledge search returns the new text. `triage_feedback` and `kb_drafts` are the only tables the API may write.
 
 ## Decisions
 See `docs/adr/`.

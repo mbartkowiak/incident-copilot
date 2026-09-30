@@ -1,5 +1,6 @@
 import logging
-from typing import Annotated
+from collections.abc import Callable
+from typing import Annotated, Any
 
 import anthropic
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request
@@ -8,21 +9,26 @@ from app import telemetry
 from app.agent.prompt import Group
 from app.deps import (
     get_incident_service,
+    get_kb_drafter,
+    get_kb_rate_limiter,
     get_summarizer,
     get_summary_cache,
     get_summary_rate_limiter,
 )
-from app.models import IncidentDetail, IncidentList, TicketSummaryResponse
+from app.models import IncidentDetail, IncidentList, KbDraftResponse, TicketSummaryResponse
 from app.services.cache import TTLCache
 from app.services.incidents import IncidentNotFound, IncidentService, Status
+from app.services.knowledge import DraftResult, KbDrafter, NotResolved
 from app.services.ratelimit import RateLimiter
-from app.services.summary import SummaryFailed, SummaryResult, TicketSummarizer
+from app.services.structured import StructuredCallFailed
+from app.services.summary import TicketSummarizer
 
 router = APIRouter(prefix="/api/incidents", tags=["incidents"])
 log = logging.getLogger(__name__)
 
 Incidents = Annotated[IncidentService, Depends(get_incident_service)]
 Number = Annotated[str, Path(pattern=r"^[Ii][Nn][Cc]\d{7}$")]
+Cache = Annotated[TTLCache, Depends(get_summary_cache)]
 
 
 @router.get("")
@@ -46,6 +52,39 @@ def get_incident(svc: Incidents, number: Number) -> IncidentDetail:
         raise HTTPException(status_code=404, detail=f"{number.upper()} not found") from None
 
 
+def cached_ai_call[T](
+    cache: TTLCache,
+    key: tuple[str, str],
+    limiter: RateLimiter,
+    request: Request,
+    event: str,
+    call: Callable[[], T],
+    describe: Callable[[T], dict[str, Any]],
+) -> tuple[T, bool]:
+    """Tickets don't change, so each AI result is generated once and served from cache after
+    that. Only fresh generations count against the rate limit. Returns (result, fresh)."""
+    fresh = False
+
+    def generate() -> T:
+        nonlocal fresh
+        limiter.check(request.client.host if request.client else "unknown")
+        fresh = True
+        try:
+            result = call()
+        except anthropic.APIError as e:
+            log.error("%s call failed: %s", event, e)
+            telemetry.emit(event, number=key[1], outcome="anthropic_error")
+            raise HTTPException(503, "The AI service is unavailable right now.") from None
+        except StructuredCallFailed as e:
+            telemetry.emit(event, number=key[1], outcome="failed", error=str(e))
+            raise HTTPException(502, "The AI returned an unusable answer. Try again.") from None
+        telemetry.emit(event, number=key[1], outcome="ok", **describe(result))
+        return result
+
+    result: T = cache.get_or_set(key, generate)
+    return result, fresh
+
+
 @router.post("/{number}/summary")
 def summarize_incident(
     number: Number,
@@ -53,45 +92,77 @@ def summarize_incident(
     svc: Incidents,
     summarizer: Annotated[TicketSummarizer, Depends(get_summarizer)],
     limiter: Annotated[RateLimiter, Depends(get_summary_rate_limiter)],
-    cache: Annotated[TTLCache, Depends(get_summary_cache)],
+    cache: Cache,
 ) -> TicketSummaryResponse:
-    """Claude summary of one ticket. Tickets don't change, so each is summarized once and
-    served from cache after that; only fresh summaries count against the rate limit."""
+    """Claude handoff note (open ticket) or recap (resolved ticket)."""
     ticket = get_incident(svc, number)
-    fresh = False
-
-    def generate() -> SummaryResult:
-        nonlocal fresh
-        limiter.check(request.client.host if request.client else "unknown")
-        fresh = True
-        try:
-            result = summarizer.summarize(ticket)
-        except anthropic.APIError as e:
-            log.error("summary call failed: %s", e)
-            telemetry.emit("ticket_summary", number=ticket.number, outcome="anthropic_error")
-            raise HTTPException(503, "The AI service is unavailable right now.") from None
-        except SummaryFailed as e:
-            telemetry.emit("ticket_summary", number=ticket.number, outcome="failed", error=str(e))
-            raise HTTPException(502, "Couldn't summarize this ticket.") from None
-        telemetry.emit(
-            "ticket_summary",
-            number=ticket.number,
-            outcome="summary",
-            state=ticket.state,
-            model=result.model,
-            latency_s=result.latency_s,
-            cost_usd=result.cost_usd,
-            input_tokens=result.usage.input_tokens,
-            output_tokens=result.usage.output_tokens,
-        )
-        return result
-
-    result: SummaryResult = cache.get_or_set(("summary", ticket.number), generate)
+    result, fresh = cached_ai_call(
+        cache,
+        ("summary", ticket.number),
+        limiter,
+        request,
+        "ticket_summary",
+        lambda: summarizer.summarize(ticket),
+        lambda r: {
+            "state": ticket.state,
+            "model": r.model,
+            "latency_s": r.latency_s,
+            "cost_usd": r.cost_usd,
+            "input_tokens": r.usage.input_tokens,
+            "output_tokens": r.usage.output_tokens,
+        },
+    )
     return TicketSummaryResponse(
         number=ticket.number,
-        summary=result.summary,
+        summary=result.value,
         model=result.model,
         cost_usd=result.cost_usd,
         latency_s=result.latency_s,
+        cached=not fresh,
+    )
+
+
+@router.post("/{number}/kb-draft")
+def draft_knowledge(
+    number: Number,
+    request: Request,
+    svc: Incidents,
+    drafter: Annotated[KbDrafter, Depends(get_kb_drafter)],
+    limiter: Annotated[RateLimiter, Depends(get_kb_rate_limiter)],
+    cache: Cache,
+) -> KbDraftResponse:
+    """Is this ticket's fix documented? Returns none / update / new with a draft to review."""
+    ticket = get_incident(svc, number)
+    if not ticket.resolved_at or not ticket.close_notes:
+        raise HTTPException(409, "Only resolved tickets have a fix to document.")
+
+    def call() -> DraftResult:
+        try:
+            return drafter.draft(ticket)
+        except NotResolved as e:
+            raise HTTPException(409, str(e)) from None
+
+    drafted, fresh = cached_ai_call(
+        cache,
+        ("kb_draft", ticket.number),
+        limiter,
+        request,
+        "kb_draft",
+        call,
+        lambda d: {
+            "action": d.result.value.action,
+            "target_kb": d.result.value.target_kb,
+            "model": d.result.model,
+            "latency_s": d.result.latency_s,
+            "cost_usd": d.result.cost_usd,
+        },
+    )
+    return KbDraftResponse(
+        number=ticket.number,
+        draft=drafted.result.value,
+        candidates=drafted.candidates,
+        model=drafted.result.model,
+        cost_usd=drafted.result.cost_usd,
+        latency_s=drafted.result.latency_s,
         cached=not fresh,
     )

@@ -11,6 +11,7 @@ from app.services.activity import ActivityService
 from app.services.cache import TTLCache
 from app.services.feedback import WarehouseFeedbackStore
 from app.services.incidents import IncidentService
+from app.services.knowledge import KbDrafter, WarehouseKbDraftStore
 from app.services.metrics import MetricsService
 from app.services.ratelimit import RateLimiter
 from app.services.retrieval import VectorSearchRetriever
@@ -100,6 +101,33 @@ def get_summarizer() -> TicketSummarizer:
     settings = get_settings()
     return TicketSummarizer(
         get_messages_client(), model=settings.summary_model, effort=settings.summary_effort
+    )
+
+
+@lru_cache
+def get_kb_drafter() -> KbDrafter:
+    settings = get_settings()
+    return KbDrafter(
+        get_messages_client(),
+        get_retriever(),
+        model=settings.summary_model,
+        effort=settings.summary_effort,
+    )
+
+
+@lru_cache
+def get_kb_draft_store() -> WarehouseKbDraftStore:
+    return WarehouseKbDraftStore(get_warehouse())
+
+
+@lru_cache
+def get_kb_rate_limiter() -> RateLimiter:
+    settings = get_settings()
+    return RateLimiter(
+        per_client=settings.summary_runs_per_client,
+        per_client_window_s=settings.summary_client_window_s,
+        daily=settings.summary_runs_per_day,
+        what="AI knowledge drafts",
     )
 
 

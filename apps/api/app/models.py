@@ -1,8 +1,9 @@
+import re
 from datetime import date, datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.agent.prompt import Group, Priority
 
@@ -219,6 +220,57 @@ class TicketSummary(BaseModel):
     actions_taken: list[str]
     next_step: str
     watch_outs: list[str]
+
+
+KbAction = Literal["none", "update", "new"]
+# Source KB articles, and articles created from approved drafts (see pipelines rag_sources.sql).
+KB_NUMBER = r"^(KB\d{7}|KBD-[0-9a-f]{8})$"
+
+
+class KbDraft(BaseModel):
+    """Claude's knowledge-base proposal (mirrors app.services.knowledge.DRAFT_SCHEMA)."""
+
+    action: KbAction
+    target_kb: str
+    title: str
+    symptoms: str
+    cause: str
+    steps: list[str]
+    rationale: str
+
+
+class KbDraftResponse(BaseModel):
+    number: str
+    draft: KbDraft
+    candidates: list[KbArticle]
+    model: str
+    cost_usd: float
+    latency_s: float
+    cached: bool
+
+
+class KbDecision(BaseModel):
+    """An engineer's decision on a knowledge draft, possibly after editing it."""
+
+    source_number: str = Field(pattern=r"^INC\d{7}$")
+    decision: Literal["approved", "rejected"]
+    action: Literal["update", "new"]
+    target_kb: str = Field(default="", max_length=20)
+    title: str = Field(min_length=5, max_length=200)
+    symptoms: str = Field(min_length=1, max_length=2000)
+    cause: str = Field(min_length=1, max_length=2000)
+    steps: list[str] = Field(min_length=1, max_length=15)
+    model: str = Field(max_length=64)
+
+    @model_validator(mode="after")
+    def check_target(self) -> "KbDecision":
+        if self.action == "update" and not re.fullmatch(KB_NUMBER, self.target_kb):
+            raise ValueError("an update needs the KB number it revises")
+        if self.action == "new" and self.target_kb:
+            raise ValueError("a new article has no target_kb")
+        if any(not s.strip() or len(s) > 500 for s in self.steps):
+            raise ValueError("steps must be 1-500 characters")
+        return self
 
 
 class TicketSummaryResponse(BaseModel):

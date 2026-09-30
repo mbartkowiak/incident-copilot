@@ -36,6 +36,7 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 "app/agent/prompt.py" = ["E501"]
 "app/agent/tools.py" = ["E501"]
 "app/services/summary.py" = ["E501"]
+"app/services/knowledge.py" = ["E501"]
 
 [tool.mypy]
 strict = true

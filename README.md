@@ -12,7 +12,7 @@ About a quarter of incidents at a typical enterprise service desk go to the wron
 2. **Triage → "Scanners down at Memphis":** the routing model and semantic search respond instantly: team, confidence, similar past incidents and their fixes, and KB articles.
 3. **Draft with AI:** watch Claude call its tools live, then edit and approve the draft. Approved drafts become searchable precedents.
 4. **Triage → "Vague: can't log in":** low model confidence triggers a review flag, and the agent asks the caller clarifying questions instead of guessing.
-5. **Incidents → any ticket** (try [INC0017396](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0017396)): the lifecycle of one ticket. You get the work-note timeline, the SLA clock, and how often tickets like it breach. A routing check shows whether the model would have avoided the misroute, and Claude writes a handoff note or recap on demand.
+5. **Incidents → any ticket** (try [INC0017396](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0017396)): the lifecycle of one ticket. You get the work-note timeline, the SLA clock, and how often tickets like it breach. A routing check shows whether the model would have avoided the misroute, and Claude writes a handoff note or recap on demand. On [INC0018308](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0018308), **Check knowledge base** finds that the closest article misses this fix and drafts a revision for you to approve. Approved articles flow back into the search the triage agent uses.
 6. **Quality:** the agent's eval results, the before/after of an eval-driven prompt fix, and the routing benchmark against Claude.
 
 ## Results
@@ -56,6 +56,7 @@ flowchart LR
 - **Pipeline:** Lakeflow declarative pipeline (Asset Bundle) with data-quality expectations and PII scrubbing; a refresh job rebuilds RAG sources and syncs the indexes.
 - **Routing model:** TF-IDF + logistic regression, time-split evaluation, benchmarked against Claude, served in-process from the registry ([ADR 0002](docs/adr/0002-in-process-routing-model.md)).
 - **Lifecycle:** incident queue and ticket pages over the gold tables, with a work-note timeline, SLA clock, breach history, routing check and a cached one-call Claude summary.
+- **Knowledge loop:** a resolved ticket's fix is checked against the closest KB articles. Claude says it is already documented, or drafts a revision or a new article, with a grounding check on the article it names. Approved drafts are merged into the KB index by the refresh job ([ADR 0006](docs/adr/0006-knowledge-loop.md)).
 - **Agent:** manual tool loop with read-only tools, structured output, citation grounding checks, SSE streaming, human approval, and per-client/daily cost caps ([ADR 0004](docs/adr/0004-triage-agent-design.md)).
 - **Quality:** unit tests across all components, deterministic agent evals with thresholds, and one structured telemetry record per agent run in CloudWatch.
 
@@ -105,7 +106,7 @@ Every push to `main` runs lint, type checks and tests for all components plus `t
 2. builds the API image, pushes it to ECR with an immutable tag, and rolls out a new ECS task definition (the circuit breaker rolls back if health checks fail),
 3. builds the frontend, syncs it to S3, and invalidates CloudFront.
 
-CloudFront serves the frontend and routes `/api/*` to the load balancer, so the browser sees one HTTPS origin; the load balancer only accepts CloudFront's IP ranges. The API reaches Databricks as a **least-privilege service principal**: read access to one schema, use of one warehouse, and write access to a single feedback table. Its OAuth secret and the Claude API key live in Secrets Manager and are injected at runtime; neither appears in code, CI, or Terraform state.
+CloudFront serves the frontend and routes `/api/*` to the load balancer, so the browser sees one HTTPS origin; the load balancer only accepts CloudFront's IP ranges. The API reaches Databricks as a **least-privilege service principal**: read access to one schema, use of one warehouse, and write access to two tables: dispatcher feedback and knowledge-draft decisions. Its OAuth secret and the Claude API key live in Secrets Manager and are injected at runtime; neither appears in code, CI, or Terraform state.
 
 ```bash
 cd infra/terraform && terraform init && terraform plan   # infra changes are applied manually

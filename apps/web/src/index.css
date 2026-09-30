@@ -1018,6 +1018,46 @@ a {
   margin-top: 8px;
 }
 
+.kb-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.kb-editor label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.kb-editor input,
+.kb-editor textarea {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+  resize: vertical;
+}
+
+details.considered {
+  margin-top: 12px;
+}
+
+details.considered > summary {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+details.considered details.kb {
+  margin-left: 12px;
+}
+
 .kb-body {
   white-space: pre-wrap;
   font-size: 13px;

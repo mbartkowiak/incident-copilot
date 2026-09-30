@@ -23,7 +23,7 @@ AI-generated code is only as good as the checks around it. Examples from this bu
 ## Security habits
 - The Claude API key and the Databricks service-principal secret were moved into AWS Secrets Manager without being printed into the session; fingerprints were compared instead of values.
 - A secret scan runs over staged files before every commit.
-- The API's Databricks identity has read access to one schema and write access to a single feedback table.
+- The API's Databricks identity has read access to one schema and write access to two append-only decision tables (dispatcher feedback and knowledge drafts).
 - When a key was accidentally placed in a committed template file, it was caught before any commit, moved to the git-ignored `.env`, and replaced with a new key.
 
 ## What I'd tell a team adopting this
