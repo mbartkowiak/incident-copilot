@@ -36,6 +36,12 @@ variable "databricks_warehouse_id" {
   default = "1ace299486bf57e9"
 }
 
+variable "anthropic_api_key_secret_name" {
+  description = "Secrets Manager secret holding the Claude API key (created out-of-band so it never enters state)"
+  type        = string
+  default     = "incident-copilot/anthropic-api-key"
+}
+
 variable "databricks_client_secret_name" {
   description = "Secrets Manager secret holding the SP OAuth secret (created out-of-band so it never enters state)"
   type        = string

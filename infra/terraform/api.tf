@@ -23,6 +23,10 @@ data "aws_secretsmanager_secret" "databricks_client_secret" {
   name = var.databricks_client_secret_name
 }
 
+data "aws_secretsmanager_secret" "anthropic_api_key" {
+  name = var.anthropic_api_key_secret_name
+}
+
 resource "aws_cloudwatch_log_group" "api" {
   name              = "/ecs/${var.project}-api"
   retention_in_days = 14
@@ -59,9 +63,12 @@ resource "aws_iam_role_policy" "task_execution_secrets" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect   = "Allow"
-      Action   = ["secretsmanager:GetSecretValue"]
-      Resource = [data.aws_secretsmanager_secret.databricks_client_secret.arn]
+      Effect = "Allow"
+      Action = ["secretsmanager:GetSecretValue"]
+      Resource = [
+        data.aws_secretsmanager_secret.databricks_client_secret.arn,
+        data.aws_secretsmanager_secret.anthropic_api_key.arn,
+      ]
     }]
   })
 }
@@ -103,6 +110,7 @@ resource "aws_ecs_task_definition" "api" {
     ]
     secrets = [
       { name = "DATABRICKS_CLIENT_SECRET", valueFrom = data.aws_secretsmanager_secret.databricks_client_secret.arn },
+      { name = "ANTHROPIC_API_KEY", valueFrom = data.aws_secretsmanager_secret.anthropic_api_key.arn },
     ]
     logConfiguration = {
       logDriver = "awslogs"
