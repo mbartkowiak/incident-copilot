@@ -15,4 +15,7 @@ Generate data from a hand-curated catalog of ~30 incident archetypes (`tools/dat
 ## Consequences
 - Evals and demo scenarios can assert against known answers: "what caused the March 10 spike?" has a correct answer.
 - Text diversity is lower than real tickets, so classifier scores will be optimistic. An optional LLM paraphrase pass can be added later if the evals need harder data.
+
+## Amendment (2026-09-29): vague tickets
+The first routing model scored 100% on the held-out months, because every archetype's wording was unique to its team. Real service desks get "can't log in", "everything is slow" and "printer not working", which several teams could own. The generator now rewrites 15% of eligible tickets with generic wording shared across a *family* of look-alike archetypes (login, slowness, access, printing, email, app-down), and records `is_vague` in the ground truth. Accuracy dropped to a credible 95%, the errors cluster where a human dispatcher would also hesitate, and low model confidence now means something.
 - The shape mirrors the ServiceNow Table API, so swapping in a live instance extract means changing only the ingest source.

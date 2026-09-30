@@ -49,6 +49,19 @@ jobs:
       - run: uv run mypy datagen
       - run: uv run pytest
 
+  ml:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ml
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest
+
   web:
     runs-on: ubuntu-latest
     defaults:
@@ -80,7 +93,7 @@ jobs:
 
   deploy-api:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [api, datagen, web, infra]
+    needs: [api, datagen, ml, web, infra]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -117,7 +130,7 @@ jobs:
 
   deploy-web:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [api, datagen, web, infra]
+    needs: [api, datagen, ml, web, infra]
     runs-on: ubuntu-latest
     permissions:
       contents: read

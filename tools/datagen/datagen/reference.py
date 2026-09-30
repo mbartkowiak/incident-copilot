@@ -190,6 +190,100 @@ WEIGHT_WINDOWS: tuple[WeightWindow, ...] = (
     ),
 )
 
+
+@dataclass(frozen=True)
+class VagueFamily:
+    """Generic wording real users write, shared by incident types that look alike from the
+    outside. Without it every archetype has unique phrasing and routing is trivially easy."""
+
+    archetype_ids: tuple[str, ...]
+    short: tuple[str, ...]
+    description: tuple[str, ...]
+
+
+VAGUE_RATE = 0.15
+
+VAGUE_FAMILIES: dict[str, VagueFamily] = {
+    "login": VagueFamily(
+        archetype_ids=(
+            "sd-password-reset",
+            "sd-account-locked",
+            "iam-mfa-new-phone",
+            "iam-sso-app-login",
+            "net-vpn-connect",
+            "euc-mobile-email",
+        ),
+        short=("Can't log in", "Login not working", "Unable to sign in", "Locked out"),
+        description=(
+            "I can't log in this morning. It was working yesterday.",
+            "Keep getting an error when I try to sign in. Please help.",
+            "Cannot get into anything, login keeps failing.",
+        ),
+    ),  # fmt: skip
+    "slow": VagueFamily(
+        archetype_ids=(
+            "euc-laptop-slow",
+            "net-slow-internet",
+            "net-wifi-drop",
+            "erp-month-end-slow",
+            "db-report-timeout",
+        ),
+        short=("Everything is slow", "System very slow", "Performance issues", "Really slow today"),
+        description=(
+            "Everything has been really slow since this morning and I can't get my work done.",
+            "Things are taking forever to load. Not sure what's going on.",
+            "Very slow performance all day, keeps freezing up.",
+        ),
+    ),  # fmt: skip
+    "access": VagueFamily(
+        archetype_ids=("iam-shared-drive-access", "msg-shared-mailbox", "iam-sso-app-login"),
+        short=("Need access", "Access denied", "Permission problem", "Can't open it"),
+        description=(
+            "I need access to something my team uses. Getting access denied.",
+            "It says I don't have permission. My manager approved it.",
+            "Please give me the same access as my coworker.",
+        ),
+    ),  # fmt: skip
+    "printing": VagueFamily(
+        archetype_ids=("euc-office-printer", "whs-label-printer"),
+        short=("Printer not working", "Can't print", "Printing problem", "Printer offline"),
+        description=(
+            "The printer isn't working. Nothing comes out.",
+            "Can't print anything, it just sits there.",
+            "Printer shows offline again.",
+        ),
+    ),  # fmt: skip
+    "email": VagueFamily(
+        archetype_ids=(
+            "msg-outlook-sync",
+            "euc-mobile-email",
+            "sec-phishing-report",
+            "msg-shared-mailbox",
+        ),
+        short=("Email problem", "Issue with email", "Email not working right", "Weird email"),
+        description=(
+            "Something is wrong with my email.",
+            "Having problems with email today, please call me.",
+            "Email is acting strange, not sure what happened.",
+        ),
+    ),  # fmt: skip
+    "app-down": VagueFamily(
+        archetype_ids=(
+            "cloud-app-5xx",
+            "cloud-cert-expired",
+            "erp-month-end-slow",
+            "whs-wave-release",
+            "db-replication-lag",
+        ),
+        short=("System down", "Application not working", "Error in the system", "App is broken"),
+        description=(
+            "The system is down and we can't work.",
+            "Getting errors in the application, this is urgent.",
+            "Something is broken, the numbers look wrong and pages error out.",
+        ),
+    ),  # fmt: skip
+}
+
 MONTH_END_ARCHETYPE = "erp-month-end-slow"
 MONTH_END_MULTIPLIER = 6.0
 OFF_MONTH_END_MULTIPLIER = 0.25

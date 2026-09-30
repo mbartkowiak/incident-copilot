@@ -8,6 +8,9 @@ variables:
   schema:
     description: Schema holding all bronze/silver/gold tables
     default: incident_copilot
+  warehouse_id:
+    description: SQL warehouse for SQL tasks
+    default: 1ace299486bf57e9
 
 include:
   - resources/*.yml

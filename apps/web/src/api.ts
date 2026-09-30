@@ -41,11 +41,67 @@ export type GroupPerformance = {
   reassignment_rate: number
 }
 
-export async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, { signal })
+export type TriageRequest = { short_description: string; description: string }
+
+export type GroupScore = { assignment_group: string; score: number }
+
+export type RoutingPrediction = {
+  assignment_group: string
+  confidence: number
+  alternatives: GroupScore[]
+  needs_review: boolean
+  model_version: string
+}
+
+export type SimilarIncident = {
+  number: string
+  short_description: string | null
+  close_notes: string | null
+  category: string | null
+  subcategory: string | null
+  assignment_group: string | null
+  location: string | null
+  priority_label: string | null
+  mttr_hours: number | null
+  kb_reference: string | null
+  occurrences: number
+  score: number
+}
+
+export type KbArticle = {
+  number: string
+  title: string
+  text: string
+  kb_category: string | null
+  score: number
+}
+
+export type TriageSuggestion = {
+  routing: RoutingPrediction
+  similar_incidents: SimilarIncident[]
+  kb_articles: KbArticle[]
+}
+
+async function parse<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    const body = (await res.json().catch(() => null)) as { detail?: string } | null
-    throw new Error(body?.detail ?? `Request failed (HTTP ${res.status})`)
+    const body = (await res.json().catch(() => null)) as { detail?: unknown } | null
+    const detail = typeof body?.detail === 'string' ? body.detail : undefined
+    throw new Error(detail ?? `Request failed (HTTP ${res.status})`)
   }
   return (await res.json()) as T
+}
+
+export async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
+  return parse<T>(await fetch(`${API_URL}${path}`, { signal }))
+}
+
+export async function postJson<T>(path: string, body: unknown, signal?: AbortSignal): Promise<T> {
+  return parse<T>(
+    await fetch(`${API_URL}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal,
+    }),
+  )
 }

@@ -1,0 +1,12 @@
+{
+  "human_first_assignment": {
+    "accuracy": 0.7564040599323345,
+    "note": "share of test incidents the service desk routed correctly on the first try"
+  },
+  "tfidf_logreg": {
+    "accuracy": 0.9507008216529724,
+    "macro_f1": 0.9343260173878788,
+    "p50_latency_s": 0.0022222999978112057,
+    "cost_per_1k_usd": 0.0
+  }
+}

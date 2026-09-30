@@ -1,0 +1,30 @@
+resources:
+  jobs:
+    refresh_lakehouse:
+      name: refresh-lakehouse
+      description: Medallion pipeline, then RAG source tables, then Vector Search index sync.
+      tasks:
+        - task_key: medallion
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.itsm_medallion.id}
+
+        - task_key: rag_sources
+          depends_on:
+            - task_key: medallion
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/rag_sources.sql
+
+        - task_key: sync_indexes
+          depends_on:
+            - task_key: rag_sources
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/sync_indexes.py
+            parameters: ["--catalog", "${var.catalog}", "--schema", "${var.schema}"]
+
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "3"

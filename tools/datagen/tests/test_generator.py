@@ -113,6 +113,20 @@ def test_vpn_upgrade_window_raises_volume(ds: Dataset) -> None:
     assert in_window / len(vpn) > 0.3
 
 
+def test_vague_tickets_share_wording_across_teams(ds: Dataset) -> None:
+    truth = {g["number"]: g for g in ds.ground_truth}
+    vague = [i for i in ds.incidents if truth[i["number"]]["is_vague"]]
+    eligible = {a for f in ref.VAGUE_FAMILIES.values() for a in f.archetype_ids}
+    eligible_count = sum(g["archetype_id"] in eligible for g in ds.ground_truth)
+    assert 0.10 < len({i["number"] for i in vague}) / eligible_count < 0.20
+
+    groups_by_text: dict[str, set[str]] = {}
+    for inc in vague:
+        text = (inc["short_description"] or "").lower().removeprefix("urgent - ")
+        groups_by_text.setdefault(text, set()).add(truth[inc["number"]]["true_assignment_group"])
+    assert any(len(groups) >= 3 for groups in groups_by_text.values())
+
+
 def test_pii_is_injected_and_tracked(ds: Dataset) -> None:
     pii_numbers = {g["number"] for g in ds.ground_truth if g["has_pii"]}
     assert 0.03 < len(pii_numbers) / len(ds.ground_truth) < 0.10

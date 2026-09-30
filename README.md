@@ -4,7 +4,7 @@ AI-assisted IT incident triage and analytics, built end to end: a Databricks Lak
 
 **Live demo: https://d1fjhcqqwngd2n.cloudfront.net**
 
-> Status: Phase 2 complete. The Overview dashboard is live on AWS and reads from Databricks. RAG, the routing model and the triage agent are next. See [docs/architecture.md](docs/architecture.md).
+> Status: Phase 3 (RAG + ML). The Overview dashboard and the Triage workbench are live: a routing model registered in Unity Catalog (95% accurate vs 76% for today's first-time routing) plus semantic search over past incidents and KB articles with Databricks Vector Search. The Claude-powered triage agent is next. See [docs/architecture.md](docs/architecture.md).
 
 ## Why
 About a quarter of incidents at a typical enterprise service desk are first sent to the wrong team. Every reassignment adds hours to resolution. This project predicts the right team, retrieves how similar incidents were fixed, and drafts a resolution for a human to accept. It also gives IT leaders a view of where incidents are spiking and why.
@@ -15,7 +15,8 @@ About a quarter of incidents at a typical enterprise service desk are first sent
 | `apps/api` | FastAPI backend |
 | `apps/web` | React + TypeScript frontend |
 | `tools/datagen` | Deterministic synthetic ServiceNow-shaped data generator |
-| `pipelines` | Databricks Asset Bundle: bronze → silver → gold pipeline |
+| `pipelines` | Databricks Asset Bundle: bronze → silver → gold pipeline, RAG source tables, Vector Search sync job |
+| `ml` | Routing model training and evaluation, MLflow tracking, Unity Catalog registration |
 | `infra/terraform` | AWS: ECS Fargate API behind an ALB, S3 + CloudFront frontend, GitHub OIDC deploy role |
 | `docs` | Architecture and decision records |
 

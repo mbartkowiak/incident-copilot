@@ -17,8 +17,14 @@ class Settings(BaseSettings):
     databricks_schema: str = "incident_copilot"
 
     metrics_cache_ttl_seconds: float = 600
+
+    routing_model_name: str = "workspace.incident_copilot.routing_model"
+    routing_model_alias: str = "champion"
+    incident_index: str = "workspace.incident_copilot.incident_precedents_index"
+    kb_index: str = "workspace.incident_copilot.kb_docs_index"
     # Serverless warehouses auto-stop; warming absorbs the ~20s cold start before users arrive.
     warm_cache_on_startup: bool = False
+    load_routing_model_on_startup: bool = True
 
 
 @lru_cache

@@ -84,6 +84,7 @@ class _Draft:
     initial_group: str
     event: str | None
     has_pii: bool
+    is_vague: bool
     defects: list[str] = field(default_factory=list)
 
 
@@ -157,7 +158,7 @@ def generate(
 
     callers, agents = _people(rng)
     kb_articles, kb_by_archetype = _kb_articles(rng, archetypes, agents, start)
-    ctx = _Context(rng, callers, agents, kb_by_archetype, as_of)
+    ctx = _Context(rng, callers, agents, kb_by_archetype, as_of, _vague_by_archetype(by_id))
 
     drafts = _baseline(ctx, archetypes, count, start, end)
     bursts_used: list[dict[str, Any]] = []
@@ -189,6 +190,7 @@ def generate(
             "initial_assignment_group": d.initial_group,
             "event": d.event,
             "has_pii": d.has_pii,
+            "is_vague": d.is_vague,
             "defects": d.defects,
         }
         for d in drafts
@@ -232,6 +234,17 @@ class _Context:
     agents: dict[str, list[Person]]
     kb_by_archetype: dict[str, str]
     as_of: datetime
+    vague: dict[str, list[ref.VagueFamily]]
+
+
+def _vague_by_archetype(by_id: dict[str, Archetype]) -> dict[str, list[ref.VagueFamily]]:
+    result: dict[str, list[ref.VagueFamily]] = {}
+    for name, family in ref.VAGUE_FAMILIES.items():
+        for archetype_id in family.archetype_ids:
+            if archetype_id not in by_id:
+                raise ValueError(f"vague family {name} references unknown archetype {archetype_id}")
+            result.setdefault(archetype_id, []).append(family)
+    return result
 
 
 def _people(rng: random.Random) -> tuple[list[Person], dict[str, list[Person]]]:
@@ -395,6 +408,12 @@ def _make_incident(
     short = fill(rng.choice(arch.short))
     description = fill(rng.choice(arch.description))
     ci = fill(rng.choice(arch.ci))
+    families = ctx.vague.get(arch.id)
+    is_vague = bool(families) and rng.random() < ref.VAGUE_RATE
+    if families and is_vague:
+        family = rng.choice(families)
+        short = rng.choice(family.short)
+        description = rng.choice(family.description)
 
     if impact_urgency:
         impact, urgency = impact_urgency
@@ -458,7 +477,7 @@ def _make_incident(
             ctx, record, arch, opened, resolved_at, route, priority, fill, resolution_index
         )
 
-    return _Draft(record, arch.id, initial_group, event, has_pii)
+    return _Draft(record, arch.id, initial_group, event, has_pii, is_vague)
 
 
 def _fill_open(

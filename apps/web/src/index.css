@@ -13,6 +13,7 @@
   --meter-track: #cde2fb;
   --good: #006300;
   --bad: #d03b3b;
+  --warning: #fab219;
   --wash: rgba(11, 11, 11, 0.04);
   --radius: 12px;
   font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -400,4 +401,202 @@ button:focus-visible {
 
 .empty {
   color: var(--text-muted);
+}
+
+/* Navigation */
+.tabs {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.tabs a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.tabs a:hover {
+  background: var(--wash);
+}
+
+.tabs a[aria-current='page'] {
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-weight: 600;
+}
+
+.page-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+}
+
+/* Triage */
+.triage {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .triage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.triage-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.triage-form label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+.triage-form input,
+.triage-form textarea {
+  font: inherit;
+  color: var(--text-primary);
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.triage-form input:focus-visible,
+.triage-form textarea:focus-visible {
+  outline: 2px solid var(--series-1);
+  outline-offset: 1px;
+}
+
+button.primary {
+  font: inherit;
+  font-weight: 600;
+  margin-top: 10px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--series-1);
+  cursor: pointer;
+}
+
+button.primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.scenarios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--grid);
+}
+
+.scenarios .subtle {
+  width: 100%;
+}
+
+button.chip {
+  font: inherit;
+  font-size: 12px;
+  color: var(--text-primary);
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.triage-results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.routing-team {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 2px 0 8px;
+}
+
+.review-flag {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border-left: 4px solid var(--warning);
+  background: var(--wash);
+  font-size: 13px;
+}
+
+.alternatives {
+  margin-top: 12px;
+}
+
+.alt-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--grid);
+  font-size: 13px;
+}
+
+.model-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.precedents {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.precedents li {
+  padding: 10px 0;
+  border-top: 1px solid var(--grid);
+}
+
+.precedent-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fix {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+details.kb {
+  border-top: 1px solid var(--grid);
+  padding: 8px 0;
+}
+
+details.kb summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.kb-body {
+  white-space: pre-wrap;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 8px;
 }

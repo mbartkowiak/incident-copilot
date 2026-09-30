@@ -1,6 +1,6 @@
 from datetime import date
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PeriodStats(BaseModel):
@@ -48,3 +48,54 @@ class GroupPerformance(BaseModel):
     p90_mttr_hours: float
     sla_breach_rate: float
     reassignment_rate: float
+
+
+class TriageRequest(BaseModel):
+    short_description: str = Field(min_length=3, max_length=200)
+    description: str = Field(default="", max_length=4000)
+
+    def text(self) -> str:
+        # Same shape as the training text: short description, newline, description.
+        return "\n".join(p for p in (self.short_description.strip(), self.description.strip()) if p)
+
+
+class GroupScore(BaseModel):
+    assignment_group: str
+    score: float
+
+
+class RoutingPrediction(BaseModel):
+    assignment_group: str
+    confidence: float
+    alternatives: list[GroupScore]
+    needs_review: bool
+    model_version: str
+
+
+class SimilarIncident(BaseModel):
+    number: str
+    short_description: str | None
+    close_notes: str | None
+    category: str | None
+    subcategory: str | None
+    assignment_group: str | None
+    location: str | None
+    priority_label: str | None
+    mttr_hours: float | None
+    kb_reference: str | None
+    occurrences: int
+    score: float
+
+
+class KbArticle(BaseModel):
+    number: str
+    title: str
+    text: str
+    kb_category: str | None
+    score: float
+
+
+class TriageSuggestion(BaseModel):
+    routing: RoutingPrediction
+    similar_incidents: list[SimilarIncident]
+    kb_articles: list[KbArticle]
