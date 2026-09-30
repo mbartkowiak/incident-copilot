@@ -31,6 +31,7 @@ databricks bundle run refresh_lakehouse
 
 # Routing model (registers a new version and moves @champion)
 cd ml && uv run pytest && uv run python -m routing.train --register
+uv run python -m sla.evaluate                     # SLA-risk estimator comparison (ADR 0005)
 ```
 
 On this machine the repo lives in OneDrive, which blocks hardlinks: set `UV_LINK_MODE=copy` for uv.

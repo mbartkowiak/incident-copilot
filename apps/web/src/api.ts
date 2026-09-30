@@ -131,6 +131,85 @@ export type TriageFeedback = {
   agent_model: string
 }
 
+// Incident timestamps are the company's local wall-clock time without a timezone.
+export type IncidentRow = {
+  number: string
+  opened_at: string
+  state: string
+  priority_label: string
+  short_description: string | null
+  assignment_group: string | null
+  subcategory: string | null
+  location: string | null
+  is_resolved: boolean
+  sla_breached: boolean
+  mttr_hours: number | null
+}
+
+export type IncidentList = { as_of: string; incidents: IncidentRow[] }
+
+export type WorkNote = {
+  at: string
+  author: string
+  text: string
+  kind: 'reassignment' | 'hold' | 'resolution' | 'note'
+}
+
+export type SlaStatus = { target_hours: number; due_at: string; elapsed_hours: number; breached: boolean }
+
+export type BreachRisk = {
+  similar_rate: number
+  similar_tickets: number
+  priority_rate: number
+  misrouted_rate: number | null
+  routed_right_rate: number | null
+}
+
+export type IncidentDetail = {
+  number: string
+  state: string
+  opened_at: string
+  resolved_at: string | null
+  closed_at: string | null
+  priority: number
+  priority_label: string
+  short_description: string | null
+  description: string | null
+  category: string | null
+  subcategory: string | null
+  cmdb_ci: string | null
+  location: string | null
+  contact_type: string | null
+  assignment_group: string | null
+  assigned_to: string | null
+  initial_group: string | null
+  reassignment_count: number
+  reopen_count: number
+  close_code: string | null
+  close_notes: string | null
+  work_notes: WorkNote[]
+  sla: SlaStatus
+  risk: BreachRisk
+  as_of: string
+}
+
+export type TicketSummary = {
+  headline: string
+  status: string
+  actions_taken: string[]
+  next_step: string
+  watch_outs: string[]
+}
+
+export type TicketSummaryResponse = {
+  number: string
+  summary: TicketSummary
+  model: string
+  cost_usd: number
+  latency_s: number
+  cached: boolean
+}
+
 async function parse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { detail?: unknown } | null

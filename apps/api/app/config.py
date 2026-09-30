@@ -32,6 +32,11 @@ class Settings(BaseSettings):
     agent_runs_per_client: int = 5
     agent_client_window_s: float = 600
     agent_runs_per_day: int = 200
+    summary_model: str = "claude-opus-5-5"
+    summary_effort: str = "low"
+    summary_runs_per_client: int = 10
+    summary_client_window_s: float = 600
+    summary_runs_per_day: int = 300
     # Serverless warehouses auto-stop; warming absorbs the ~20s cold start before users arrive.
     warm_cache_on_startup: bool = False
     load_routing_model_on_startup: bool = True

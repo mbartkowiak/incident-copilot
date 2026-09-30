@@ -82,8 +82,16 @@ The baseline showed the agent asking the caller questions on nearly half of the 
 
 Known limit: resolved golden tickets are also in the precedent index, so retrieval is easier than for a truly new ticket. Paraphrased golden tickets would make the set harder.
 
+## Incident lifecycle
+The Incidents tab lists tickets from `gold_incident_facts` (filters: status, priority, team, SLA breached, number or text) and opens each one with:
+- **Work-note journal**: parsed from the ServiceNow-style `work_notes` field into acknowledgement, investigation, reassignment, on-hold and resolution entries. The team a ticket went to first comes from its first reassignment note.
+- **SLA clock**: target by priority, due time, elapsed (to the end of the extract for open tickets), met or breached.
+- **Breach history**: how often this subcategory breached at this priority, and at P1/P2 how routing changed the odds. P1/P2 tickets misrouted first breached **70%** of the time vs **11%** when routed right. A trained breach classifier was evaluated and rejected ([ADR 0005](adr/0005-sla-risk-lookup-over-classifier.md)).
+- **Routing check**: the routing model's prediction compared with the first and current teams, plus similar resolved incidents.
+- **AI handoff note / recap**: `POST /api/incidents/{number}/summary`, one structured-output call to Claude Opus 5.5 at low effort (~$0.01, 6-9 s). Summaries are cached per ticket, and only fresh ones count against a per-client and daily limit.
+
 ## Observability
-Each agent run and each dispatcher decision writes one JSON line (`app/telemetry.py`) to the ECS task's CloudWatch log group, `/ecs/incident-copilot-api`. Logs Insights discovers the fields automatically:
+Each agent run, ticket summary and dispatcher decision writes one JSON line (`app/telemetry.py`) to the ECS task's CloudWatch log group, `/ecs/incident-copilot-api`. Logs Insights discovers the fields automatically:
 
 ```
 # Cost, latency and outcome per day
@@ -94,6 +102,10 @@ filter event = "agent_run"
 # How often dispatchers override the agent's team
 filter event = "triage_feedback"
 | stats count(*) as decisions, sum(team_changed) as team_overrides by decision
+
+# Ticket summaries: volume, spend and failures
+filter event = "ticket_summary"
+| stats count(*) as summaries, sum(cost_usd) as cost, avg(latency_s) as avg_s by outcome
 ```
 
 `/health` reports the loaded routing model version. ECS restarts unhealthy tasks, and the deploy circuit breaker rolls back failed releases.

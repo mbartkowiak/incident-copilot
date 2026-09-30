@@ -23,7 +23,9 @@ class RateLimiter:
         per_client_window_s: float,
         daily: int,
         clock: Callable[[], float] = time.monotonic,
+        what: str = "AI triage runs",
     ) -> None:
+        self._what = what
         self._per_client = per_client
         self._window = per_client_window_s
         self._daily = daily
@@ -42,7 +44,7 @@ class RateLimiter:
             hits = self._clients.setdefault(client, deque())
             _trim(hits, now - self._window)
             if len(hits) >= self._per_client:
-                raise RateLimited("Too many AI triage runs. Please wait a few minutes.",
+                raise RateLimited(f"Too many {self._what}. Please wait a few minutes.",
                                   int(hits[0] + self._window - now) + 1)  # fmt: skip
             hits.append(now)
             self._all.append(now)

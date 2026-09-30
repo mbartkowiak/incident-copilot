@@ -12,7 +12,8 @@ About a quarter of incidents at a typical enterprise service desk go to the wron
 2. **Triage → "Scanners down at Memphis":** the routing model and semantic search respond instantly: team, confidence, similar past incidents and their fixes, and KB articles.
 3. **Draft with AI:** watch Claude call its tools live, then edit and approve the draft. Approved drafts become searchable precedents.
 4. **Triage → "Vague: can't log in":** low model confidence triggers a review flag, and the agent asks the caller clarifying questions instead of guessing.
-5. **Quality:** the agent's eval results, the before/after of an eval-driven prompt fix, and the routing benchmark against Claude.
+5. **Incidents → any ticket** (try [INC0017396](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0017396)): the lifecycle of one ticket. You get the work-note timeline, the SLA clock, and how often tickets like it breach. A routing check shows whether the model would have avoided the misroute, and Claude writes a handoff note or recap on demand.
+6. **Quality:** the agent's eval results, the before/after of an eval-driven prompt fix, and the routing benchmark against Claude.
 
 ## Results
 | | |
@@ -21,6 +22,8 @@ About a quarter of incidents at a typical enterprise service desk go to the wron
 | Trained model vs Claude zero-shot (same 200 tickets) | 95.5% vs 91.5% (Opus 5) / 87.0% (Haiku 4.5); 2 ms and ~$0 vs 1.8 s and $5.19 per 1k |
 | Agent on 30 golden tickets | 100% right team and right KB on clear tickets, 0 ungrounded citations, questions asked on every vague ticket |
 | Agent cost / latency | ~$0.06 and ~13 s per ticket, streamed live |
+| Why routing matters | P1/P2 tickets misrouted first breached their SLA **70%** of the time vs 11% when routed right |
+| SLA risk | Smoothed historical lookup beat a trained classifier on urgent tickets (AUC 0.69 vs 0.62), so the lookup ships ([ADR 0005](docs/adr/0005-sla-risk-lookup-over-classifier.md)) |
 
 Details: [docs/architecture.md](docs/architecture.md) (routing benchmark, eval tables, observability queries).
 
@@ -52,6 +55,7 @@ flowchart LR
 
 - **Pipeline:** Lakeflow declarative pipeline (Asset Bundle) with data-quality expectations and PII scrubbing; a refresh job rebuilds RAG sources and syncs the indexes.
 - **Routing model:** TF-IDF + logistic regression, time-split evaluation, benchmarked against Claude, served in-process from the registry ([ADR 0002](docs/adr/0002-in-process-routing-model.md)).
+- **Lifecycle:** incident queue and ticket pages over the gold tables, with a work-note timeline, SLA clock, breach history, routing check and a cached one-call Claude summary.
 - **Agent:** manual tool loop with read-only tools, structured output, citation grounding checks, SSE streaming, human approval, and per-client/daily cost caps ([ADR 0004](docs/adr/0004-triage-agent-design.md)).
 - **Quality:** unit tests across all components, deterministic agent evals with thresholds, and one structured telemetry record per agent run in CloudWatch.
 
@@ -64,7 +68,7 @@ Decision records: [docs/adr/](docs/adr/).
 | `apps/web` | React + TypeScript frontend |
 | `tools/datagen` | Deterministic synthetic ServiceNow-shaped data generator |
 | `pipelines` | Databricks Asset Bundle: medallion pipeline, RAG source tables, Vector Search sync job |
-| `ml` | Routing model training, evaluation vs Claude, MLflow tracking, Unity Catalog registration |
+| `ml` | Routing model training, evaluation vs Claude, MLflow tracking, Unity Catalog registration; SLA-risk estimator comparison |
 | `infra/terraform` | AWS: ECS Fargate API behind an ALB, S3 + CloudFront, Secrets Manager, GitHub OIDC deploy role |
 | `docs` | Architecture, decision records, AI workflow, demo script |
 

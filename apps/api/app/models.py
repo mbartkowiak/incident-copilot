@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Literal
 from uuid import UUID
 
@@ -133,3 +133,98 @@ class TriageSuggestion(BaseModel):
     routing: RoutingPrediction
     similar_incidents: list[SimilarIncident]
     kb_articles: list[KbArticle]
+
+
+# Timestamps are the company's local wall-clock time, as in the source system, so they carry
+# no timezone and the UI shows them as-is.
+
+
+class IncidentRow(BaseModel):
+    number: str
+    opened_at: datetime
+    state: str
+    priority_label: str
+    short_description: str | None
+    assignment_group: str | None
+    subcategory: str | None
+    location: str | None
+    is_resolved: bool
+    sla_breached: bool
+    mttr_hours: float | None
+
+
+class IncidentList(BaseModel):
+    as_of: date
+    incidents: list[IncidentRow]
+
+
+class WorkNote(BaseModel):
+    at: datetime
+    author: str
+    text: str
+    kind: Literal["reassignment", "hold", "resolution", "note"]
+
+
+class SlaStatus(BaseModel):
+    target_hours: float
+    due_at: datetime
+    # Resolution time for resolved tickets; time open so far (to the data's as-of) otherwise.
+    elapsed_hours: float
+    breached: bool
+
+
+class BreachRisk(BaseModel):
+    """How often tickets like this one miss their SLA, from resolved history."""
+
+    similar_rate: float
+    similar_tickets: int
+    priority_rate: float
+    misrouted_rate: float | None
+    routed_right_rate: float | None
+
+
+class IncidentDetail(BaseModel):
+    number: str
+    state: str
+    opened_at: datetime
+    resolved_at: datetime | None
+    closed_at: datetime | None
+    priority: int
+    priority_label: str
+    short_description: str | None
+    description: str | None
+    category: str | None
+    subcategory: str | None
+    cmdb_ci: str | None
+    location: str | None
+    contact_type: str | None
+    assignment_group: str | None
+    assigned_to: str | None
+    initial_group: str | None
+    reassignment_count: int
+    reopen_count: int
+    close_code: str | None
+    close_notes: str | None
+    work_notes: list[WorkNote]
+    sla: SlaStatus
+    risk: BreachRisk
+    as_of: date
+
+
+class TicketSummary(BaseModel):
+    """Claude's structured summary of a ticket (mirrors app.services.summary.SUMMARY_SCHEMA)."""
+
+    headline: str
+    status: str
+    actions_taken: list[str]
+    next_step: str
+    watch_outs: list[str]
+
+
+class TicketSummaryResponse(BaseModel):
+    number: str
+    summary: TicketSummary
+    model: str
+    cost_usd: float
+    latency_s: float
+    cached: bool

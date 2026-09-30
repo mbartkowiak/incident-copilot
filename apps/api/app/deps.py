@@ -10,10 +10,12 @@ from app.config import get_settings
 from app.services.activity import ActivityService
 from app.services.cache import TTLCache
 from app.services.feedback import WarehouseFeedbackStore
+from app.services.incidents import IncidentService
 from app.services.metrics import MetricsService
 from app.services.ratelimit import RateLimiter
 from app.services.retrieval import VectorSearchRetriever
 from app.services.routing import UcRoutingModel
+from app.services.summary import TicketSummarizer
 from app.services.triage import TriageService
 from app.services.warehouse import DatabricksWarehouse
 
@@ -63,22 +65,57 @@ def get_triage_service() -> TriageService:
 
 
 @lru_cache
-def get_agent() -> TriageAgent:
+def get_messages_client() -> MessagesClient:
     settings = get_settings()
     if settings.anthropic_api_key is None:
         raise NotConfigured("ANTHROPIC_API_KEY is not set")
     client = anthropic.Anthropic(
         api_key=settings.anthropic_api_key.get_secret_value(), timeout=90.0, max_retries=2
     )
+    # The SDK's overloaded create() is narrower than the Protocol's **kwargs signature.
+    return cast(MessagesClient, client.beta.messages)
+
+
+@lru_cache
+def get_agent() -> TriageAgent:
+    settings = get_settings()
     activity = ActivityService(get_warehouse(), TTLCache(settings.metrics_cache_ttl_seconds))
     executor = ToolExecutor(get_routing_model(), get_retriever(), activity)
     return TriageAgent(
-        # The SDK's overloaded create() is narrower than the Protocol's **kwargs signature.
-        cast(MessagesClient, client.beta.messages),
+        get_messages_client(),
         executor,
         model=settings.agent_model,
         effort=settings.agent_effort,
         max_turns=settings.agent_max_turns,
+    )
+
+
+@lru_cache
+def get_incident_service() -> IncidentService:
+    return IncidentService(get_warehouse(), TTLCache(get_settings().metrics_cache_ttl_seconds))
+
+
+@lru_cache
+def get_summarizer() -> TicketSummarizer:
+    settings = get_settings()
+    return TicketSummarizer(
+        get_messages_client(), model=settings.summary_model, effort=settings.summary_effort
+    )
+
+
+@lru_cache
+def get_summary_cache() -> TTLCache:
+    return TTLCache(ttl_seconds=86_400)
+
+
+@lru_cache
+def get_summary_rate_limiter() -> RateLimiter:
+    settings = get_settings()
+    return RateLimiter(
+        per_client=settings.summary_runs_per_client,
+        per_client_window_s=settings.summary_client_window_s,
+        daily=settings.summary_runs_per_day,
+        what="AI summaries",
     )
 
 

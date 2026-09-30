@@ -12,12 +12,12 @@ from pydantic import BaseModel
 
 from app.config import get_settings
 from app.deps import NotConfigured, get_metrics_service, get_routing_model
-from app.routes import agent, metrics, quality, triage
+from app.routes import agent, incidents, metrics, quality, triage
 from app.services.ratelimit import RateLimited
 from app.services.routing import ModelNotReady
 from app.services.warehouse import WarehouseError
 
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger(__name__)
 
@@ -111,6 +111,7 @@ def create_app() -> FastAPI:
     app.include_router(triage.router)
     app.include_router(agent.router)
     app.include_router(quality.router)
+    app.include_router(incidents.router)
     return app
 
 
