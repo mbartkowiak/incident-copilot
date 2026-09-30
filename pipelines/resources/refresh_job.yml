@@ -2,7 +2,9 @@ resources:
   jobs:
     refresh_lakehouse:
       name: refresh-lakehouse
-      description: Medallion pipeline, then RAG source tables, then Vector Search index sync.
+      description: >-
+        Medallion pipeline, then RAG source tables and Vector Search index sync, and in
+        parallel the major-incident and problem-candidate tables.
       tasks:
         - task_key: medallion
           pipeline_task:
@@ -15,6 +17,14 @@ resources:
             warehouse_id: ${var.warehouse_id}
             file:
               path: ../src/rag_sources.sql
+
+        - task_key: lifecycle
+          depends_on:
+            - task_key: medallion
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../src/lifecycle.sql
 
         - task_key: sync_indexes
           depends_on:
