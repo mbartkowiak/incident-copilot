@@ -36,7 +36,13 @@ def call_structured[T: BaseModel](
     prompt: str | list[dict[str, Any]],
     output: type[T],
 ) -> StructuredResult[T]:
-    """`prompt` is the user turn: text, or content blocks when it carries images or PDFs."""
+    """`prompt` is the user turn (text, or content blocks when it carries images or PDFs), or a
+    whole conversation as a list of role/content messages ending with the user."""
+    conversation = (
+        prompt
+        if isinstance(prompt, list) and prompt and "role" in prompt[0]
+        else [{"role": "user", "content": prompt}]
+    )
     started = time.perf_counter()
     response = messages.create(
         model=model,
@@ -45,7 +51,7 @@ def call_structured[T: BaseModel](
         fallbacks="default",
         system=system,
         output_config={"effort": effort, "format": {"type": "json_schema", "schema": schema}},
-        messages=[{"role": "user", "content": prompt}],
+        messages=conversation,
     )
     usage = Usage()
     usage.add(response.usage)

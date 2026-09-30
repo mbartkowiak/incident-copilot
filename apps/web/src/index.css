@@ -1026,6 +1026,169 @@ a {
   margin-top: 8px;
 }
 
+/* Get help (employee chat) */
+.persona {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.persona select,
+.assign-row select,
+.ticket-preview select {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.help {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .help {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.help-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 260px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.bubble {
+  max-width: 85%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bubble[data-role='assistant'] {
+  align-self: flex-start;
+  background: var(--wash);
+  border-bottom-left-radius: 4px;
+}
+
+.bubble[data-role='user'] {
+  align-self: flex-end;
+  background: var(--series-1);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.bubble.typing {
+  color: var(--text-muted);
+}
+
+.chat-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--grid);
+  padding-top: 12px;
+}
+
+.chat-input textarea {
+  font: inherit;
+  color: var(--text-primary);
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.chat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.chat-actions button.primary {
+  margin-top: 0;
+  margin-left: auto;
+}
+
+.sample-inline {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.pending {
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 6px 8px;
+  background: var(--wash);
+  border-radius: 8px;
+}
+
+a.button-link {
+  display: inline-block;
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 6px 12px;
+}
+
+/* Review queue */
+.section-title {
+  margin-top: 8px;
+}
+
+.review-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.review-list li {
+  padding: 10px 0;
+  border-top: 1px solid var(--grid);
+}
+
+.assign-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.assign-row button.primary {
+  margin-top: 0;
+}
+
 .attachments {
   margin-top: 10px;
   padding: 10px 12px;

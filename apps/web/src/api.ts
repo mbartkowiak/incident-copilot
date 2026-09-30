@@ -76,6 +76,61 @@ export type KbArticle = {
   score: number
 }
 
+export type TicketDraft = {
+  short_description: string
+  description: string
+  impact: 1 | 2 | 3
+  urgency: 1 | 2 | 3
+  cmdb_ci: string
+}
+
+export type ChatMessage = { role: 'user' | 'assistant'; content: string }
+
+export type IntakeTurnResponse = {
+  turn: { reply: string; ready: boolean; ticket: TicketDraft }
+  model: string
+  cost_usd: number
+  latency_s: number
+}
+
+export type TicketCreated = {
+  number: string
+  priority_label: string
+  state: string
+  assignment_group: string | null
+  triage: {
+    suggested_group: string
+    confidence: number
+    mode: 'auto' | 'review'
+    category: string | null
+    subcategory: string | null
+    precedent: string | null
+  }
+}
+
+export type LiveTicket = {
+  number: string
+  opened_at: string
+  state: string
+  caller: string
+  location: string
+  priority_label: string
+  short_description: string
+  assignment_group: string | null
+  suggested_group: string | null
+  triage_confidence: number | null
+  triage_mode: string
+}
+
+export const CLOSE_CODES = [
+  'Solved (Permanently)',
+  'Solved Remotely (Permanently)',
+  'Solved (Work Around)',
+  'Solved Remotely (Work Around)',
+  'Not Solved (Not Reproducible)',
+  'Closed/Resolved by Caller',
+] as const
+
 export type AttachmentFacts = {
   attachment_summary: string
   error_messages: string[]
@@ -215,6 +270,8 @@ export type IncidentDetail = {
   as_of: string
   major_incident: string | null
   problem: string | null
+  source: 'history' | 'live'
+  caller_id: string | null
 }
 
 export type TicketSummary = {

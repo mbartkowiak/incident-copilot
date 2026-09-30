@@ -26,6 +26,12 @@ Number = Annotated[str, Path(pattern=r"^[Ii][Nn][Cc]\d{7}$")]
 Cache = Annotated[TTLCache, Depends(get_summary_cache)]
 
 
+def version(ticket: IncidentDetail) -> str:
+    """Cache key for AI output about a ticket: live tickets change as they are worked, so a new
+    work note or state gets a fresh summary. History never changes."""
+    return f"{ticket.number}:{len(ticket.work_notes)}:{ticket.state}"
+
+
 @router.get("")
 def list_incidents(
     svc: Incidents,
@@ -60,7 +66,7 @@ def summarize_incident(
     ticket = get_incident(svc, number)
     result, fresh = cached_ai_call(
         cache,
-        ("summary", ticket.number),
+        ("summary", version(ticket)),
         limiter,
         request,
         "ticket_summary",
@@ -106,7 +112,7 @@ def draft_knowledge(
 
     drafted, fresh = cached_ai_call(
         cache,
-        ("kb_draft", ticket.number),
+        ("kb_draft", version(ticket)),
         limiter,
         request,
         "kb_draft",

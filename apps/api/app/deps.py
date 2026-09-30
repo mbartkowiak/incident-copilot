@@ -12,6 +12,7 @@ from app.services.cache import TTLCache
 from app.services.feedback import WarehouseFeedbackStore
 from app.services.incidents import IncidentService
 from app.services.intake import AttachmentReader
+from app.services.intake_chat import IntakeAgent
 from app.services.knowledge import KbDrafter, WarehouseKbDraftStore
 from app.services.lifecycle import LifecycleService
 from app.services.metrics import MetricsService
@@ -20,6 +21,7 @@ from app.services.retrieval import VectorSearchRetriever
 from app.services.reviews import LifecycleWriter
 from app.services.routing import UcRoutingModel
 from app.services.summary import TicketSummarizer
+from app.services.tickets import TicketService
 from app.services.triage import TriageService
 from app.services.warehouse import DatabricksWarehouse
 
@@ -175,6 +177,30 @@ def get_attachment_rate_limiter() -> RateLimiter:
         daily=settings.summary_runs_per_day,
         what="attachment reads",
     )
+
+
+@lru_cache
+def get_ticket_service() -> TicketService:
+    return TicketService(get_warehouse(), get_routing_model(), get_retriever())
+
+
+@lru_cache
+def get_ticket_rate_limiter() -> RateLimiter:
+    return RateLimiter(per_client=30, per_client_window_s=600, daily=1000, what="ticket updates")
+
+
+@lru_cache
+def get_intake_agent() -> IntakeAgent:
+    settings = get_settings()
+    return IntakeAgent(
+        get_messages_client(), model=settings.summary_model, effort=settings.summary_effort
+    )
+
+
+@lru_cache
+def get_intake_rate_limiter() -> RateLimiter:
+    # Each chat turn is one small call (~1 cent); a conversation is 1-3 turns.
+    return RateLimiter(per_client=20, per_client_window_s=600, daily=400, what="chat messages")
 
 
 @lru_cache

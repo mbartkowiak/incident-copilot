@@ -82,6 +82,14 @@ The baseline showed the agent asking the caller questions on nearly half of the 
 
 Known limit: resolved golden tickets are also in the precedent index, so retrieval is easier than for a truly new ticket. Paraphrased golden tickets would make the set harder.
 
+## Conversational intake and live tickets
+**Get help** is the employee's side. A chat with the virtual agent (`POST /api/intake/chat`, one structured call per turn, about 1¢) asks at most two questions and proposes a ticket. Impact × urgency on the proposed ticket gives the priority. The employee reviews it and submits (`POST /api/tickets`). The ticket is written to the `tickets` Delta table and triaged at once:
+- the routing model at ≥85% confidence assigns it;
+- below that, it waits in the **review queue** on the Triage tab (`GET /api/tickets?view=review`);
+- the closest precedent supplies its category.
+
+Dispatchers assign, add notes and resolve from the ticket page (`/api/tickets/{number}/assign|notes|resolve`). The `incident_queue` view unions live tickets with history, computing live SLA fields at query time, so every page and AI feature works on both. See [ADR 0009](adr/0009-conversational-intake-and-live-tickets.md).
+
 ## Attachment intake
 On the Triage page a dispatcher can attach up to three screenshots, photos or PDFs (5 MB each). `POST /api/triage/attachments` checks each file's type by its content, then makes one structured Claude call with the files as image or PDF blocks. It returns the verbatim error text, device, application, site, scope, start time, a suggested title and a description addition, and it names any sensitive data it saw without copying it. After review, **Add to ticket & triage** feeds the enriched text to routing, search and the agent. Files are never stored. About 1.3-2¢ and 6-9 s per read. See [ADR 0008](adr/0008-attachment-intake.md).
 
@@ -118,8 +126,11 @@ filter event = "triage_feedback"
 | stats count(*) as decisions, sum(team_changed) as team_overrides by decision
 
 # One-call AI documents: volume, spend and failures
-filter event in ["attachment_read", "ticket_summary", "kb_draft", "incident_review", "problem_record"]
+filter event in ["intake_turn", "attachment_read", "ticket_summary", "kb_draft", "incident_review", "problem_record"]
 | stats count(*) as calls, sum(cost_usd) as cost, avg(latency_s) as avg_s by event, outcome
+
+# How new tickets are triaged: share auto-assigned vs sent to review
+filter event = "ticket_created" | stats count(*) as tickets, avg(confidence) as avg_conf by mode
 
 # What the knowledge check finds, and what engineers approve
 filter event = "kb_draft" and outcome = "ok" | stats count(*) by action
@@ -132,7 +143,7 @@ filter event = "kb_decision" | stats count(*) by action, decision
 Dispatcher approve/edit/reject → `POST /api/triage/feedback` → `triage_feedback` → `refresh-lakehouse` merges approved drafts into `incident_docs` as `FB-` precedents → vector index sync. Later triages retrieve the human-corrected answers.
 
 ## Knowledge loop
-Resolved ticket → knowledge check → engineer edits and approves → `POST /api/knowledge/drafts` → `kb_drafts` → `refresh-lakehouse` builds `kb_docs` from source articles + approved new drafts (`KBD-…`), overlaying each article's latest approved revision → KB index sync → the triage agent's knowledge search returns the new text. `triage_feedback` and `kb_drafts` are the only tables the API may write.
+Resolved ticket → knowledge check → engineer edits and approves → `POST /api/knowledge/drafts` → `kb_drafts` → `refresh-lakehouse` builds `kb_docs` from source articles + approved new drafts (`KBD-…`), overlaying each article's latest approved revision → KB index sync → the triage agent's knowledge search returns the new text. `tickets`, `triage_feedback` and `kb_drafts` are the only tables the API may write.
 
 ## Decisions
 See `docs/adr/`.

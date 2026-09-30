@@ -19,6 +19,73 @@ CREATE TABLE IF NOT EXISTS triage_feedback (
   agent_model STRING
 );
 
+-- Live tickets created in the app (conversational intake, then triage and dispatcher work).
+-- Timestamps are company local time (America/Chicago), like the source extract. The API's
+-- service principal can write here too.
+CREATE TABLE IF NOT EXISTS tickets (
+  number STRING NOT NULL COMMENT 'INC1000001 upward, history uses INC00xxxxx',
+  opened_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  state STRING COMMENT 'New | In Progress | Resolved',
+  caller STRING,
+  location STRING,
+  contact_type STRING,
+  category STRING,
+  subcategory STRING,
+  cmdb_ci STRING,
+  impact INT,
+  urgency INT,
+  priority INT,
+  short_description STRING,
+  description STRING,
+  assignment_group STRING,
+  suggested_group STRING COMMENT 'Routing model prediction at creation',
+  triage_confidence DOUBLE,
+  triage_mode STRING COMMENT 'auto (assigned by the model) | review (waiting for a dispatcher) | manual',
+  resolved_at TIMESTAMP,
+  close_code STRING,
+  close_notes STRING,
+  work_notes STRING COMMENT 'Journal lines: <timestamp> - <author>: <text>'
+);
+
+-- History and live tickets in one shape, read by the incident queue and ticket pages.
+-- SLA fields for live tickets are computed at query time against the company's clock.
+CREATE OR REPLACE VIEW incident_queue AS
+SELECT
+  number, opened_at, resolved_at, closed_at, state, priority, priority_label,
+  short_description, description, category, subcategory, cmdb_ci, location, contact_type,
+  caller_id, assignment_group, assigned_to, reassignment_count, reopen_count, close_code,
+  close_notes, work_notes, sla_target_hours, sla_breached, mttr_hours, is_resolved,
+  'history' AS source,
+  CAST(NULL AS DOUBLE) AS live_elapsed_hours
+FROM gold_incident_facts
+
+UNION ALL
+
+SELECT
+  number, opened_at, resolved_at, CAST(NULL AS TIMESTAMP) AS closed_at, state, priority,
+  CASE priority WHEN 1 THEN '1 - Critical' WHEN 2 THEN '2 - High' WHEN 3 THEN '3 - Moderate'
+    WHEN 4 THEN '4 - Low' ELSE '5 - Planning' END AS priority_label,
+  short_description, description, category, subcategory, cmdb_ci, location, contact_type,
+  caller AS caller_id, assignment_group, CAST(NULL AS STRING) AS assigned_to,
+  size(split(coalesce(work_notes, ''), 'Reassigning to ')) - 1 AS reassignment_count,
+  0 AS reopen_count, close_code, close_notes, work_notes, sla_target_hours,
+  elapsed_hours > sla_target_hours AS sla_breached,
+  CASE WHEN resolved_at IS NOT NULL THEN elapsed_hours END AS mttr_hours,
+  resolved_at IS NOT NULL AS is_resolved,
+  'live' AS source,
+  elapsed_hours AS live_elapsed_hours
+FROM (
+  SELECT
+    *,
+    CASE priority WHEN 1 THEN 4 WHEN 2 THEN 8 WHEN 3 THEN 72 WHEN 4 THEN 120 ELSE 240 END
+      AS sla_target_hours,
+    (unix_timestamp(coalesce(resolved_at,
+                             from_utc_timestamp(current_timestamp(), 'America/Chicago')))
+     - unix_timestamp(opened_at)) / 3600.0 AS elapsed_hours
+  FROM tickets
+);
+
 CREATE TABLE IF NOT EXISTS incident_docs (
   number STRING NOT NULL,
   embed_text STRING COMMENT 'Problem statement only: what a new ticket will be compared against',

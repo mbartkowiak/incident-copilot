@@ -9,14 +9,16 @@ About a quarter of incidents at a typical enterprise service desk go to the wron
 
 ## Try it: the incident lifecycle in ten minutes
 1. **Overview:** the weekly volume chart highlights planted outages (an email outage in January, a Chicago network outage in March, a VPN regression in May). Hover a bar for the breakdown.
-2. **Triage → "Scanners down at Memphis":** the routing model and semantic search respond instantly: team, confidence, similar past incidents and their fixes, and KB articles.
-3. **Draft with AI:** watch Claude call its tools live, then edit and approve the draft. Approved drafts become searchable precedents.
-4. **Triage → attach "VPN error dialog" → Read attachments with AI:** Claude reads the screenshot. It pulls out the exact error code and the "updated this morning" clue, then suggests a title and description. **Add to ticket & triage** routes the enriched ticket. The "Customer email (PDF)" sample shows sensitive data flagged but not copied.
-5. **Triage → "Vague: can't log in":** low model confidence triggers a review flag, and the agent asks the caller clarifying questions instead of guessing.
-6. **Incidents → any ticket** (try [INC0017396](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0017396)): the lifecycle of one ticket. You get the work-note timeline, the SLA clock, and how often tickets like it breach. A routing check shows whether the model would have avoided the misroute, and Claude writes a handoff note or recap on demand. On [INC0018308](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0018308), **Check knowledge base** finds that the closest article misses this fix and drafts a revision for you to approve. Approved articles flow back into the search the triage agent uses.
-7. **Major incidents → Chicago HQ network outage:** 85 tickets grouped into one incident, with the hourly arrival curve. **Draft review** writes the post-incident review.
-8. **Problems → VPN connection failures:** six weeks of elevated VPN tickets with no single outage behind them. One fix explains 100% of the surge against 34% normally. **Draft problem record** proposes the root cause, a workaround and the permanent fix. Compare with the weak-evidence WAN candidate, where the draft says so.
-9. **Quality:** the agent's eval results, the before/after of an eval-driven prompt fix, and the routing benchmark against Claude.
+2. **Get help → report a problem as an employee:** pick a persona (standing in for single sign-on), then describe it, for example "the label printer at outbound is printing blank labels". The virtual agent asks at most two questions and writes the ticket with its impact, urgency and priority. You review it and submit. The ticket gets a number, is routed on the spot (auto-assigned at ≥85% confidence), and appears in Incidents with a live SLA clock. Open it to add notes and resolve it.
+3. **Triage → Review queue:** tickets the routing model wasn't sure about wait here for a dispatcher (try "everything is slow" on Get help). Below it, the sandbox takes any pasted text.
+4. **Triage → "Scanners down at Memphis":** the routing model and semantic search respond instantly: team, confidence, similar past incidents and their fixes, and KB articles.
+5. **Draft with AI:** watch Claude call its tools live, then edit and approve the draft. Approved drafts become searchable precedents.
+6. **Triage → attach "VPN error dialog" → Read attachments with AI:** Claude reads the screenshot. It pulls out the exact error code and the "updated this morning" clue, then suggests a title and description. **Add to ticket & triage** routes the enriched ticket. The "Customer email (PDF)" sample shows sensitive data flagged but not copied.
+7. **Triage → "Vague: can't log in":** low model confidence triggers a review flag, and the agent asks the caller clarifying questions instead of guessing.
+8. **Incidents → any ticket** (try [INC0017396](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0017396)): the lifecycle of one ticket. You get the work-note timeline, the SLA clock, and how often tickets like it breach. A routing check shows whether the model would have avoided the misroute, and Claude writes a handoff note or recap on demand. On [INC0018308](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0018308), **Check knowledge base** finds that the closest article misses this fix and drafts a revision for you to approve. Approved articles flow back into the search the triage agent uses.
+9. **Major incidents → Chicago HQ network outage:** 85 tickets grouped into one incident, with the hourly arrival curve. **Draft review** writes the post-incident review.
+10. **Problems → VPN connection failures:** six weeks of elevated VPN tickets with no single outage behind them. One fix explains 100% of the surge against 34% normally. **Draft problem record** proposes the root cause, a workaround and the permanent fix. Compare with the weak-evidence WAN candidate, where the draft says so.
+11. **Quality:** the agent's eval results, the before/after of an eval-driven prompt fix, and the routing benchmark against Claude.
 
 ## Results
 | | |
@@ -60,6 +62,7 @@ flowchart LR
 
 - **Pipeline:** Lakeflow declarative pipeline (Asset Bundle) with data-quality expectations and PII scrubbing; a refresh job rebuilds RAG sources, syncs the indexes, and derives the major-incident and problem tables.
 - **Routing model:** TF-IDF + logistic regression, time-split evaluation, benchmarked against Claude, served in-process from the registry ([ADR 0002](docs/adr/0002-in-process-routing-model.md)).
+- **Conversational intake and live tickets:** an employee chats with the virtual agent. It asks at most two questions, proposes the ticket, and the ticket is written to a Delta `tickets` table and triaged on creation: auto-assigned when the routing model is confident, otherwise queued for a dispatcher. A view unions live tickets with history, so every page and AI feature works on both ([ADR 0009](docs/adr/0009-conversational-intake-and-live-tickets.md)).
 - **Attachment intake:** screenshots and PDFs are read into structured, reviewable facts (error text, device, site, scope). Files are type-checked by content and never stored ([ADR 0008](docs/adr/0008-attachment-intake.md)).
 - **Lifecycle:** incident queue and ticket pages over the gold tables, with a work-note timeline, SLA clock, breach history, routing check and a cached one-call Claude summary.
 - **Major incidents and problems:** SQL in the refresh job groups outage tickets into major incidents and finds sustained surges as problem candidates, graded by how much one fix explains them. Claude drafts the post-incident review and the problem record on demand.
@@ -113,7 +116,7 @@ Every push to `main` runs lint, type checks and tests for all components plus `t
 2. builds the API image, pushes it to ECR with an immutable tag, and rolls out a new ECS task definition (the circuit breaker rolls back if health checks fail),
 3. builds the frontend, syncs it to S3, and invalidates CloudFront.
 
-CloudFront serves the frontend and routes `/api/*` to the load balancer, so the browser sees one HTTPS origin; the load balancer only accepts CloudFront's IP ranges. The API reaches Databricks as a **least-privilege service principal**: read access to one schema, use of one warehouse, and write access to two tables: dispatcher feedback and knowledge-draft decisions. Its OAuth secret and the Claude API key live in Secrets Manager and are injected at runtime; neither appears in code, CI, or Terraform state.
+CloudFront serves the frontend and routes `/api/*` to the load balancer, so the browser sees one HTTPS origin; the load balancer only accepts CloudFront's IP ranges. The API reaches Databricks as a **least-privilege service principal**: read access to one schema, use of one warehouse, and write access to three tables: live tickets, dispatcher feedback and knowledge-draft decisions. Its OAuth secret and the Claude API key live in Secrets Manager and are injected at runtime; neither appears in code, CI, or Terraform state.
 
 ```bash
 cd infra/terraform && terraform init && terraform plan   # infra changes are applied manually

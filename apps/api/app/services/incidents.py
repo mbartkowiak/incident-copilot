@@ -1,4 +1,4 @@
-"""Incident queue and ticket detail over gold_incident_facts.
+"""Incident queue and ticket detail over incident_queue: history plus live tickets.
 
 Fixed SQL templates with bound parameters only, like the dashboard metrics.
 """
@@ -9,6 +9,7 @@ from typing import Any, Literal
 
 from app.models import BreachRisk, IncidentDetail, IncidentList, IncidentRow, SlaStatus, WorkNote
 from app.services.cache import TTLCache
+from app.services.tickets import is_live
 from app.services.warehouse import Warehouse
 
 Status = Literal["open", "resolved", "all"]
@@ -27,7 +28,7 @@ SELECT
   is_resolved,
   sla_breached,
   mttr_hours
-FROM gold_incident_facts
+FROM incident_queue
 WHERE (:status = 'all'
        OR (:status = 'open' AND NOT is_resolved)
        OR (:status = 'resolved' AND is_resolved))
@@ -68,10 +69,13 @@ SELECT
   sla_breached,
   mttr_hours,
   is_resolved,
+  source,
+  live_elapsed_hours,
+  caller_id,
   (SELECT min(m.mi_id) FROM major_incident_members m WHERE m.number = f.number)
     AS major_incident,
   (SELECT min(p.problem_id) FROM problem_members p WHERE p.number = f.number) AS problem
-FROM gold_incident_facts f
+FROM incident_queue f
 WHERE number = :number
 """
 
@@ -142,6 +146,9 @@ def sla_status(row: dict[str, Any], as_of: date) -> SlaStatus:
     target = float(row["sla_target_hours"])
     if row["mttr_hours"] is not None:
         elapsed = float(row["mttr_hours"])
+    elif row.get("live_elapsed_hours") is not None:
+        # Live tickets run on the company's real clock, computed by the view.
+        elapsed = float(row["live_elapsed_hours"])
     else:
         # The extract runs through the end of its last day.
         now = datetime.combine(as_of, time.max).replace(microsecond=0)
@@ -232,5 +239,7 @@ class IncidentService:
                 }
             )
 
+        if is_live(number):
+            return load()  # live tickets change as dispatchers work them
         result: IncidentDetail = self._cache.get_or_set(("detail", number.upper()), load)
         return result

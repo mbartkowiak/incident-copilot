@@ -149,6 +149,109 @@ class AttachmentFacts(BaseModel):
     sensitive_data: list[str]
 
 
+Level = Literal[1, 2, 3]
+
+
+class TicketDraft(BaseModel):
+    """The ticket the virtual agent proposes (mirrors app.services.intake_chat.TURN_SCHEMA)."""
+
+    short_description: str
+    description: str
+    impact: Level
+    urgency: Level
+    cmdb_ci: str
+
+
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=4000)
+
+
+class IntakeChatRequest(BaseModel):
+    caller: str = Field(min_length=2, max_length=100)
+    location: Site
+    messages: list[ChatMessage] = Field(min_length=1, max_length=12)
+
+
+class IntakeTurn(BaseModel):
+    reply: str
+    ready: bool
+    ticket: TicketDraft
+
+
+class IntakeTurnResponse(BaseModel):
+    turn: IntakeTurn
+    model: str
+    cost_usd: float
+    latency_s: float
+
+
+class TicketCreate(BaseModel):
+    """A new ticket. Caller and site come from the signed-in user, as SSO would supply them."""
+
+    caller: str = Field(min_length=2, max_length=100)
+    location: Site
+    contact_type: Literal["virtual_agent", "self-service"] = "virtual_agent"
+    short_description: str = Field(min_length=3, max_length=200)
+    description: str = Field(default="", max_length=4000)
+    impact: Level
+    urgency: Level
+    cmdb_ci: str = Field(default="", max_length=100)
+
+
+class TriageOutcome(BaseModel):
+    suggested_group: str
+    confidence: float
+    mode: Literal["auto", "review"]
+    category: str | None
+    subcategory: str | None
+    precedent: str | None
+
+
+class TicketCreated(BaseModel):
+    number: str
+    priority_label: str
+    state: str
+    assignment_group: str | None
+    triage: TriageOutcome
+
+
+class LiveTicket(BaseModel):
+    """A ticket created in the app, as the dispatcher's review queue shows it."""
+
+    number: str
+    opened_at: datetime
+    state: str
+    caller: str
+    location: str
+    priority_label: str
+    short_description: str
+    assignment_group: str | None
+    suggested_group: str | None
+    triage_confidence: float | None
+    triage_mode: str
+
+
+class TicketAssign(BaseModel):
+    group: Group
+
+
+class TicketNote(BaseModel):
+    text: str = Field(min_length=1, max_length=2000)
+
+
+class TicketResolve(BaseModel):
+    close_code: Literal[
+        "Solved (Permanently)",
+        "Solved Remotely (Permanently)",
+        "Solved (Work Around)",
+        "Solved Remotely (Work Around)",
+        "Not Solved (Not Reproducible)",
+        "Closed/Resolved by Caller",
+    ]
+    close_notes: str = Field(min_length=5, max_length=4000)
+
+
 class AttachmentInfo(BaseModel):
     name: str
     media_type: str
@@ -246,6 +349,8 @@ class IncidentDetail(BaseModel):
     as_of: date
     major_incident: str | None = None
     problem: str | None = None
+    source: Literal["history", "live"] = "history"
+    caller_id: str | None = None
 
 
 class TicketSummary(BaseModel):

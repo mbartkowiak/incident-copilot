@@ -19,11 +19,13 @@ AI-generated code is only as good as the checks around it. Examples from this bu
 | GitHub deploys couldn't assume the AWS role | CI failure; inspected the repo's OIDC subject format | Trust policy now matches GitHub's immutable owner/repo-ID subject |
 | Production bundle might call `localhost` | Grepped the built JS before uploading | Production builds default to the same-origin API |
 | Agent asked clarifying questions on 45% of clear tickets | The eval suite measured it | One scoped prompt change took it to 0% with no regressions; a ceiling is now part of the gate |
+| Get help page rendered blank in Chrome | Clicking through the page after unit tests and the build passed | A one-line React effect returned `scrollIntoView()`'s value, which this browser returns as a Promise; effects now never return a value |
+| A trained SLA-breach model looked like the obvious feature | Scoring it against a two-column lookup on urgent tickets | The lookup won (AUC 0.69 vs 0.62), so it ships instead ([ADR 0005](adr/0005-sla-risk-lookup-over-classifier.md)) |
 
 ## Security habits
 - The Claude API key and the Databricks service-principal secret were moved into AWS Secrets Manager without being printed into the session; fingerprints were compared instead of values.
 - A secret scan runs over staged files before every commit.
-- The API's Databricks identity has read access to one schema and write access to two append-only decision tables (dispatcher feedback and knowledge drafts).
+- The API's Databricks identity has read access to one schema and write access to three tables only: live tickets, dispatcher feedback and knowledge drafts.
 - When a key was accidentally placed in a committed template file, it was caught before any commit, moved to the git-ignored `.env`, and replaced with a new key.
 
 ## What I'd tell a team adopting this

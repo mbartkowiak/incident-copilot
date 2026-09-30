@@ -13,6 +13,7 @@ import { addFiles, applyFacts } from '../attachments'
 import type { SAMPLES } from '../attachments'
 import { AgentPanel } from '../components/AgentPanel'
 import { AttachmentFactsCard, AttachmentPicker } from '../components/Attachments'
+import { ReviewQueue } from '../components/ReviewQueue'
 import { formatHours, formatPercent } from '../format'
 
 const SCENARIOS: { label: string; ticket: TriageRequest }[] = [
@@ -139,11 +140,16 @@ export function TriagePage() {
   return (
     <>
       <p className="subtle page-sub">
-        Paste a new ticket, and attach any screenshots or PDFs for Claude to read. The routing model predicts the
+        Tickets from the Get help tab arrive here already triaged; the ones the routing model wasn't sure about wait
+        in the review queue. The sandbox below lets you paste any ticket text, and attach screenshots or PDFs for
+        Claude to read. The routing model predicts the
         resolving team and semantic search finds how similar incidents were fixed, instantly and at no cost. Then
         the AI agent can investigate and draft a resolution for you to approve.
       </p>
 
+      <ReviewQueue />
+
+      <h2 className="section-title">Triage sandbox</h2>
       <div className="triage">
         <form className="card triage-form" onSubmit={onSubmit}>
           <label htmlFor="short">Short description</label>

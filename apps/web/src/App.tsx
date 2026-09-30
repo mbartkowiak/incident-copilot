@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { parseRoute } from './incidents'
+import { GetHelpPage } from './pages/GetHelpPage'
 import { IncidentPage } from './pages/IncidentPage'
 import { IncidentsPage } from './pages/IncidentsPage'
 import { MajorIncidentPage, MajorIncidentsPage } from './pages/MajorIncidentsPage'
@@ -8,9 +9,10 @@ import { ProblemPage, ProblemsPage } from './pages/ProblemsPage'
 import { QualityPage } from './pages/QualityPage'
 import { TriagePage } from './pages/TriagePage'
 
-// In lifecycle order: detect, take in, work, escalate, prevent, measure.
+// In lifecycle order: overview, report, triage, work, escalate, prevent, measure.
 const PAGES = [
   { id: 'overview', label: 'Overview' },
+  { id: 'get-help', label: 'Get help' },
   { id: 'triage', label: 'Triage' },
   { id: 'incidents', label: 'Incidents' },
   { id: 'major-incidents', label: 'Major incidents' },
@@ -51,6 +53,7 @@ function App() {
         </nav>
       </header>
       {page === 'overview' && <OverviewPage />}
+      {page === 'get-help' && <GetHelpPage />}
       {page === 'triage' && <TriagePage />}
       {page === 'incidents' && (
         <>

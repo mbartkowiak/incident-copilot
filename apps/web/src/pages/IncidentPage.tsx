@@ -3,12 +3,15 @@ import { postJson } from '../api'
 import type { IncidentDetail, TicketSummaryResponse, TriageSuggestion, WorkNote } from '../api'
 import { Fact } from '../components/Facts'
 import { KnowledgeCard } from '../components/KnowledgeCard'
+import { TicketActions } from '../components/TicketActions'
 import { formatHours, formatPercent } from '../format'
 import { ROUTING_TRAIN_CUTOFF, describeSla, formatDateTime, routingVerdict } from '../incidents'
 import { useApi } from '../useApi'
 
 export function IncidentPage({ number }: { number: string }) {
-  const ticket = useApi<IncidentDetail>(`/api/incidents/${number}`)
+  // Bumped after a dispatcher action so a live ticket reloads.
+  const [version, setVersion] = useState(0)
+  const ticket = useApi<IncidentDetail>(`/api/incidents/${number}?v=${version}`)
   const t = ticket.data?.number === number ? ticket.data : undefined
 
   return (
@@ -22,12 +25,12 @@ export function IncidentPage({ number }: { number: string }) {
         </div>
       )}
       {!t && !ticket.error && <div className="card empty">Loading {number}…</div>}
-      {t && <Ticket key={t.number} t={t} />}
+      {t && <Ticket key={t.number} t={t} onChanged={() => setVersion((v) => v + 1)} />}
     </>
   )
 }
 
-function Ticket({ t }: { t: IncidentDetail }) {
+function Ticket({ t, onChanged }: { t: IncidentDetail; onChanged: () => void }) {
   const resolved = t.resolved_at !== null
   return (
     <>
@@ -35,13 +38,19 @@ function Ticket({ t }: { t: IncidentDetail }) {
         <div className="ticket-id">
           <span className="num">{t.number}</span>
           <span className="badge">{t.state}</span>
+          {t.source === 'live' && (
+            <span className="badge" data-tone="good">
+              Live ticket
+            </span>
+          )}
           <span className="badge" data-tone={t.priority <= 2 ? 'bad' : undefined}>
             {t.priority_label}
           </span>
         </div>
         <h2 className="ticket-title">{t.short_description}</h2>
         <dl className="facts">
-          <Fact label="Team" value={t.assignment_group} />
+          <Fact label="Caller" value={t.caller_id} />
+          <Fact label="Team" value={t.assignment_group ?? 'Awaiting dispatcher review'} />
           <Fact label="Assignee" value={t.assigned_to ?? 'Unassigned'} />
           <Fact label="Site" value={t.location} />
           <Fact label="Configuration item" value={t.cmdb_ci} />
@@ -82,6 +91,7 @@ function Ticket({ t }: { t: IncidentDetail }) {
           {resolved && t.close_notes && <KnowledgeCard number={t.number} />}
         </div>
         <aside className="ticket-side">
+          {t.source === 'live' && <TicketActions t={t} onChanged={onChanged} />}
           <SlaCard t={t} resolved={resolved} />
           <RoutingCard t={t} resolved={resolved} />
         </aside>
