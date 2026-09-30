@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
 import { OverviewPage } from './pages/OverviewPage'
+import { QualityPage } from './pages/QualityPage'
 import { TriagePage } from './pages/TriagePage'
 
 const PAGES = [
   { id: 'overview', label: 'Overview' },
   { id: 'triage', label: 'Triage' },
+  { id: 'quality', label: 'Quality' },
 ] as const
 type PageId = (typeof PAGES)[number]['id']
 
 function pageFromHash(): PageId {
-  return window.location.hash === '#/triage' ? 'triage' : 'overview'
+  const id = window.location.hash.replace('#/', '')
+  return PAGES.find((p) => p.id === id)?.id ?? 'overview'
 }
 
 function App() {
@@ -33,7 +36,9 @@ function App() {
           ))}
         </nav>
       </header>
-      {page === 'overview' ? <OverviewPage /> : <TriagePage />}
+      {page === 'overview' && <OverviewPage />}
+      {page === 'triage' && <TriagePage />}
+      {page === 'quality' && <QualityPage />}
     </div>
   )
 }
