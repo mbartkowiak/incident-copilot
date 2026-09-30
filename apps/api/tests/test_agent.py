@@ -191,6 +191,27 @@ def test_agent_endpoint_streams_server_sent_events() -> None:
     assert events == ["status", "draft", "done"]
 
 
+def test_agent_endpoint_emits_one_telemetry_record_per_run(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    records: list[tuple[str, dict[str, Any]]] = []
+    monkeypatch.setattr(
+        "app.routes.agent.telemetry.emit", lambda event, **f: records.append((event, f))
+    )
+    app = create_app()
+    app.dependency_overrides[get_agent] = lambda: FakeAgent()
+    app.dependency_overrides[get_agent_rate_limiter] = lambda: RateLimiter(5, 60, 100)
+
+    TestClient(app).post("/api/triage/agent", json={"short_description": "VPN down"})
+
+    assert len(records) == 1
+    event, fields = records[0]
+    assert event == "agent_run"
+    assert fields["outcome"] == "draft"
+    assert fields["team"] == "Network Operations"
+    assert fields["citations"] == 3
+
+
 def test_agent_endpoint_returns_429_when_limited() -> None:
     limiter = RateLimiter(per_client=1, per_client_window_s=60, daily=100)
     app = create_app()

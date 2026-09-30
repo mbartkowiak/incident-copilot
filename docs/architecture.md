@@ -82,6 +82,22 @@ The baseline showed the agent asking the caller questions on nearly half of the 
 
 Known limit: resolved golden tickets are also in the precedent index, so retrieval is easier than for a truly new ticket. Paraphrased golden tickets would make the set harder.
 
+## Observability
+Each agent run and each dispatcher decision writes one JSON line (`app/telemetry.py`) to the ECS task's CloudWatch log group, `/ecs/incident-copilot-api`. Logs Insights discovers the fields automatically:
+
+```
+# Cost, latency and outcome per day
+filter event = "agent_run"
+| stats count(*) as runs, sum(cost_usd) as cost, avg(latency_s) as avg_s,
+        sum(outcome = "error") as errors, sum(ungrounded > 0) as ungrounded_drafts by bin(1d)
+
+# How often dispatchers override the agent's team
+filter event = "triage_feedback"
+| stats count(*) as decisions, sum(team_changed) as team_overrides by decision
+```
+
+`/health` reports the loaded routing model version. ECS restarts unhealthy tasks, and the deploy circuit breaker rolls back failed releases.
+
 ## Agent memory loop
 Dispatcher approve/edit/reject → `POST /api/triage/feedback` → `triage_feedback` (the only table the API may write) → `refresh-lakehouse` merges approved drafts into `incident_docs` as `FB-` precedents → vector index sync. Later triages retrieve the human-corrected answers.
 
