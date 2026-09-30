@@ -7,7 +7,6 @@ from app.deps import get_servicenow_connector, get_ticket_rate_limiter, get_tick
 from app.models import ServiceNowStatus
 from app.services.ratelimit import RateLimiter
 from app.services.sync import ServiceNowConnector
-from app.services.tickets import TicketService
 
 router = APIRouter(prefix="/api/servicenow", tags=["servicenow"])
 
@@ -34,12 +33,12 @@ async def sync_now(
     request: Request,
     connector: Connector,
     limiter: Annotated[RateLimiter, Depends(get_ticket_rate_limiter)],
-    tickets: Annotated[TicketService, Depends(get_ticket_service)],
 ) -> ServiceNowStatus:
     """Run one sync pass now instead of waiting for the poller."""
     if connector is None:
         raise HTTPException(503, "ServiceNow isn't configured.")
     limiter.check(request.client.host if request.client else "unknown")
-    assert connector.tickets is tickets  # wired by get_ticket_service
+    if connector.tickets is None:
+        get_ticket_service()  # wires the connector to the ticket service
     await run_in_threadpool(connector.sync_once)
     return connector.status()

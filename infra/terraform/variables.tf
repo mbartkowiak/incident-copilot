@@ -42,6 +42,24 @@ variable "anthropic_api_key_secret_name" {
   default     = "incident-copilot/anthropic-api-key"
 }
 
+variable "servicenow_instance" {
+  description = "ServiceNow instance the connector syncs with; empty disables the connector"
+  type        = string
+  default     = "https://dev343808.service-now.com"
+}
+
+variable "servicenow_user" {
+  description = "ServiceNow integration user (itil role only; not secret)"
+  type        = string
+  default     = "copilot.integration"
+}
+
+variable "servicenow_password_secret_name" {
+  description = "Secrets Manager secret holding the integration user's password (created out-of-band so it never enters state)"
+  type        = string
+  default     = "incident-copilot/servicenow-password"
+}
+
 variable "databricks_client_secret_name" {
   description = "Secrets Manager secret holding the SP OAuth secret (created out-of-band so it never enters state)"
   type        = string

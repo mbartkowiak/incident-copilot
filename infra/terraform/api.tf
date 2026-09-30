@@ -27,6 +27,10 @@ data "aws_secretsmanager_secret" "anthropic_api_key" {
   name = var.anthropic_api_key_secret_name
 }
 
+data "aws_secretsmanager_secret" "servicenow_password" {
+  name = var.servicenow_password_secret_name
+}
+
 resource "aws_cloudwatch_log_group" "api" {
   name              = "/ecs/${var.project}-api"
   retention_in_days = 14
@@ -68,6 +72,7 @@ resource "aws_iam_role_policy" "task_execution_secrets" {
       Resource = [
         data.aws_secretsmanager_secret.databricks_client_secret.arn,
         data.aws_secretsmanager_secret.anthropic_api_key.arn,
+        data.aws_secretsmanager_secret.servicenow_password.arn,
       ]
     }]
   })
@@ -107,10 +112,13 @@ resource "aws_ecs_task_definition" "api" {
       { name = "APP_METRICS_CACHE_TTL_SECONDS", value = "21600" },
       { name = "DATABRICKS_HOST", value = var.databricks_host },
       { name = "DATABRICKS_CLIENT_ID", value = var.databricks_client_id },
+      { name = "SERVICENOW_INSTANCE", value = var.servicenow_instance },
+      { name = "SERVICENOW_USER", value = var.servicenow_user },
     ]
     secrets = [
       { name = "DATABRICKS_CLIENT_SECRET", valueFrom = data.aws_secretsmanager_secret.databricks_client_secret.arn },
       { name = "ANTHROPIC_API_KEY", valueFrom = data.aws_secretsmanager_secret.anthropic_api_key.arn },
+      { name = "SERVICENOW_PASSWORD", valueFrom = data.aws_secretsmanager_secret.servicenow_password.arn },
     ]
     logConfiguration = {
       logDriver = "awslogs"
