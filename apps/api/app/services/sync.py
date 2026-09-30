@@ -36,6 +36,8 @@ AUTHOR = "Incident Copilot"
 # window avoids comparing timestamps across the instance's and the app's time zones.
 IMPORT_WINDOW = "@hour@ago@24"
 UPDATE_WINDOW = "@minute@ago@15"
+# The incident form's default category; replacing it doesn't override a human choice.
+DEFAULT_CATEGORY = "inquiry"
 
 log = logging.getLogger(__name__)
 
@@ -84,9 +86,21 @@ class ServiceNowConnector:
         return {k: v for k, v in refs.items() if v}
 
     def created(
-        self, number: str, ticket: TicketFields, triage: TriageOutcome, priority: int
+        self,
+        number: str,
+        ticket: TicketFields,
+        triage: TriageOutcome,
+        priority: int,
+        current_group: str | None = None,
+        current_state: str = "New",
     ) -> str | None:
-        group = triage.suggested_group if triage.mode == "auto" else ""
+        """Create the ServiceNow incident. A catch-up push passes the ticket's current group and
+        state, since a dispatcher may have worked it while ServiceNow was unreachable."""
+        group = (
+            current_group
+            if current_group is not None
+            else (triage.suggested_group if triage.mode == "auto" else "")
+        )
         notes = [
             f"{AUTHOR}: created from {ticket.caller}'s conversation with the virtual agent.",
             f"{AUTHOR} routing: {triage_note(triage)}",
@@ -105,6 +119,8 @@ class ServiceNowConnector:
             }
             if triage.category:
                 fields["category"] = triage.category
+            if current_state in STATE_CODES and current_state != "New":
+                fields["state"] = STATE_CODES[current_state]
             if not fields.get("caller_id"):
                 fields["description"] = (
                     f"Caller: {ticket.caller}, {ticket.location}\n\n{ticket.description}"
@@ -185,7 +201,14 @@ class ServiceNowConnector:
                 subcategory=row["subcategory"],
                 precedent=None,
             )
-            self.created(row["number"], ticket, triage, 0)
+            self.created(
+                row["number"],
+                ticket,
+                triage,
+                0,
+                current_group=row["assignment_group"] or "",
+                current_state=row["state"] or "New",
+            )
 
     def _import_new(self) -> None:
         assert self.tickets is not None
@@ -215,9 +238,11 @@ class ServiceNowConnector:
                 "correlation_display": CORRELATION_DISPLAY,
                 "work_notes": self._triage_work_note(triage),
             }
-            # Only fill the group when nobody in ServiceNow has chosen one.
+            # Only fill what nobody in ServiceNow has chosen: an empty group, the default category.
             if triage.mode == "auto" and not value(inc["assignment_group"]):
                 fields.update(self._references("", "", triage.suggested_group))
+            if triage.category and value(inc.get("category")) in ("", DEFAULT_CATEGORY):
+                fields["category"] = triage.category
             self._sn.update_incident(sys_id, fields)
             self._counts["imported"] += 1
             telemetry.emit(

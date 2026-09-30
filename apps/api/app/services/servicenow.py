@@ -31,8 +31,8 @@ CLOSE_CODE_CANDIDATES: dict[str, list[str]] = {
 }
 
 INCIDENT_FIELDS = [
-    "sys_id", "number", "sys_created_on", "sys_updated_on", "state", "short_description",
-    "description", "caller_id", "location", "contact_type", "category", "impact", "urgency",
+    "sys_id", "number", "sys_created_on", "sys_updated_on", "state", "short_description", "category",
+    "description", "caller_id", "location", "contact_type", "impact", "urgency",
     "assignment_group", "close_code", "close_notes", "resolved_at", "correlation_id",
 ]  # fmt: skip
 

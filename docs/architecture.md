@@ -90,6 +90,13 @@ Known limit: resolved golden tickets are also in the precedent index, so retriev
 
 Dispatchers assign, add notes and resolve from the ticket page (`/api/tickets/{number}/assign|notes|resolve`). The `incident_queue` view unions live tickets with history, computing live SLA fields at query time, so every page and AI feature works on both. See [ADR 0009](adr/0009-conversational-intake-and-live-tickets.md).
 
+## ServiceNow connector
+When `SERVICENOW_INSTANCE`, `SERVICENOW_USER` and `SERVICENOW_PASSWORD` are set, live tickets are kept in step with a ServiceNow instance through the Table API ([ADR 0010](adr/0010-servicenow-connector.md)):
+- App tickets are created there (`correlation_id` = app number), and assignments, notes and resolutions follow them.
+- A poller (every 60 s; **Sync now** on the Triage tab) imports incidents raised in ServiceNow, triages them, and writes back an AI work note, plus the group and category when nobody has chosen them.
+- State and assignment changes made in ServiceNow flow back to the app.
+- Ticket pages link to the ServiceNow incident. `GET /api/servicenow/status` reports the last sync, counts and errors.
+
 ## Attachment intake
 On the Triage page a dispatcher can attach up to three screenshots, photos or PDFs (5 MB each). `POST /api/triage/attachments` checks each file's type by its content, then makes one structured Claude call with the files as image or PDF blocks. It returns the verbatim error text, device, application, site, scope, start time, a suggested title and a description addition, and it names any sensitive data it saw without copying it. After review, **Add to ticket & triage** feeds the enriched text to routing, search and the agent. Files are never stored. About 1.3-2¢ and 6-9 s per read. See [ADR 0008](adr/0008-attachment-intake.md).
 
@@ -128,6 +135,9 @@ filter event = "triage_feedback"
 # One-call AI documents: volume, spend and failures
 filter event in ["intake_turn", "attachment_read", "ticket_summary", "kb_draft", "incident_review", "problem_record"]
 | stats count(*) as calls, sum(cost_usd) as cost, avg(latency_s) as avg_s by event, outcome
+
+# ServiceNow connector: imports, pushes and failures
+filter event in ["servicenow_imported", "servicenow_pushed", "servicenow_error"] | stats count(*) by event
 
 # How new tickets are triaged: share auto-assigned vs sent to review
 filter event = "ticket_created" | stats count(*) as tickets, avg(confidence) as avg_conf by mode

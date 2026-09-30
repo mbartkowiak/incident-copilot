@@ -208,6 +208,7 @@ def servicenow_incident(**overrides: Any) -> dict[str, Any]:
         "impact": ref("2", "2 - Medium"),
         "urgency": ref("2", "2 - Medium"),
         "assignment_group": ref("", ""),
+        "category": ref("inquiry", "Inquiry / Help"),
         "close_code": ref(""),
         "close_notes": ref(""),
         **overrides,
@@ -234,6 +235,7 @@ def test_incidents_raised_in_servicenow_are_imported_triaged_and_annotated(
     assert fields["correlation_id"] == "INC1000001"
     assert fields["assignment_group"] == "grp-netops"  # confident, and nobody had assigned it
     assert "Closest precedent: INC0015123" in fields["work_notes"]
+    assert fields["category"] == "network"  # the form default is replaced
     assert connector.status().imported == 1
 
 
@@ -241,12 +243,16 @@ def test_a_human_assignment_in_servicenow_is_never_overridden(
     connector: ServiceNowConnector, sn: FakeServiceNow
 ) -> None:
     sn.queries["active=true^correlation_idISEMPTY"] = [
-        servicenow_incident(assignment_group=ref("grp-eud", "End User Computing"))
+        servicenow_incident(
+            assignment_group=ref("grp-eud", "End User Computing"),
+            category=ref("software", "Software"),
+        )
     ]
 
     connector.sync_once()
 
     assert "assignment_group" not in sn.updates[0][1]
+    assert "category" not in sn.updates[0][1]
 
 
 def test_changes_made_in_servicenow_flow_back_and_echoes_are_ignored(
@@ -281,15 +287,19 @@ def test_unlinked_app_tickets_are_pushed_on_the_next_sync(
         {
             "number": "INC1000003", "caller": "Priya Shah", "location": "Remote",
             "contact_type": "virtual_agent", "short_description": "VPN down", "description": "",
-            "impact": 3, "urgency": 1, "suggested_group": "Network Operations",
-            "triage_confidence": 0.9, "triage_mode": "auto", "category": "network",
-            "subcategory": "vpn",
+            "impact": 3, "urgency": 1, "suggested_group": "Service Desk",
+            "triage_confidence": 0.3, "triage_mode": "manual", "category": "network",
+            "subcategory": "vpn", "assignment_group": "Network Operations", "state": "In Progress",
         }
     ]  # fmt: skip
 
     connector.sync_once()
 
-    assert sn.created[0]["correlation_id"] == "INC1000003"
+    pushed = sn.created[0]
+    assert pushed["correlation_id"] == "INC1000003"
+    # The dispatcher's assignment and progress, not the creation-time triage, reach ServiceNow.
+    assert pushed["assignment_group"] == "grp-netops"
+    assert pushed["state"] == "2"
     assert tickets.links[0][0] == "INC1000003"
 
 

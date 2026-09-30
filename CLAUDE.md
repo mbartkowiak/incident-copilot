@@ -16,6 +16,7 @@ AI-assisted ITSM triage and analytics: ServiceNow-style incident data → Databr
 # API
 cd apps/api && uv sync && uv run pytest && uv run ruff check . && uv run ruff format --check . && uv run mypy app
 uv run uvicorn app.main:app --reload            # http://localhost:8000/health
+uv run python -m app.servicenow_seed           # one-time: groups, sites, demo users in the ServiceNow instance
 
 # Web
 cd apps/web && npm install && npm run dev        # http://localhost:5173
