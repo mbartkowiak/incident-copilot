@@ -5,6 +5,8 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY app ./app
+# Committed eval results, served read-only on the Quality page.
+COPY evals/reports ./evals/reports
 
 FROM python:3.12-slim
 RUN useradd --create-home --uid 10001 appuser

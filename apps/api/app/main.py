@@ -12,7 +12,7 @@ from pydantic import BaseModel
 
 from app.config import get_settings
 from app.deps import NotConfigured, get_metrics_service, get_routing_model
-from app.routes import agent, metrics, triage
+from app.routes import agent, metrics, quality, triage
 from app.services.ratelimit import RateLimited
 from app.services.routing import ModelNotReady
 from app.services.warehouse import WarehouseError
@@ -110,6 +110,7 @@ def create_app() -> FastAPI:
     app.include_router(metrics.router)
     app.include_router(triage.router)
     app.include_router(agent.router)
+    app.include_router(quality.router)
     return app
 
 
