@@ -20,6 +20,8 @@ AI-generated code is only as good as the checks around it. Examples from this bu
 | Production bundle might call `localhost` | Grepped the built JS before uploading | Production builds default to the same-origin API |
 | Agent asked clarifying questions on 45% of clear tickets | The eval suite measured it | One scoped prompt change took it to 0% with no regressions; a ceiling is now part of the gate |
 | Get help page rendered blank in Chrome | Clicking through the page after unit tests and the build passed | A one-line React effect returned `scrollIntoView()`'s value, which this browser returns as a Promise; effects now never return a value |
+| A new route passed locally but failed in CI | CI runs without the developer's `.env` | The route built a dependency it didn't need; a test `conftest.py` now blanks `.env`-provided settings so local runs match CI |
+| The ServiceNow connector passed its unit tests | Running it against a real developer instance | Two sync bugs (stale assignment on catch-up pushes, default category kept on import) and a least-privilege gap (`itil` can't read the choice table), all fixed |
 | A trained SLA-breach model looked like the obvious feature | Scoring it against a two-column lookup on urgent tickets | The lookup won (AUC 0.69 vs 0.62), so it ships instead ([ADR 0005](adr/0005-sla-risk-lookup-over-classifier.md)) |
 
 ## Security habits
