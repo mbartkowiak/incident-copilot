@@ -320,6 +320,9 @@ function Confirmation({ created, onNew }: { created: TicketCreated; onNew: () =>
           Categorized as {t.category} / {t.subcategory} from a similar past incident ({t.precedent}).
         </p>
       )}
+      {created.servicenow_number && (
+        <p className="subtle">Also raised in ServiceNow as {created.servicenow_number}.</p>
+      )}
       <div className="draft-actions">
         <a className="ghost button-link" href={`#/incidents/${created.number}`}>
           Open the ticket

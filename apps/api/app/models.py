@@ -186,8 +186,22 @@ class IntakeTurnResponse(BaseModel):
     latency_s: float
 
 
-class TicketCreate(BaseModel):
-    """A new ticket. Caller and site come from the signed-in user, as SSO would supply them."""
+class TicketFields(BaseModel):
+    """What a new ticket needs, from any source: the app's intake or a ServiceNow incident."""
+
+    caller: str = Field(max_length=100)
+    location: str = Field(default="", max_length=100)
+    contact_type: str = Field(default="virtual_agent", max_length=40)
+    short_description: str = Field(min_length=1, max_length=200)
+    description: str = Field(default="", max_length=4000)
+    impact: Level
+    urgency: Level
+    cmdb_ci: str = Field(default="", max_length=100)
+
+
+class TicketCreate(TicketFields):
+    """A new ticket from the app. Caller and site come from the signed-in user, as SSO would
+    supply them."""
 
     caller: str = Field(min_length=2, max_length=100)
     location: Site
@@ -214,6 +228,17 @@ class TicketCreated(BaseModel):
     state: str
     assignment_group: str | None
     triage: TriageOutcome
+    servicenow_number: str | None = None
+
+
+class ServiceNowStatus(BaseModel):
+    enabled: bool
+    instance: str | None
+    last_sync: datetime | None
+    last_error: str | None
+    imported: int
+    pushed: int
+    updates_applied: int
 
 
 class LiveTicket(BaseModel):
@@ -351,6 +376,8 @@ class IncidentDetail(BaseModel):
     problem: str | None = None
     source: Literal["history", "live"] = "history"
     caller_id: str | None = None
+    servicenow_number: str | None = None
+    servicenow_url: str | None = None
 
 
 class TicketSummary(BaseModel):

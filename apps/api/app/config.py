@@ -37,6 +37,14 @@ class Settings(BaseSettings):
     summary_runs_per_client: int = 10
     summary_client_window_s: float = 600
     summary_runs_per_day: int = 300
+    # ServiceNow connector. Off unless an instance and credentials are configured; read from
+    # SERVICENOW_* (no APP_ prefix) like other third-party credentials.
+    servicenow_instance: str = Field(default="", validation_alias="SERVICENOW_INSTANCE")
+    servicenow_user: str = Field(default="", validation_alias="SERVICENOW_USER")
+    servicenow_password: SecretStr | None = Field(
+        default=None, validation_alias="SERVICENOW_PASSWORD"
+    )
+    servicenow_poll_seconds: float = 60
     # Serverless warehouses auto-stop; warming absorbs the ~20s cold start before users arrive.
     warm_cache_on_startup: bool = False
     load_routing_model_on_startup: bool = True

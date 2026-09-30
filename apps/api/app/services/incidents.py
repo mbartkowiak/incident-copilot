@@ -72,6 +72,8 @@ SELECT
   source,
   live_elapsed_hours,
   caller_id,
+  sn_number AS servicenow_number,
+  sn_sys_id,
   (SELECT min(m.mi_id) FROM major_incident_members m WHERE m.number = f.number)
     AS major_incident,
   (SELECT min(p.problem_id) FROM problem_members p WHERE p.number = f.number) AS problem
@@ -179,9 +181,12 @@ def _round(value: float | None) -> float | None:
 
 
 class IncidentService:
-    def __init__(self, warehouse: Warehouse, cache: TTLCache) -> None:
+    def __init__(
+        self, warehouse: Warehouse, cache: TTLCache, servicenow_instance: str = ""
+    ) -> None:
         self._wh = warehouse
         self._cache = cache
+        self._servicenow = servicenow_instance.rstrip("/")
 
     def as_of(self) -> date:
         def load() -> date:
@@ -236,6 +241,11 @@ class IncidentService:
                     "sla": sla_status(row, as_of),
                     "risk": breach_risk(risk_rows[0] if risk_rows else {}),
                     "as_of": as_of,
+                    "servicenow_url": (
+                        f"{self._servicenow}/incident.do?sys_id={row['sn_sys_id']}"
+                        if self._servicenow and row.get("sn_sys_id")
+                        else None
+                    ),
                 }
             )
 

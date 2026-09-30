@@ -45,7 +45,10 @@ CREATE TABLE IF NOT EXISTS tickets (
   resolved_at TIMESTAMP,
   close_code STRING,
   close_notes STRING,
-  work_notes STRING COMMENT 'Journal lines: <timestamp> - <author>: <text>'
+  work_notes STRING COMMENT 'Journal lines: <timestamp> - <author>: <text>',
+  origin STRING COMMENT 'app (virtual agent) | servicenow (imported by the connector)',
+  sn_sys_id STRING COMMENT 'Linked ServiceNow incident',
+  sn_number STRING
 );
 
 -- History and live tickets in one shape, read by the incident queue and ticket pages.
@@ -57,7 +60,9 @@ SELECT
   caller_id, assignment_group, assigned_to, reassignment_count, reopen_count, close_code,
   close_notes, work_notes, sla_target_hours, sla_breached, mttr_hours, is_resolved,
   'history' AS source,
-  CAST(NULL AS DOUBLE) AS live_elapsed_hours
+  CAST(NULL AS DOUBLE) AS live_elapsed_hours,
+  CAST(NULL AS STRING) AS sn_number,
+  CAST(NULL AS STRING) AS sn_sys_id
 FROM gold_incident_facts
 
 UNION ALL
@@ -74,7 +79,9 @@ SELECT
   CASE WHEN resolved_at IS NOT NULL THEN elapsed_hours END AS mttr_hours,
   resolved_at IS NOT NULL AS is_resolved,
   'live' AS source,
-  elapsed_hours AS live_elapsed_hours
+  elapsed_hours AS live_elapsed_hours,
+  sn_number,
+  sn_sys_id
 FROM (
   SELECT
     *,

@@ -20,7 +20,9 @@ from app.services.ratelimit import RateLimiter
 from app.services.retrieval import VectorSearchRetriever
 from app.services.reviews import LifecycleWriter
 from app.services.routing import UcRoutingModel
+from app.services.servicenow import ServiceNowClient
 from app.services.summary import TicketSummarizer
+from app.services.sync import ServiceNowConnector
 from app.services.tickets import TicketService
 from app.services.triage import TriageService
 from app.services.warehouse import DatabricksWarehouse
@@ -98,7 +100,11 @@ def get_agent() -> TriageAgent:
 
 @lru_cache
 def get_incident_service() -> IncidentService:
-    return IncidentService(get_warehouse(), TTLCache(get_settings().metrics_cache_ttl_seconds))
+    return IncidentService(
+        get_warehouse(),
+        TTLCache(get_settings().metrics_cache_ttl_seconds),
+        servicenow_instance=get_settings().servicenow_instance,
+    )
 
 
 @lru_cache
@@ -180,8 +186,25 @@ def get_attachment_rate_limiter() -> RateLimiter:
 
 
 @lru_cache
+def get_servicenow_connector() -> ServiceNowConnector | None:
+    """The ServiceNow connector, or None when no instance is configured."""
+    settings = get_settings()
+    password = (
+        settings.servicenow_password.get_secret_value() if settings.servicenow_password else ""
+    )
+    if not (settings.servicenow_instance and settings.servicenow_user and password):
+        return None
+    client = ServiceNowClient(settings.servicenow_instance, settings.servicenow_user, password)
+    return ServiceNowConnector(client)
+
+
+@lru_cache
 def get_ticket_service() -> TicketService:
-    return TicketService(get_warehouse(), get_routing_model(), get_retriever())
+    connector = get_servicenow_connector()
+    svc = TicketService(get_warehouse(), get_routing_model(), get_retriever(), mirror=connector)
+    if connector is not None:
+        connector.tickets = svc
+    return svc
 
 
 @lru_cache

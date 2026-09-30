@@ -11,13 +11,30 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from app.config import get_settings
-from app.deps import NotConfigured, get_metrics_service, get_routing_model
-from app.routes import agent, incidents, knowledge, lifecycle, metrics, quality, tickets, triage
+from app.deps import (
+    NotConfigured,
+    get_metrics_service,
+    get_routing_model,
+    get_servicenow_connector,
+    get_ticket_service,
+)
+from app.routes import (
+    agent,
+    incidents,
+    knowledge,
+    lifecycle,
+    metrics,
+    quality,
+    servicenow,
+    tickets,
+    triage,
+)
 from app.services.ratelimit import RateLimited
 from app.services.routing import ModelNotReady
+from app.services.sync import Poller
 from app.services.warehouse import WarehouseError
 
-VERSION = "0.6.0"
+VERSION = "0.7.0"
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger(__name__)
 
@@ -54,7 +71,20 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         threading.Thread(target=_warm_cache, daemon=True).start()
     if settings.load_routing_model_on_startup:
         threading.Thread(target=_load_routing_model, daemon=True).start()
+    poller = None
+    connector = get_servicenow_connector()
+    if connector is not None:
+        get_ticket_service()  # wires the connector to the ticket service
+        poller = Poller(connector, settings.servicenow_poll_seconds)
+        poller.start()
+        log.info(
+            "servicenow sync every %ss with %s",
+            settings.servicenow_poll_seconds,
+            connector.status().instance,
+        )
     yield
+    if poller is not None:
+        poller.stop()
 
 
 def create_app() -> FastAPI:
@@ -115,6 +145,7 @@ def create_app() -> FastAPI:
     app.include_router(knowledge.router)
     app.include_router(lifecycle.router)
     app.include_router(tickets.router)
+    app.include_router(servicenow.router)
     return app
 
 

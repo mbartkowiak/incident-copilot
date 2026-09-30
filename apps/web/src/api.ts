@@ -106,6 +106,7 @@ export type TicketCreated = {
     subcategory: string | null
     precedent: string | null
   }
+  servicenow_number: string | null
 }
 
 export type LiveTicket = {
@@ -272,6 +273,18 @@ export type IncidentDetail = {
   problem: string | null
   source: 'history' | 'live'
   caller_id: string | null
+  servicenow_number: string | null
+  servicenow_url: string | null
+}
+
+export type ServiceNowStatus = {
+  enabled: boolean
+  instance: string | null
+  last_sync: string | null
+  last_error: string | null
+  imported: number
+  pushed: number
+  updates_applied: number
 }
 
 export type TicketSummary = {

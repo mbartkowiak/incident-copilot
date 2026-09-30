@@ -57,8 +57,13 @@ function Ticket({ t, onChanged }: { t: IncidentDetail; onChanged: () => void }) 
           <Fact label="Category" value={`${t.category ?? ''} / ${t.subcategory ?? ''}`} />
           <Fact label="Channel" value={t.contact_type} />
         </dl>
-        {(t.major_incident || t.problem) && (
+        {(t.major_incident || t.problem || t.servicenow_url) && (
           <div className="links">
+            {t.servicenow_url && (
+              <a className="badge" href={t.servicenow_url} target="_blank" rel="noreferrer">
+                ServiceNow {t.servicenow_number} ↗
+              </a>
+            )}
             {t.major_incident && (
               <a className="badge" data-tone="bad" href={`#/major-incidents/${t.major_incident}`}>
                 Part of major incident {t.major_incident}

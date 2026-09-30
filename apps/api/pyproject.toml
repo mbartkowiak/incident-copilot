@@ -15,6 +15,7 @@ dependencies = [
     "anthropic>=1.9",
     "python-multipart>=0.0.20",
     "tzdata>=2025.2",
+    "requests>=2.32",
 ]
 
 [dependency-groups]
@@ -24,6 +25,7 @@ dev = [
     "ruff>=0.6",
     "mypy>=1.11",
     "pandas-stubs>=3.0.5.260914",
+    "types-requests>=2.33.0.20260906",
 ]
 
 [tool.ruff]
@@ -43,6 +45,8 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 "app/services/intake.py" = ["E501"]
 "app/services/intake_chat.py" = ["E501"]
 "app/services/tickets.py" = ["E501"]  # work-note prose
+"app/services/sync.py" = ["E501"]  # work-note prose and encoded queries
+"app/services/servicenow.py" = ["E501"]
 
 [tool.mypy]
 strict = true

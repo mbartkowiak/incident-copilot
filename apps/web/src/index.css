@@ -1161,6 +1161,18 @@ a.button-link {
   padding: 6px 12px;
 }
 
+.servicenow-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  padding: 10px 14px;
+}
+
+.servicenow-bar button.ghost {
+  margin-left: auto;
+}
+
 /* Review queue */
 .section-title {
   margin-top: 8px;

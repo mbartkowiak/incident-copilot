@@ -14,6 +14,7 @@ import type { SAMPLES } from '../attachments'
 import { AgentPanel } from '../components/AgentPanel'
 import { AttachmentFactsCard, AttachmentPicker } from '../components/Attachments'
 import { ReviewQueue } from '../components/ReviewQueue'
+import { ServiceNowBar } from '../components/ServiceNowBar'
 import { formatHours, formatPercent } from '../format'
 
 const SCENARIOS: { label: string; ticket: TriageRequest }[] = [
@@ -147,6 +148,7 @@ export function TriagePage() {
         the AI agent can investigate and draft a resolution for you to approve.
       </p>
 
+      <ServiceNowBar />
       <ReviewQueue />
 
       <h2 className="section-title">Triage sandbox</h2>
