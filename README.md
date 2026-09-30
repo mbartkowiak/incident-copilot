@@ -7,15 +7,16 @@ AI-assisted IT incident triage and analytics, built end to end: a Databricks Lak
 ## Why
 About a quarter of incidents at a typical enterprise service desk go to the wrong team first, and every reassignment adds hours to resolution. This app predicts the right team, shows how similar incidents were fixed, and drafts a resolution for a person to approve. It also shows IT leaders where incidents are spiking.
 
-## Try it in two minutes
+## Try it: the incident lifecycle in ten minutes
 1. **Overview:** the weekly volume chart highlights planted outages (an email outage in January, a Chicago network outage in March, a VPN regression in May). Hover a bar for the breakdown.
 2. **Triage → "Scanners down at Memphis":** the routing model and semantic search respond instantly: team, confidence, similar past incidents and their fixes, and KB articles.
 3. **Draft with AI:** watch Claude call its tools live, then edit and approve the draft. Approved drafts become searchable precedents.
-4. **Triage → "Vague: can't log in":** low model confidence triggers a review flag, and the agent asks the caller clarifying questions instead of guessing.
-5. **Incidents → any ticket** (try [INC0017396](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0017396)): the lifecycle of one ticket. You get the work-note timeline, the SLA clock, and how often tickets like it breach. A routing check shows whether the model would have avoided the misroute, and Claude writes a handoff note or recap on demand. On [INC0018308](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0018308), **Check knowledge base** finds that the closest article misses this fix and drafts a revision for you to approve. Approved articles flow back into the search the triage agent uses.
-6. **Major incidents → Chicago HQ network outage:** 85 tickets grouped into one incident, with the hourly arrival curve. **Draft review** writes the post-incident review.
-7. **Problems → VPN connection failures:** six weeks of elevated VPN tickets with no single outage behind them. One fix explains 100% of the surge against 34% normally. **Draft problem record** proposes the root cause, a workaround and the permanent fix. Compare with the weak-evidence WAN candidate, where the draft says so.
-8. **Quality:** the agent's eval results, the before/after of an eval-driven prompt fix, and the routing benchmark against Claude.
+4. **Triage → attach "VPN error dialog" → Read attachments with AI:** Claude reads the screenshot. It pulls out the exact error code and the "updated this morning" clue, then suggests a title and description. **Add to ticket & triage** routes the enriched ticket. The "Customer email (PDF)" sample shows sensitive data flagged but not copied.
+5. **Triage → "Vague: can't log in":** low model confidence triggers a review flag, and the agent asks the caller clarifying questions instead of guessing.
+6. **Incidents → any ticket** (try [INC0017396](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0017396)): the lifecycle of one ticket. You get the work-note timeline, the SLA clock, and how often tickets like it breach. A routing check shows whether the model would have avoided the misroute, and Claude writes a handoff note or recap on demand. On [INC0018308](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0018308), **Check knowledge base** finds that the closest article misses this fix and drafts a revision for you to approve. Approved articles flow back into the search the triage agent uses.
+7. **Major incidents → Chicago HQ network outage:** 85 tickets grouped into one incident, with the hourly arrival curve. **Draft review** writes the post-incident review.
+8. **Problems → VPN connection failures:** six weeks of elevated VPN tickets with no single outage behind them. One fix explains 100% of the surge against 34% normally. **Draft problem record** proposes the root cause, a workaround and the permanent fix. Compare with the weak-evidence WAN candidate, where the draft says so.
+9. **Quality:** the agent's eval results, the before/after of an eval-driven prompt fix, and the routing benchmark against Claude.
 
 ## Results
 | | |
@@ -59,6 +60,7 @@ flowchart LR
 
 - **Pipeline:** Lakeflow declarative pipeline (Asset Bundle) with data-quality expectations and PII scrubbing; a refresh job rebuilds RAG sources, syncs the indexes, and derives the major-incident and problem tables.
 - **Routing model:** TF-IDF + logistic regression, time-split evaluation, benchmarked against Claude, served in-process from the registry ([ADR 0002](docs/adr/0002-in-process-routing-model.md)).
+- **Attachment intake:** screenshots and PDFs are read into structured, reviewable facts (error text, device, site, scope). Files are type-checked by content and never stored ([ADR 0008](docs/adr/0008-attachment-intake.md)).
 - **Lifecycle:** incident queue and ticket pages over the gold tables, with a work-note timeline, SLA clock, breach history, routing check and a cached one-call Claude summary.
 - **Major incidents and problems:** SQL in the refresh job groups outage tickets into major incidents and finds sustained surges as problem candidates, graded by how much one fix explains them. Claude drafts the post-incident review and the problem record on demand.
 - **Knowledge loop:** a resolved ticket's fix is checked against the closest KB articles. Claude says it is already documented, or drafts a revision or a new article, with a grounding check on the article it names. Approved drafts are merged into the KB index by the refresh job ([ADR 0006](docs/adr/0006-knowledge-loop.md)).

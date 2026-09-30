@@ -1,8 +1,18 @@
 import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { postJson } from '../api'
-import type { KbArticle, RoutingPrediction, SimilarIncident, TriageRequest, TriageSuggestion } from '../api'
+import { postForm, postJson } from '../api'
+import type {
+  AttachmentReadResponse,
+  KbArticle,
+  RoutingPrediction,
+  SimilarIncident,
+  TriageRequest,
+  TriageSuggestion,
+} from '../api'
+import { addFiles, applyFacts } from '../attachments'
+import type { SAMPLES } from '../attachments'
 import { AgentPanel } from '../components/AgentPanel'
+import { AttachmentFactsCard, AttachmentPicker } from '../components/Attachments'
 import { formatHours, formatPercent } from '../format'
 
 const SCENARIOS: { label: string; ticket: TriageRequest }[] = [
@@ -53,6 +63,48 @@ export function TriagePage() {
   const [error, setError] = useState<string>()
   const [loading, setLoading] = useState(false)
   const inFlight = useRef<AbortController | null>(null)
+  const [files, setFiles] = useState<File[]>([])
+  const [reading, setReading] = useState(false)
+  const [read, setRead] = useState<{ result: AttachmentReadResponse; applied: boolean }>()
+
+  function add(incoming: File[]) {
+    const next = addFiles(files, incoming)
+    setFiles(next.files)
+    setError(next.error)
+  }
+
+  async function addSample(sample: (typeof SAMPLES)[number]) {
+    try {
+      const blob = await (await fetch(`/samples/${sample.file}`)).blob()
+      add([new File([blob], sample.file, { type: sample.type })])
+    } catch {
+      setError(`Couldn't load the sample ${sample.file}.`)
+    }
+  }
+
+  async function readAttachments() {
+    setReading(true)
+    setError(undefined)
+    const form = new FormData()
+    for (const f of files) form.append('files', f)
+    form.append('short_description', ticket.short_description)
+    form.append('description', ticket.description)
+    try {
+      setRead({ result: await postForm<AttachmentReadResponse>('/api/triage/attachments', form), applied: false })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setReading(false)
+    }
+  }
+
+  function applyRead() {
+    if (!read) return
+    const enriched = applyFacts(ticket, read.result.facts)
+    setTicket(enriched)
+    setRead({ ...read, applied: true })
+    void run(enriched)
+  }
 
   async function run(request: TriageRequest) {
     inFlight.current?.abort()
@@ -77,6 +129,8 @@ export function TriagePage() {
 
   function pick(scenario: TriageRequest) {
     setTicket(scenario)
+    setFiles([])
+    setRead(undefined)
     void run(scenario)
   }
 
@@ -85,9 +139,9 @@ export function TriagePage() {
   return (
     <>
       <p className="subtle page-sub">
-        Paste a new ticket. The routing model predicts the resolving team and semantic search finds how similar
-        incidents were fixed, instantly and at no cost. Then the AI agent can investigate and draft a resolution
-        for you to approve.
+        Paste a new ticket, and attach any screenshots or PDFs for Claude to read. The routing model predicts the
+        resolving team and semantic search finds how similar incidents were fixed, instantly and at no cost. Then
+        the AI agent can investigate and draft a resolution for you to approve.
       </p>
 
       <div className="triage">
@@ -109,6 +163,14 @@ export function TriagePage() {
             placeholder="What the caller said"
             onChange={(e) => setTicket({ ...ticket, description: e.target.value })}
           />
+          <AttachmentPicker
+            files={files}
+            onAdd={add}
+            onRemove={(name) => setFiles(files.filter((f) => f.name !== name))}
+            onSample={(s) => void addSample(s)}
+            onRead={() => void readAttachments()}
+            reading={reading}
+          />
           <button type="submit" className="primary" disabled={!canSubmit}>
             {loading ? 'Analyzing…' : 'Suggest triage'}
           </button>
@@ -129,7 +191,16 @@ export function TriagePage() {
               {error}
             </div>
           )}
-          {!result && !error && (
+          {read && (
+            <AttachmentFactsCard
+              result={read.result}
+              applied={read.applied}
+              onApply={applyRead}
+              onDismiss={() => setRead(undefined)}
+            />
+          )}
+          {reading && <div className="card empty">Reading attachments…</div>}
+          {!result && !error && !read && !reading && (
             <div className="card empty">{loading ? 'Analyzing…' : 'Results appear here.'}</div>
           )}
           {result && (

@@ -33,9 +33,10 @@ def call_structured[T: BaseModel](
     effort: str,
     system: str,
     schema: dict[str, Any],
-    prompt: str,
+    prompt: str | list[dict[str, Any]],
     output: type[T],
 ) -> StructuredResult[T]:
+    """`prompt` is the user turn: text, or content blocks when it carries images or PDFs."""
     started = time.perf_counter()
     response = messages.create(
         model=model,

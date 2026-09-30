@@ -82,6 +82,9 @@ The baseline showed the agent asking the caller questions on nearly half of the 
 
 Known limit: resolved golden tickets are also in the precedent index, so retrieval is easier than for a truly new ticket. Paraphrased golden tickets would make the set harder.
 
+## Attachment intake
+On the Triage page a dispatcher can attach up to three screenshots, photos or PDFs (5 MB each). `POST /api/triage/attachments` checks each file's type by its content, then makes one structured Claude call with the files as image or PDF blocks. It returns the verbatim error text, device, application, site, scope, start time, a suggested title and a description addition, and it names any sensitive data it saw without copying it. After review, **Add to ticket & triage** feeds the enriched text to routing, search and the agent. Files are never stored. About 1.3-2¢ and 6-9 s per read. See [ADR 0008](adr/0008-attachment-intake.md).
+
 ## Incident lifecycle
 The Incidents tab lists tickets from `gold_incident_facts` (filters: status, priority, team, SLA breached, number or text) and opens each one with:
 - **Work-note journal**: parsed from the ServiceNow-style `work_notes` field into acknowledgement, investigation, reassignment, on-hold and resolution entries. The team a ticket went to first comes from its first reassignment note.
@@ -115,7 +118,7 @@ filter event = "triage_feedback"
 | stats count(*) as decisions, sum(team_changed) as team_overrides by decision
 
 # One-call AI documents: volume, spend and failures
-filter event in ["ticket_summary", "kb_draft", "incident_review", "problem_record"]
+filter event in ["attachment_read", "ticket_summary", "kb_draft", "incident_review", "problem_record"]
 | stats count(*) as calls, sum(cost_usd) as cost, avg(latency_s) as avg_s by event, outcome
 
 # What the knowledge check finds, and what engineers approve

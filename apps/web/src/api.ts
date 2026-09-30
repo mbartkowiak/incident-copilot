@@ -76,6 +76,27 @@ export type KbArticle = {
   score: number
 }
 
+export type AttachmentFacts = {
+  attachment_summary: string
+  error_messages: string[]
+  device_or_asset: string
+  application: string
+  site: string
+  scope: string
+  first_seen: string
+  suggested_short_description: string
+  description_addendum: string
+  sensitive_data: string[]
+}
+
+export type AttachmentReadResponse = {
+  facts: AttachmentFacts
+  files: { name: string; media_type: string; bytes: number }[]
+  model: string
+  cost_usd: number
+  latency_s: number
+}
+
 export type TriageSuggestion = {
   routing: RoutingPrediction
   similar_incidents: SimilarIncident[]
@@ -340,6 +361,10 @@ async function parse<T>(res: Response): Promise<T> {
 
 export async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   return parse<T>(await fetch(`${API_URL}${path}`, { signal }))
+}
+
+export async function postForm<T>(path: string, form: FormData, signal?: AbortSignal): Promise<T> {
+  return parse<T>(await fetch(`${API_URL}${path}`, { method: 'POST', body: form, signal }))
 }
 
 export async function postJson<T>(path: string, body: unknown, signal?: AbortSignal): Promise<T> {

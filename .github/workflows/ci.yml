@@ -158,5 +158,7 @@ jobs:
             --cache-control "public,max-age=31536000,immutable"
           aws s3 cp dist/index.html "s3://${{ vars.WEB_BUCKET }}/index.html" --cache-control "no-cache"
           aws s3 cp dist/favicon.svg "s3://${{ vars.WEB_BUCKET }}/favicon.svg"
+          # Sample attachments for the Triage page; unhashed, so revalidate daily.
+          aws s3 sync dist/samples "s3://${{ vars.WEB_BUCKET }}/samples" --cache-control "public,max-age=86400"
       - name: Invalidate CloudFront
         run: aws cloudfront create-invalidation --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" --paths /index.html

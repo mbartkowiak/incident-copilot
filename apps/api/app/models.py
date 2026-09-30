@@ -130,6 +130,39 @@ class TriageFeedback(BaseModel):
     agent_model: str = Field(max_length=64)
 
 
+Site = Literal["Chicago HQ", "Dallas DC", "Atlanta DC", "Memphis DC", "Toronto Office", "Remote"]
+Scope = Literal["single user", "several users", "whole site", "multiple sites", "unknown"]
+
+
+class AttachmentFacts(BaseModel):
+    """What Claude read from a ticket's attachments (mirrors app.services.intake.FACTS_SCHEMA)."""
+
+    attachment_summary: str
+    error_messages: list[str]
+    device_or_asset: str
+    application: str
+    site: Site | Literal[""]
+    scope: Scope
+    first_seen: str
+    suggested_short_description: str
+    description_addendum: str
+    sensitive_data: list[str]
+
+
+class AttachmentInfo(BaseModel):
+    name: str
+    media_type: str
+    bytes: int
+
+
+class AttachmentReadResponse(BaseModel):
+    facts: AttachmentFacts
+    files: list[AttachmentInfo]
+    model: str
+    cost_usd: float
+    latency_s: float
+
+
 class TriageSuggestion(BaseModel):
     routing: RoutingPrediction
     similar_incidents: list[SimilarIncident]

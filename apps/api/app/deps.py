@@ -11,6 +11,7 @@ from app.services.activity import ActivityService
 from app.services.cache import TTLCache
 from app.services.feedback import WarehouseFeedbackStore
 from app.services.incidents import IncidentService
+from app.services.intake import AttachmentReader
 from app.services.knowledge import KbDrafter, WarehouseKbDraftStore
 from app.services.lifecycle import LifecycleService
 from app.services.metrics import MetricsService
@@ -154,6 +155,25 @@ def get_review_rate_limiter() -> RateLimiter:
         per_client_window_s=settings.summary_client_window_s,
         daily=settings.summary_runs_per_day,
         what="AI reviews",
+    )
+
+
+@lru_cache
+def get_attachment_reader() -> AttachmentReader:
+    settings = get_settings()
+    return AttachmentReader(
+        get_messages_client(), model=settings.summary_model, effort=settings.summary_effort
+    )
+
+
+@lru_cache
+def get_attachment_rate_limiter() -> RateLimiter:
+    settings = get_settings()
+    return RateLimiter(
+        per_client=settings.summary_runs_per_client,
+        per_client_window_s=settings.summary_client_window_s,
+        daily=settings.summary_runs_per_day,
+        what="attachment reads",
     )
 
 

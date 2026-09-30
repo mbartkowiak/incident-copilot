@@ -17,7 +17,7 @@ from app.services.ratelimit import RateLimited
 from app.services.routing import ModelNotReady
 from app.services.warehouse import WarehouseError
 
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger(__name__)
 

@@ -520,6 +520,14 @@ button.chip {
   cursor: pointer;
 }
 
+/* Pinned so elements injected by browser extensions can't push results to a new row. */
+@media (min-width: 861px) {
+  .triage-results {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
 .triage-results {
   display: flex;
   flex-direction: column;
@@ -1016,6 +1024,79 @@ a {
 
 .summary .draft-summary {
   margin-top: 8px;
+}
+
+.attachments {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px dashed var(--axis);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attachments-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.field-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.attachments .subtle {
+  font-size: 12px;
+}
+
+.file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.file-list li {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--grid);
+  font-size: 13px;
+}
+
+.file-name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+button.link-button {
+  font: inherit;
+  font-size: 12px;
+  color: var(--series-1);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.attachment-actions,
+.sample-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.error-text code {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.compact-facts {
+  margin-top: 10px;
 }
 
 .links {
