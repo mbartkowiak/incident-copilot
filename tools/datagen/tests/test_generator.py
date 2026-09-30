@@ -127,6 +127,35 @@ def test_vague_tickets_share_wording_across_teams(ds: Dataset) -> None:
     assert any(len(groups) >= 3 for groups in groups_by_text.values())
 
 
+NOTE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - ([^:]+): (.+)$")
+
+
+def test_work_notes_are_a_chronological_journal(ds: Dataset) -> None:
+    defects = {g["number"]: g["defects"] for g in ds.ground_truth}
+    resolved = [
+        i
+        for i in ds.incidents
+        if i["resolved_at"] and "resolved_before_opened" not in defects[i["number"]]
+    ]
+    for inc in resolved:
+        lines = inc["work_notes"].split("\n")
+        stamps = [_ts(NOTE_RE.fullmatch(line).group(1)) for line in lines]  # type: ignore[union-attr]
+        assert stamps == sorted(stamps), inc["number"]
+        assert _ts(inc["opened_at"]) <= stamps[0]
+        assert stamps[-1] == _ts(inc["resolved_at"])
+        assert lines[-1].endswith("Resolved. See close notes.")
+    # Enough detail to summarize: most tickets carry investigation steps, some go on hold.
+    assert sum("Working KB" in i["work_notes"] for i in resolved) / len(resolved) > 0.9
+    assert any("On Hold" in i["work_notes"] for i in resolved)
+
+
+def test_in_progress_tickets_have_notes(ds: Dataset) -> None:
+    for inc in ds.incidents:
+        if inc["state"] in {"In Progress", "On Hold"}:
+            assert inc["work_notes"], inc["number"]
+            assert inc["assigned_to"] in inc["work_notes"]
+
+
 def test_pii_is_injected_and_tracked(ds: Dataset) -> None:
     pii_numbers = {g["number"] for g in ds.ground_truth if g["has_pii"]}
     assert 0.03 < len(pii_numbers) / len(ds.ground_truth) < 0.10

@@ -471,7 +471,7 @@ def _make_incident(
     }
 
     if resolved_at > ctx.as_of:
-        _fill_open(ctx, record, opened, initial_group, priority)
+        _fill_open(ctx, record, arch, opened, initial_group, priority)
     else:
         _fill_resolved(
             ctx, record, arch, opened, resolved_at, route, priority, fill, resolution_index
@@ -481,16 +481,24 @@ def _make_incident(
 
 
 def _fill_open(
-    ctx: _Context, record: dict[str, Any], opened: datetime, group: str, priority: int
+    ctx: _Context,
+    record: dict[str, Any],
+    arch: Archetype,
+    opened: datetime,
+    group: str,
+    priority: int,
 ) -> None:
     rng = ctx.rng
     age = ctx.as_of - opened
     is_new = age < timedelta(hours=1)
+    state = "New" if is_new else rng.choice(["In Progress", "In Progress", "On Hold"])
+    assignee = None if is_new else rng.choice(ctx.agents[group]).name
+    updated = opened + (age * rng.uniform(0.1, 0.9))
     record.update(
         {
-            "state": "New" if is_new else rng.choice(["In Progress", "In Progress", "On Hold"]),
+            "state": state,
             "assignment_group": group,
-            "assigned_to": None if is_new else rng.choice(ctx.agents[group]).name,
+            "assigned_to": assignee,
             "reassignment_count": 0,
             "reopen_count": 0,
             "resolved_at": None,
@@ -499,9 +507,13 @@ def _fill_open(
             "close_notes": None,
             "made_sla": age.total_seconds() / 3600 <= ref.SLA_HOURS[priority],
             "work_notes": None,
-            "sys_updated_on": (opened + (age * rng.uniform(0.1, 0.9))).strftime(TS_FORMAT),
+            "sys_updated_on": updated.strftime(TS_FORMAT),
         }
     )
+    if assignee is not None:
+        record["work_notes"] = _open_journal(
+            ctx, record, arch, opened, updated, group, assignee, state
+        )
 
 
 def _fill_resolved(
@@ -525,15 +537,15 @@ def _fill_resolved(
     is_closed = closed_at <= ctx.as_of
     resolver = rng.choice(ctx.agents[arch.group])
 
-    notes: list[str] = []
+    notes: list[tuple[datetime, str, str]] = []
     elapsed = resolved_at - opened
     for hop, (current, nxt) in enumerate(zip(route, route[1:], strict=False)):
         when = opened + elapsed * (hop + 1) / (len(route) + 1)
         who = rng.choice(ctx.agents[current]).name
-        notes.append(
-            f"{when.strftime(TS_FORMAT)} - {who}: Not a {current} issue. Reassigning to {nxt}."
-        )
-    notes.append(f"{resolved_at.strftime(TS_FORMAT)} - {resolver.name}: Resolved. See close notes.")
+        notes.append((when, who, f"Not a {current} issue. Reassigning to {nxt}."))
+    notes.extend(_resolved_journal(ctx, record, arch, opened, resolved_at, route, resolver))
+    notes.append((resolved_at, resolver.name, "Resolved. See close notes."))
+    notes.sort(key=lambda n: n[0])
 
     mttr_hours = elapsed.total_seconds() / 3600
     record.update(
@@ -548,10 +560,90 @@ def _fill_resolved(
             "close_code": _weighted(rng, ref.CLOSE_CODES),
             "close_notes": close_notes,
             "made_sla": mttr_hours <= ref.SLA_HOURS[priority],
-            "work_notes": "\n".join(notes),
+            "work_notes": "\n".join(_note(*n) for n in notes),
             "sys_updated_on": (closed_at if is_closed else resolved_at).strftime(TS_FORMAT),
         }
     )
+
+
+def _note(when: datetime, who: str, text: str) -> str:
+    return f"{when.strftime(TS_FORMAT)} - {who}: {text}"
+
+
+def _journal_rng(record: dict[str, Any]) -> random.Random:
+    # Work-note detail draws from its own per-ticket stream so adding it leaves every other
+    # generated field, and therefore the evals and embeddings built on them, unchanged.
+    return random.Random(f"journal:{record['sys_id']}")
+
+
+def _resolved_journal(
+    ctx: _Context,
+    record: dict[str, Any],
+    arch: Archetype,
+    opened: datetime,
+    resolved_at: datetime,
+    route: list[str],
+    resolver: Person,
+) -> list[tuple[datetime, str, str]]:
+    """Acknowledgement, investigation and on-hold notes around the reassignment hops."""
+    rng = _journal_rng(record)
+    elapsed = resolved_at - opened
+    first_owner = resolver.name if len(route) == 1 else rng.choice(ctx.agents[route[0]]).name
+    notes = [(opened + elapsed * rng.uniform(0.02, 0.08), first_owner, rng.choice(ACK_NOTES))]
+
+    # The resolving team's work happens after the last reassignment.
+    start = (len(route) - 1) / (len(route) + 1) + 0.05
+    kb = ctx.kb_by_archetype[arch.id]
+    steps = rng.sample(arch.kb.steps, k=min(len(arch.kb.steps), rng.choice((1, 2, 2))))
+    fractions = sorted(rng.uniform(start, 0.9) for _ in steps)
+    for fraction, step in zip(fractions, steps, strict=True):
+        notes.append((opened + elapsed * fraction, resolver.name, f"Working {kb}: {step}"))
+
+    if elapsed > timedelta(hours=8) and rng.random() < 0.25:
+        hold, resume = sorted(rng.uniform(start, 0.93) for _ in range(2))
+        notes.append((opened + elapsed * hold, resolver.name, rng.choice(HOLD_NOTES)))
+        notes.append((opened + elapsed * resume, resolver.name, rng.choice(RESUME_NOTES)))
+    return notes
+
+
+def _open_journal(
+    ctx: _Context,
+    record: dict[str, Any],
+    arch: Archetype,
+    opened: datetime,
+    updated: datetime,
+    group: str,
+    assignee: str,
+    state: str,
+) -> str:
+    rng = _journal_rng(record)
+    span = updated - opened
+    notes = [(opened + span * rng.uniform(0.05, 0.3), assignee, rng.choice(ACK_NOTES))]
+    if group == arch.group:
+        step = rng.choice(arch.kb.steps)
+        kb = ctx.kb_by_archetype[arch.id]
+        notes.append((opened + span * rng.uniform(0.35, 0.8), assignee, f"Working {kb}: {step}"))
+    if state == "On Hold":
+        notes.append((updated, assignee, rng.choice(HOLD_NOTES)))
+    return "\n".join(_note(*n) for n in sorted(notes, key=lambda n: n[0]))
+
+
+ACK_NOTES = (
+    "Acknowledged. Reviewing the ticket details.",
+    "Picked up. Contacting the caller to confirm scope.",
+    "Assigned to me. Checking recent changes and related tickets.",
+    "Acknowledged. Reproducing the issue.",
+)
+HOLD_NOTES = (
+    "Waiting on the caller to confirm a time to test. Placing On Hold.",
+    "Left a voicemail for the caller. On Hold pending response.",
+    "Waiting on vendor response. Placing On Hold.",
+)
+RESUME_NOTES = (
+    "Caller responded. Resuming work.",
+    "Vendor replied with a fix. Resuming.",
+    "Reached the caller. Continuing troubleshooting.",
+)
 
 
 def _inject_defects(rng: random.Random, drafts: list[_Draft]) -> list[dict[str, Any]]:
