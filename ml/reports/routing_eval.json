@@ -6,7 +6,27 @@
   "tfidf_logreg": {
     "accuracy": 0.9507008216529724,
     "macro_f1": 0.9343260173878788,
-    "p50_latency_s": 0.0022222999978112057,
+    "p50_latency_s": 0.002214450010797009,
     "cost_per_1k_usd": 0.0
+  },
+  "tfidf_logreg_on_llm_sample": {
+    "accuracy": 0.955,
+    "macro_f1": 0.9463707061942215
+  },
+  "claude-opus-5": {
+    "accuracy": 0.915,
+    "macro_f1": 0.9446993293036094,
+    "p50_latency_s": 1.7956130000238772,
+    "p95_latency_s": 3.0105611000035424,
+    "cost_per_1k_usd": 5.1884,
+    "unparseable": 0
+  },
+  "claude-haiku-4-5": {
+    "accuracy": 0.87,
+    "macro_f1": 0.8890835300812417,
+    "p50_latency_s": 0.7304157000035048,
+    "p95_latency_s": 1.1177548000123352,
+    "cost_per_1k_usd": 0.610405,
+    "unparseable": 0
   }
 }

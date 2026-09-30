@@ -25,7 +25,7 @@
 | Synthetic source data | `tools/datagen` (stdlib Python) | Done |
 | Bronze/silver/gold | Lakeflow declarative pipeline via Asset Bundle (`pipelines/`) | Deployed; all 5 planted events detected in `gold_hotspots` |
 | RAG index | Databricks Vector Search, managed `databricks-gte-large-en` embeddings, delta-sync on precedent + KB tables ([ADR 0003](adr/0003-precedent-level-vector-index.md)) | Live |
-| Routing model | TF-IDF + logistic regression, MLflow tracking, Unity Catalog registry, served in-process ([ADR 0002](adr/0002-in-process-routing-model.md)) | Live; Claude comparison pending |
+| Routing model | TF-IDF + logistic regression, MLflow tracking, Unity Catalog registry, served in-process ([ADR 0002](adr/0002-in-process-routing-model.md)); benchmarked against Claude Opus 5 and Haiku 4.5 | Live |
 | API | FastAPI, Pydantic, services behind interfaces | Metrics + `/api/triage/suggest` |
 | Agent | Claude tool calling: similar incidents, KB search, predict group, allowlisted metric queries, ServiceNow writeback | Phase 4 |
 | Frontend | React + TypeScript + Vite | Overview dashboard + Triage workbench |
@@ -46,11 +46,22 @@
 ## Routing model results
 Time-based split: trained on incidents opened before 2026-07-01 (6,190), tested on the following ~3 months (2,069). Reproduce with `cd ml && uv run python -m routing.train`.
 
+Full test set (2,069 tickets):
+
 | Approach | Accuracy | Macro-F1 | Latency (p50) | Cost / 1k tickets |
 |---|---|---|---|---|
 | Human first assignment (today) | 75.6% | — | minutes | analyst time |
 | TF-IDF + logistic regression (champion v2) | **95.1%** | 0.93 | 2 ms | ~$0 |
-| Claude zero-shot (Opus 5, Haiku 4.5) | pending | | | |
+
+Same 200-ticket random sample for all three (Claude zero-shot with structured output, team descriptions in the system prompt):
+
+| Approach | Accuracy | Macro-F1 | Latency (p50 / p95) | Cost / 1k tickets |
+|---|---|---|---|---|
+| TF-IDF + logistic regression | **95.5%** | **0.946** | 2 ms | ~$0 |
+| Claude Opus 5 | 91.5% | 0.945 | 1.8 s / 3.0 s | $5.19 |
+| Claude Haiku 4.5 | 87.0% | 0.889 | 0.7 s / 1.1 s | $0.61 |
+
+**Decision:** route with the trained model. It is more accurate, about 1,000× faster and effectively free per ticket. Claude Opus 5 matches it on macro-F1 with *no training data*, which makes it the right fallback for new categories or a cold start before labeled history exists. Claude is used where language understanding pays off instead: reading precedents and drafting resolutions in the triage agent (Phase 4).
 
 Errors concentrate on vague tickets ("everything is slow", "can't log in"). Predictions below 60% confidence are flagged for human confirmation in the UI.
 
