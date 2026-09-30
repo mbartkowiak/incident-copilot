@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS incident_precedents (
   close_notes STRING,
   category STRING,
   subcategory STRING,
-  assignment_group STRING COMMENT 'Team that most often resolved it',
+  assignment_group STRING COMMENT 'Team that resolved the example ticket',
   location STRING,
   priority_label STRING,
   mttr_hours DOUBLE COMMENT 'Average across occurrences',
@@ -73,11 +73,13 @@ USING (
     max_by(close_notes, opened_at) AS close_notes,
     max_by(category, opened_at) AS category,
     max_by(subcategory, opened_at) AS subcategory,
-    mode(assignment_group) AS assignment_group,
+    -- Team, fix and KB all come from the same example ticket so they never contradict each
+    -- other (vague problem statements are resolved by different teams over time).
+    max_by(assignment_group, opened_at) AS assignment_group,
     max_by(location, opened_at) AS location,
     max_by(priority_label, opened_at) AS priority_label,
     avg(mttr_hours) AS mttr_hours,
-    mode(kb_reference) AS kb_reference,
+    max_by(kb_reference, opened_at) AS kb_reference,
     count(*) AS occurrences,
     max(opened_at) AS last_seen
   FROM incident_docs
@@ -85,7 +87,12 @@ USING (
 ) s
 ON t.precedent_id = s.precedent_id
 -- Only touch rows whose content changed, so syncs don't re-embed unchanged precedents.
-WHEN MATCHED AND (t.number <> s.number OR t.occurrences <> s.occurrences) THEN UPDATE SET *
+WHEN MATCHED AND (
+  t.number <> s.number
+  OR t.occurrences <> s.occurrences
+  OR NOT (t.assignment_group <=> s.assignment_group)
+  OR NOT (t.kb_reference <=> s.kb_reference)
+) THEN UPDATE SET *
 WHEN NOT MATCHED THEN INSERT *
 WHEN NOT MATCHED BY SOURCE THEN DELETE;
 
