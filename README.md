@@ -55,4 +55,4 @@ cd infra/terraform && terraform init && terraform plan   # infra changes are app
 ```
 
 ## Built with AI coding tools
-This project is developed with Claude Code. `CLAUDE.md` holds the project conventions the agent follows. Tests, type checks and (from Phase 5) evals in CI are the quality gate for all code, whether written by hand or by AI.
+This project is developed with Claude Code. `CLAUDE.md` holds the project conventions the agent follows. Tests, type checks, CI and agent evals are the quality gate for all code, whether written by hand or by AI. See [docs/ai-workflow.md](docs/ai-workflow.md) for the working method and the problems verification caught along the way.
