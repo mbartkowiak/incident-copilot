@@ -31,6 +31,7 @@ const SUBCATEGORY_LABELS: Record<string, string> = {
   certificate: 'Expired TLS certificate',
   handheld: 'Handheld scanners not syncing',
   wireless: 'Wi-Fi drops',
+  wan: 'Slow internet (WAN)',
   sap: 'SAP performance',
   wms: 'WMS wave release',
 }

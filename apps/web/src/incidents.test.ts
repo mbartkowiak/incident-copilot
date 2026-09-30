@@ -1,12 +1,32 @@
 import { describe, expect, it } from 'vitest'
 import type { RoutingPrediction } from './api'
-import { describeSla, parseRoute, routingVerdict } from './incidents'
+import { describeSla, fillHours, parseRoute, routingVerdict } from './incidents'
+
+describe('fillHours', () => {
+  it('fills quiet hours with zeros across a day boundary', () => {
+    expect(
+      fillHours([
+        { hour: '2026-08-18T22:00:00', opened: 5 },
+        { hour: '2026-08-19T01:00:00', opened: 2 },
+      ]),
+    ).toEqual([
+      { hour: '2026-08-18T22:00:00', opened: 5 },
+      { hour: '2026-08-18T23:00:00', opened: 0 },
+      { hour: '2026-08-19T00:00:00', opened: 0 },
+      { hour: '2026-08-19T01:00:00', opened: 2 },
+    ])
+    expect(fillHours([])).toEqual([])
+  })
+})
 
 describe('parseRoute', () => {
   it('reads a page and an optional ticket number', () => {
     expect(parseRoute('#/incidents')).toEqual({ page: 'incidents' })
     expect(parseRoute('#/incidents/inc0017396')).toEqual({ page: 'incidents', number: 'INC0017396' })
     expect(parseRoute('#/incidents/not-a-ticket')).toEqual({ page: 'incidents' })
+    expect(parseRoute('#/major-incidents/MI20260310-lan')).toEqual({ page: 'major-incidents', number: 'MI20260310-lan' })
+    expect(parseRoute('#/problems/PRB20260504-vpn')).toEqual({ page: 'problems', number: 'PRB20260504-vpn' })
+    expect(parseRoute('#/problems/INC0017396')).toEqual({ page: 'problems' })
     expect(parseRoute('')).toEqual({ page: '' })
   })
 })

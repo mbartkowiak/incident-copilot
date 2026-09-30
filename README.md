@@ -13,7 +13,9 @@ About a quarter of incidents at a typical enterprise service desk go to the wron
 3. **Draft with AI:** watch Claude call its tools live, then edit and approve the draft. Approved drafts become searchable precedents.
 4. **Triage → "Vague: can't log in":** low model confidence triggers a review flag, and the agent asks the caller clarifying questions instead of guessing.
 5. **Incidents → any ticket** (try [INC0017396](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0017396)): the lifecycle of one ticket. You get the work-note timeline, the SLA clock, and how often tickets like it breach. A routing check shows whether the model would have avoided the misroute, and Claude writes a handoff note or recap on demand. On [INC0018308](https://d1fjhcqqwngd2n.cloudfront.net/#/incidents/INC0018308), **Check knowledge base** finds that the closest article misses this fix and drafts a revision for you to approve. Approved articles flow back into the search the triage agent uses.
-6. **Quality:** the agent's eval results, the before/after of an eval-driven prompt fix, and the routing benchmark against Claude.
+6. **Major incidents → Chicago HQ network outage:** 85 tickets grouped into one incident, with the hourly arrival curve. **Draft review** writes the post-incident review.
+7. **Problems → VPN connection failures:** six weeks of elevated VPN tickets with no single outage behind them. One fix explains 100% of the surge against 34% normally. **Draft problem record** proposes the root cause, a workaround and the permanent fix. Compare with the weak-evidence WAN candidate, where the draft says so.
+8. **Quality:** the agent's eval results, the before/after of an eval-driven prompt fix, and the routing benchmark against Claude.
 
 ## Results
 | | |
@@ -24,6 +26,8 @@ About a quarter of incidents at a typical enterprise service desk go to the wron
 | Agent cost / latency | ~$0.06 and ~13 s per ticket, streamed live |
 | Why routing matters | P1/P2 tickets misrouted first breached their SLA **70%** of the time vs 11% when routed right |
 | SLA risk | Smoothed historical lookup beat a trained classifier on urgent tickets (AUC 0.69 vs 0.62), so the lookup ships ([ADR 0005](docs/adr/0005-sla-risk-lookup-over-classifier.md)) |
+| Major-incident detection | All 4 planted outages found, ticket membership precision ≥0.99 and recall 1.00 against ground truth ([ADR 0007](docs/adr/0007-major-incidents-and-problems.md)) |
+| Problem detection | Planted 6-week VPN client regression found with strong evidence (top fix 100% of surge vs 34% usually) |
 
 Details: [docs/architecture.md](docs/architecture.md) (routing benchmark, eval tables, observability queries).
 
@@ -53,9 +57,10 @@ flowchart LR
   API -->|dispatcher decisions| FB
 ```
 
-- **Pipeline:** Lakeflow declarative pipeline (Asset Bundle) with data-quality expectations and PII scrubbing; a refresh job rebuilds RAG sources and syncs the indexes.
+- **Pipeline:** Lakeflow declarative pipeline (Asset Bundle) with data-quality expectations and PII scrubbing; a refresh job rebuilds RAG sources, syncs the indexes, and derives the major-incident and problem tables.
 - **Routing model:** TF-IDF + logistic regression, time-split evaluation, benchmarked against Claude, served in-process from the registry ([ADR 0002](docs/adr/0002-in-process-routing-model.md)).
 - **Lifecycle:** incident queue and ticket pages over the gold tables, with a work-note timeline, SLA clock, breach history, routing check and a cached one-call Claude summary.
+- **Major incidents and problems:** SQL in the refresh job groups outage tickets into major incidents and finds sustained surges as problem candidates, graded by how much one fix explains them. Claude drafts the post-incident review and the problem record on demand.
 - **Knowledge loop:** a resolved ticket's fix is checked against the closest KB articles. Claude says it is already documented, or drafts a revision or a new article, with a grounding check on the article it names. Approved drafts are merged into the KB index by the refresh job ([ADR 0006](docs/adr/0006-knowledge-loop.md)).
 - **Agent:** manual tool loop with read-only tools, structured output, citation grounding checks, SSE streaming, human approval, and per-client/daily cost caps ([ADR 0004](docs/adr/0004-triage-agent-design.md)).
 - **Quality:** unit tests across all components, deterministic agent evals with thresholds, and one structured telemetry record per agent run in CloudWatch.
@@ -68,7 +73,7 @@ Decision records: [docs/adr/](docs/adr/).
 | `apps/api` | FastAPI backend, triage agent (`app/agent`), agent evals (`evals/`) |
 | `apps/web` | React + TypeScript frontend |
 | `tools/datagen` | Deterministic synthetic ServiceNow-shaped data generator |
-| `pipelines` | Databricks Asset Bundle: medallion pipeline, RAG source tables, Vector Search sync job |
+| `pipelines` | Databricks Asset Bundle: medallion pipeline, RAG source tables, Vector Search sync, major-incident and problem detection |
 | `ml` | Routing model training, evaluation vs Claude, MLflow tracking, Unity Catalog registration; SLA-risk estimator comparison |
 | `infra/terraform` | AWS: ECS Fargate API behind an ALB, S3 + CloudFront, Secrets Manager, GitHub OIDC deploy role |
 | `docs` | Architecture, decision records, AI workflow, demo script |

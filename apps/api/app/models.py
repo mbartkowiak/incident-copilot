@@ -152,6 +152,7 @@ class IncidentRow(BaseModel):
     is_resolved: bool
     sla_breached: bool
     mttr_hours: float | None
+    close_notes: str | None = None
 
 
 class IncidentList(BaseModel):
@@ -210,6 +211,8 @@ class IncidentDetail(BaseModel):
     sla: SlaStatus
     risk: BreachRisk
     as_of: date
+    major_incident: str | None = None
+    problem: str | None = None
 
 
 class TicketSummary(BaseModel):
@@ -220,6 +223,109 @@ class TicketSummary(BaseModel):
     actions_taken: list[str]
     next_step: str
     watch_outs: list[str]
+
+
+class HourCount(BaseModel):
+    hour: datetime
+    opened: int
+
+
+class WeekCount(BaseModel):
+    week: date
+    tickets: int
+
+
+class MajorIncident(BaseModel):
+    """A same-day volume spike in one subcategory (and site, when one site dominates)."""
+
+    mi_id: str
+    day: date
+    subcategory: str
+    category: str | None
+    site: str | None
+    started_at: datetime
+    restored_at: datetime | None
+    tickets: int
+    baseline_daily: float
+    spike_ratio: float
+    worst_priority: str
+    locations: list[str]
+    resolving_groups: list[str]
+    sla_breaches: int
+    avg_mttr_hours: float | None
+    top_fix: str | None
+
+
+class MajorIncidentDetail(BaseModel):
+    incident: MajorIncident
+    timeline: list[HourCount]
+    tickets: list[IncidentRow]
+
+
+Evidence = Literal["strong", "moderate", "weak"]
+
+
+class ProblemCandidate(BaseModel):
+    """A sustained volume surge in one subcategory, with the fix that dominated it."""
+
+    problem_id: str
+    subcategory: str
+    category: str | None
+    first_week: date
+    last_week: date
+    weeks: int
+    tickets: int
+    baseline_weekly: float | None
+    excess_tickets: int | None
+    hours_to_resolve: float | None
+    sla_breaches: int
+    locations: list[str]
+    resolving_groups: list[str]
+    top_fix: str | None
+    top_fix_share: float | None
+    top_fix_usual_share: float | None
+    major_incident: str | None
+    evidence: Evidence
+
+
+class ProblemDetail(BaseModel):
+    problem: ProblemCandidate
+    weekly: list[WeekCount]
+    tickets: list[IncidentRow]
+
+
+class IncidentReview(BaseModel):
+    """Claude's post-incident review draft (mirrors app.services.reviews.REVIEW_SCHEMA)."""
+
+    headline: str
+    impact: str
+    timeline: list[str]
+    root_cause: str
+    resolution: str
+    follow_ups: list[str]
+
+
+class ProblemRecord(BaseModel):
+    """Claude's problem record draft (mirrors app.services.reviews.PROBLEM_SCHEMA)."""
+
+    title: str
+    problem_statement: str
+    root_cause_hypothesis: str
+    evidence: list[str]
+    workaround: str
+    permanent_fix: str
+    next_steps: list[str]
+
+
+class AiDocument[T: BaseModel](BaseModel):
+    """A cached AI-written document with its cost."""
+
+    id: str
+    document: T
+    model: str
+    cost_usd: float
+    latency_s: float
+    cached: bool
 
 
 KbAction = Literal["none", "update", "new"]

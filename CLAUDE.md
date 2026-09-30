@@ -6,7 +6,7 @@ AI-assisted ITSM triage and analytics: ServiceNow-style incident data → Databr
 - `apps/api` — FastAPI backend (Python 3.12, uv). `app/` code, `tests/` pytest.
 - `apps/web` — React + TypeScript + Vite SPA.
 - `tools/datagen` — deterministic synthetic ITSM data generator (stdlib only).
-- `pipelines` — Databricks Asset Bundle: Lakeflow declarative pipeline (bronze → silver → gold), plus the `refresh-lakehouse` job (pipeline → RAG source tables → Vector Search sync).
+- `pipelines` — Databricks Asset Bundle: Lakeflow declarative pipeline (bronze → silver → gold), plus the `refresh-lakehouse` job (pipeline → RAG source tables → Vector Search sync, and in parallel `lifecycle.sql` → major incidents and problem candidates).
 - `ml` — routing model: training, evaluation vs human routing and Claude, MLflow/Unity Catalog registration.
 - `infra/terraform` — AWS infrastructure (applied manually; CI only deploys app code).
 - `docs` — architecture, ADRs, AI workflow notes.

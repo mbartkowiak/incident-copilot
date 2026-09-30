@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { postJson } from '../api'
 import type { IncidentDetail, TicketSummaryResponse, TriageSuggestion, WorkNote } from '../api'
+import { Fact } from '../components/Facts'
 import { KnowledgeCard } from '../components/KnowledgeCard'
 import { formatHours, formatPercent } from '../format'
 import { ROUTING_TRAIN_CUTOFF, describeSla, formatDateTime, routingVerdict } from '../incidents'
@@ -47,6 +48,20 @@ function Ticket({ t }: { t: IncidentDetail }) {
           <Fact label="Category" value={`${t.category ?? ''} / ${t.subcategory ?? ''}`} />
           <Fact label="Channel" value={t.contact_type} />
         </dl>
+        {(t.major_incident || t.problem) && (
+          <div className="links">
+            {t.major_incident && (
+              <a className="badge" data-tone="bad" href={`#/major-incidents/${t.major_incident}`}>
+                Part of major incident {t.major_incident}
+              </a>
+            )}
+            {t.problem && (
+              <a className="badge" href={`#/problems/${t.problem}`}>
+                Linked problem {t.problem}
+              </a>
+            )}
+          </div>
+        )}
       </header>
 
       <div className="ticket">
@@ -72,15 +87,6 @@ function Ticket({ t }: { t: IncidentDetail }) {
         </aside>
       </div>
     </>
-  )
-}
-
-function Fact({ label, value }: { label: string; value: string | null }) {
-  return (
-    <div>
-      <dt>{label}</dt>
-      <dd>{value ?? '—'}</dd>
-    </div>
   )
 }
 

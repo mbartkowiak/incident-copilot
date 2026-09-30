@@ -67,8 +67,11 @@ SELECT
   sla_target_hours,
   sla_breached,
   mttr_hours,
-  is_resolved
-FROM gold_incident_facts
+  is_resolved,
+  (SELECT min(m.mi_id) FROM major_incident_members m WHERE m.number = f.number)
+    AS major_incident,
+  (SELECT min(p.problem_id) FROM problem_members p WHERE p.number = f.number) AS problem
+FROM gold_incident_facts f
 WHERE number = :number
 """
 

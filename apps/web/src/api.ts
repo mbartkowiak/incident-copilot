@@ -144,6 +144,7 @@ export type IncidentRow = {
   is_resolved: boolean
   sla_breached: boolean
   mttr_hours: number | null
+  close_notes?: string | null
 }
 
 export type IncidentList = { as_of: string; incidents: IncidentRow[] }
@@ -191,6 +192,8 @@ export type IncidentDetail = {
   sla: SlaStatus
   risk: BreachRisk
   as_of: string
+  major_incident: string | null
+  problem: string | null
 }
 
 export type TicketSummary = {
@@ -204,6 +207,88 @@ export type TicketSummary = {
 export type TicketSummaryResponse = {
   number: string
   summary: TicketSummary
+  model: string
+  cost_usd: number
+  latency_s: number
+  cached: boolean
+}
+
+export type MajorIncident = {
+  mi_id: string
+  day: string
+  subcategory: string
+  category: string | null
+  site: string | null
+  started_at: string
+  restored_at: string | null
+  tickets: number
+  baseline_daily: number
+  spike_ratio: number
+  worst_priority: string
+  locations: string[]
+  resolving_groups: string[]
+  sla_breaches: number
+  avg_mttr_hours: number | null
+  top_fix: string | null
+}
+
+export type MajorIncidentDetail = {
+  incident: MajorIncident
+  timeline: { hour: string; opened: number }[]
+  tickets: IncidentRow[]
+}
+
+export type Evidence = 'strong' | 'moderate' | 'weak'
+
+export type ProblemCandidate = {
+  problem_id: string
+  subcategory: string
+  category: string | null
+  first_week: string
+  last_week: string
+  weeks: number
+  tickets: number
+  baseline_weekly: number | null
+  excess_tickets: number | null
+  hours_to_resolve: number | null
+  sla_breaches: number
+  locations: string[]
+  resolving_groups: string[]
+  top_fix: string | null
+  top_fix_share: number | null
+  top_fix_usual_share: number | null
+  major_incident: string | null
+  evidence: Evidence
+}
+
+export type ProblemDetail = {
+  problem: ProblemCandidate
+  weekly: { week: string; tickets: number }[]
+  tickets: IncidentRow[]
+}
+
+export type IncidentReview = {
+  headline: string
+  impact: string
+  timeline: string[]
+  root_cause: string
+  resolution: string
+  follow_ups: string[]
+}
+
+export type ProblemRecord = {
+  title: string
+  problem_statement: string
+  root_cause_hypothesis: string
+  evidence: string[]
+  workaround: string
+  permanent_fix: string
+  next_steps: string[]
+}
+
+export type AiDocument<T> = {
+  id: string
+  document: T
   model: string
   cost_usd: number
   latency_s: number

@@ -12,9 +12,11 @@ from app.services.cache import TTLCache
 from app.services.feedback import WarehouseFeedbackStore
 from app.services.incidents import IncidentService
 from app.services.knowledge import KbDrafter, WarehouseKbDraftStore
+from app.services.lifecycle import LifecycleService
 from app.services.metrics import MetricsService
 from app.services.ratelimit import RateLimiter
 from app.services.retrieval import VectorSearchRetriever
+from app.services.reviews import LifecycleWriter
 from app.services.routing import UcRoutingModel
 from app.services.summary import TicketSummarizer
 from app.services.triage import TriageService
@@ -128,6 +130,30 @@ def get_kb_rate_limiter() -> RateLimiter:
         per_client_window_s=settings.summary_client_window_s,
         daily=settings.summary_runs_per_day,
         what="AI knowledge drafts",
+    )
+
+
+@lru_cache
+def get_lifecycle_service() -> LifecycleService:
+    return LifecycleService(get_warehouse(), TTLCache(get_settings().metrics_cache_ttl_seconds))
+
+
+@lru_cache
+def get_lifecycle_writer() -> LifecycleWriter:
+    settings = get_settings()
+    return LifecycleWriter(
+        get_messages_client(), model=settings.summary_model, effort=settings.summary_effort
+    )
+
+
+@lru_cache
+def get_review_rate_limiter() -> RateLimiter:
+    settings = get_settings()
+    return RateLimiter(
+        per_client=settings.summary_runs_per_client,
+        per_client_window_s=settings.summary_client_window_s,
+        daily=settings.summary_runs_per_day,
+        what="AI reviews",
     )
 
 

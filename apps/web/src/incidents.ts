@@ -4,9 +4,16 @@ import { formatHours, formatPercent } from './format'
 export type Route = { page: string; number?: string }
 
 // #/incidents/INC0017396 opens one ticket; everything else is a top-level page id.
+const RECORD_ID: Record<string, RegExp> = {
+  incidents: /^INC\d{7}$/i,
+  'major-incidents': /^MI\d{8}-[a-z-]+$/,
+  problems: /^PRB\d{8}-[a-z-]+$/,
+}
+
 export function parseRoute(hash: string): Route {
-  const [page = '', number] = hash.replace(/^#\/?/, '').split('/')
-  return number && /^INC\d{7}$/i.test(number) ? { page, number: number.toUpperCase() } : { page }
+  const [page = '', id] = hash.replace(/^#\/?/, '').split('/')
+  const valid = id !== undefined && RECORD_ID[page]?.test(id)
+  return valid ? { page, number: page === 'incidents' ? id.toUpperCase() : id } : { page }
 }
 
 // Timestamps have no timezone: they are the company's local time, shown as-is.
@@ -29,6 +36,23 @@ export function describeSla(sla: SlaStatus, resolved: boolean): SlaView {
   }
   if (resolved) return { fraction, tone: 'good', label: `Met with ${formatHours(gap)} to spare` }
   return { fraction, tone: 'neutral', label: `${formatHours(gap)} left` }
+}
+
+const pad = (n: number) => String(n).padStart(2, '0')
+const localIso = (d: Date) =>
+  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:00:00`
+
+// Hourly counts arrive only for hours that had tickets; fill the quiet hours with zeros.
+export function fillHours(points: { hour: string; opened: number }[]): { hour: string; opened: number }[] {
+  if (points.length === 0) return []
+  const counts = new Map(points.map((p) => [localIso(new Date(p.hour)), p.opened]))
+  const sorted = [...counts.keys()].sort()
+  const out: { hour: string; opened: number }[] = []
+  for (let t = new Date(sorted[0]); localIso(t) <= sorted[sorted.length - 1]; t.setHours(t.getHours() + 1)) {
+    const key = localIso(t)
+    out.push({ hour: key, opened: counts.get(key) ?? 0 })
+  }
+  return out
 }
 
 // The champion routing model was trained on tickets opened before this date.

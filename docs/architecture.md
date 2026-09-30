@@ -91,6 +91,16 @@ The Incidents tab lists tickets from `gold_incident_facts` (filters: status, pri
 - **AI handoff note / recap**: `POST /api/incidents/{number}/summary`, one structured-output call to Claude Opus 5.5 at low effort (~$0.01, 6-9 s). Summaries are cached per ticket, and only fresh ones count against a per-client and daily limit.
 - **Knowledge check** (resolved tickets): `POST /api/incidents/{number}/kb-draft` compares the fix with the three closest KB articles and returns `none`, `update` (a revised article) or `new`. An approved draft goes to `kb_drafts` via `POST /api/knowledge/drafts`. See the knowledge loop below and [ADR 0006](adr/0006-knowledge-loop.md).
 
+## Major incidents and problems
+`refresh-lakehouse` runs `pipelines/src/lifecycle.sql` after the medallion pipeline, in parallel with the RAG sources task. It rebuilds `major_incidents`, `major_incident_members`, `problem_candidates` and `problem_members` ([ADR 0007](adr/0007-major-incidents-and-problems.md)).
+
+| | Rule | Found in current data |
+|---|---|---|
+| Major incident | Daily subcategory volume ≥10 and ≥5× trailing 28-day average; site-scoped when one site has ≥80% | The 4 planted outages; member precision ≥0.99, recall 1.00 |
+| Problem candidate | 4-week volume ≥15 and ≥2.5× the 12-week baseline; surge = consecutive weeks at ≥2× | 6: the 4 outages, the GlobalProtect regression (strong evidence), a WAN rise (weak) |
+
+The Major incidents and Problems tabs list them. Their detail pages show hourly or weekly charts and member tickets, plus a Claude draft on demand: a post-incident review (`POST /api/major-incidents/{id}/review`) or a problem record (`POST /api/problems/{id}/record`). Each costs 2-3¢, is cached per record, and is rate-limited like the other AI calls.
+
 ## Observability
 Each agent run, ticket summary, knowledge draft and human decision writes one JSON line (`app/telemetry.py`) to the ECS task's CloudWatch log group, `/ecs/incident-copilot-api`. Logs Insights discovers the fields automatically:
 
@@ -104,8 +114,8 @@ filter event = "agent_run"
 filter event = "triage_feedback"
 | stats count(*) as decisions, sum(team_changed) as team_overrides by decision
 
-# Ticket summaries and knowledge drafts: volume, spend and failures
-filter event in ["ticket_summary", "kb_draft"]
+# One-call AI documents: volume, spend and failures
+filter event in ["ticket_summary", "kb_draft", "incident_review", "problem_record"]
 | stats count(*) as calls, sum(cost_usd) as cost, avg(latency_s) as avg_s by event, outcome
 
 # What the knowledge check finds, and what engineers approve

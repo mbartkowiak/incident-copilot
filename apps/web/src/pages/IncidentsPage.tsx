@@ -2,8 +2,8 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { GROUPS } from '../api'
 import type { IncidentList } from '../api'
-import { formatDate, formatHours } from '../format'
-import { formatDateTime } from '../incidents'
+import { IncidentTable } from '../components/IncidentTable'
+import { formatDate } from '../format'
 import { useApi } from '../useApi'
 
 const STATUSES = [
@@ -105,51 +105,10 @@ export function IncidentsPage() {
           {list.data.incidents.length === 0 ? (
             <p className="empty">No incidents match these filters.</p>
           ) : (
-            <div className="table-scroll table-tall">
-              <table className="data-table incident-table">
-                <thead>
-                  <tr>
-                    <th>Number</th>
-                    <th>Opened</th>
-                    <th>Priority</th>
-                    <th>Short description</th>
-                    <th>Team</th>
-                    <th>State</th>
-                    <th>SLA</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {list.data.incidents.map((i) => (
-                    <tr key={i.number}>
-                      <td>
-                        <a href={`#/incidents/${i.number}`}>{i.number}</a>
-                      </td>
-                      <td className="num">{formatDateTime(i.opened_at)}</td>
-                      <td>{i.priority_label}</td>
-                      <td className="wrap">{i.short_description}</td>
-                      <td>{i.assignment_group}</td>
-                      <td>{i.state}</td>
-                      <td>
-                        <SlaBadge breached={i.sla_breached} resolved={i.is_resolved} mttr={i.mttr_hours} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <IncidentTable incidents={list.data.incidents} />
           )}
         </div>
       )}
     </>
-  )
-}
-
-function SlaBadge({ breached, resolved, mttr }: { breached: boolean; resolved: boolean; mttr: number | null }) {
-  if (breached) return <span className="badge" data-tone="bad">Breached</span>
-  if (!resolved) return <span className="badge">Running</span>
-  return (
-    <span className="badge" data-tone="good" title={`Resolved in ${formatHours(mttr)}`}>
-      Met
-    </span>
   )
 }
