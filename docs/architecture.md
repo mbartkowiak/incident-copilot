@@ -65,6 +65,23 @@ Same 200-ticket random sample for all three (Claude zero-shot with structured ou
 
 Errors concentrate on vague tickets ("everything is slow", "can't log in"). Predictions below 60% confidence are flagged for human confirmation in the UI.
 
+## Agent evals
+`apps/api/evals/`: 30 golden tickets from the held-out months (2 per team plus 10 vague), with known team and expected KB article from the generator's ground truth. Deterministic checks, no LLM judge. `uv run python -m evals.run` (~$1.80) exits non-zero below the thresholds in `evals/run.py`.
+
+| Metric | Baseline | After prompt fix |
+|---|---|---|
+| Team accuracy, clear tickets | 100% | 100% |
+| Team accuracy, vague tickets | 60% | 60% |
+| Citations grounded in retrieved data | 100% | 100% |
+| Expected KB article cited (clear) | 100% | 100% |
+| Clarifying questions on vague tickets | 100% | 100% |
+| Clarifying questions on clear tickets (noise) | **45%** | **0%** |
+| Cost / latency (p50) per ticket | $0.059 / 14.3 s | $0.059 / 13.0 s |
+
+The baseline showed the agent asking the caller questions on nearly half of the clear tickets. One prompt change, scoped to "questions only when the answer would change the team or first step", removed that with no regressions, and a ceiling on that rate is now part of the gate. Vague-ticket misses mostly fall back to Service Desk, which is also what a human dispatcher does.
+
+Known limit: resolved golden tickets are also in the precedent index, so retrieval is easier than for a truly new ticket. Paraphrased golden tickets would make the set harder.
+
 ## Agent memory loop
 Dispatcher approve/edit/reject → `POST /api/triage/feedback` → `triage_feedback` (the only table the API may write) → `refresh-lakehouse` merges approved drafts into `incident_docs` as `FB-` precedents → vector index sync. Later triages retrieve the human-corrected answers.
 

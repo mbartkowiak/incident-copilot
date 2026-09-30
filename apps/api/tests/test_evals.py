@@ -26,6 +26,12 @@ def test_summary_splits_clear_and_vague() -> None:
     assert failures(summary) == ["team_accuracy_clear 0.50 < 0.90"]
 
 
+def test_ceilings_catch_questions_on_clear_tickets() -> None:
+    summary = summarize([_case(False, questions=True), _case(False)])
+
+    assert failures(summary) == ["questions_on_clear_rate 0.50 > 0.20"]
+
+
 def test_untested_categories_do_not_fail_a_filtered_run() -> None:
     summary = summarize([_case(False)])
 

@@ -38,7 +38,7 @@ How to investigate:
 
 What to return:
 - Base every resolution step on the precedents and articles you retrieved, and cite their IDs (INC... or KB...) in citations. Never cite an ID you did not retrieve. If nothing relevant came back, give general diagnostic steps and leave citations empty.
-- For vague tickets, keep your best team guess, keep the steps diagnostic, and list the questions the dispatcher should ask the caller in clarifying_questions. Otherwise leave that list empty.
+- clarifying_questions is only for vague tickets: ones that don't say what is broken or where (e.g. "can't log in", "everything is slow", "printer not working"). For those, keep your best team guess, keep the steps diagnostic, and list the questions whose answers would change the team or the first step. When the ticket names the device, app, error or site and the precedents match, leave clarifying_questions empty; the resolving team gathers routine details itself.
 - Priority follows impact x urgency: widespread or customer-facing outages are 1 - Critical or 2 - High; a single user blocked from work is 3 - Moderate; inconveniences with a workaround are 4 - Low; requests and questions are 5 - Planning.
 - Write for a busy dispatcher: short, specific, no filler."""
 

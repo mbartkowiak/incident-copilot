@@ -22,11 +22,13 @@ from app.deps import get_agent, get_routing_model
 from app.models import TriageRequest
 
 HERE = Path(__file__).parent
+# Keys ending in _max are ceilings on the metric without the suffix; the rest are floors.
 THRESHOLDS = {
     "team_accuracy_clear": 0.90,
     "grounded_rate": 0.95,
     "expected_kb_cited_rate_clear": 0.70,
     "questions_on_vague_rate": 0.80,
+    "questions_on_clear_rate_max": 0.20,
     "error_rate_max": 0.05,
 }
 
@@ -106,15 +108,15 @@ def summarize(results: list[CaseResult]) -> dict[str, float | None]:
 
 def failures(summary: dict[str, float | None]) -> list[str]:
     out = []
-    for key, minimum in THRESHOLDS.items():
-        if key == "error_rate_max":
+    for key, limit in THRESHOLDS.items():
+        metric = key.removesuffix("_max")
+        value = summary[metric]
+        if value is None:
             continue
-        value = summary[key]
-        if value is not None and value < minimum:
-            out.append(f"{key} {value:.2f} < {minimum:.2f}")
-    error_rate = summary["error_rate"] or 0.0
-    if error_rate > THRESHOLDS["error_rate_max"]:
-        out.append(f"error_rate {error_rate:.2f} > {THRESHOLDS['error_rate_max']:.2f}")
+        if key.endswith("_max") and value > limit:
+            out.append(f"{metric} {value:.2f} > {limit:.2f}")
+        elif not key.endswith("_max") and value < limit:
+            out.append(f"{metric} {value:.2f} < {limit:.2f}")
     return out
 
 
