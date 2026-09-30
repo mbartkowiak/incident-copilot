@@ -18,10 +18,16 @@ WHERE is_resolved
 
 def load_incidents(client: WorkspaceClient, warehouse_id: str) -> pd.DataFrame:
     """Resolved incidents with the final (correct) resolver group as the label."""
+    df = query(client, warehouse_id, INCIDENTS_SQL)
+    df["opened_at"] = pd.to_datetime(df["opened_at"], utc=True).dt.tz_convert(None)
+    df["was_reassigned"] = df["was_reassigned"] == "true"
+    return df.sort_values("opened_at").reset_index(drop=True)
+
+
+def query(client: WorkspaceClient, warehouse_id: str, sql: str) -> pd.DataFrame:
+    """Run a statement on a SQL warehouse; every value comes back as a string."""
     api = client.statement_execution
-    resp = api.execute_statement(
-        statement=INCIDENTS_SQL, warehouse_id=warehouse_id, wait_timeout="30s"
-    )
+    resp = api.execute_statement(statement=sql, warehouse_id=warehouse_id, wait_timeout="30s")
     while resp.status and resp.status.state in (StatementState.PENDING, StatementState.RUNNING):
         time.sleep(1)
         assert resp.statement_id
@@ -35,10 +41,7 @@ def load_incidents(client: WorkspaceClient, warehouse_id: str) -> pd.DataFrame:
         assert resp.statement_id
         rows.extend(api.get_statement_result_chunk_n(resp.statement_id, chunk).data_array or [])
 
-    df = pd.DataFrame(rows, columns=columns)
-    df["opened_at"] = pd.to_datetime(df["opened_at"], utc=True).dt.tz_convert(None)
-    df["was_reassigned"] = df["was_reassigned"] == "true"
-    return df.sort_values("opened_at").reset_index(drop=True)
+    return pd.DataFrame(rows, columns=columns)
 
 
 def time_split(df: pd.DataFrame, cutoff: str) -> tuple[pd.DataFrame, pd.DataFrame]:

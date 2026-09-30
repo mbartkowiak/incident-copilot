@@ -1,0 +1,52 @@
+{
+  "cutoff": "2026-07-01",
+  "train_rows": 6190,
+  "test_rows": 2069,
+  "breach_rate": 0.04,
+  "urgent_test_rows": 272,
+  "urgent_breach_rate": 0.294,
+  "all_tickets": {
+    "priority_only": {
+      "roc_auc": 0.946,
+      "average_precision": 0.285,
+      "brier": 0.0289
+    },
+    "subcategory_priority_lookup": {
+      "roc_auc": 0.967,
+      "average_precision": 0.464,
+      "brier": 0.0257
+    },
+    "logistic_regression": {
+      "roc_auc": 0.96,
+      "average_precision": 0.392,
+      "brier": 0.0284
+    }
+  },
+  "p1_p2_only": {
+    "priority_only": {
+      "roc_auc": 0.486,
+      "average_precision": 0.289,
+      "brier": 0.2128
+    },
+    "subcategory_priority_lookup": {
+      "roc_auc": 0.688,
+      "average_precision": 0.47,
+      "brier": 0.1878
+    },
+    "logistic_regression": {
+      "roc_auc": 0.616,
+      "average_precision": 0.397,
+      "brier": 0.2084
+    }
+  },
+  "p1_p2_breach_by_routing": {
+    "routed_right": {
+      "breach_rate": 0.114,
+      "tickets": 806
+    },
+    "misrouted": {
+      "breach_rate": 0.696,
+      "tickets": 355
+    }
+  }
+}
