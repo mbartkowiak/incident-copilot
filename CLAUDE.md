@@ -9,6 +9,7 @@ AI-assisted ITSM triage and analytics: ServiceNow-style incident data → Databr
 - `pipelines` — Databricks Asset Bundle: Lakeflow declarative pipeline (bronze → silver → gold), plus the `refresh-lakehouse` job (pipeline → RAG source tables → Vector Search sync, and in parallel `lifecycle.sql` → major incidents and problem candidates).
 - `ml` — routing model: training, evaluation vs human routing and Claude, MLflow/Unity Catalog registration.
 - `infra/terraform` — AWS infrastructure (applied manually; CI only deploys app code).
+- `servicenow-app` — ServiceNow scoped app `x_67971_copilot` (ServiceNow SDK / Fluent). `npm run build`, then `npx now-sdk install --auth pdi` (credential alias `pdi` = the developer instance; the `dev` alias points at an old instance). Commit `src/fluent/generated/keys.ts`; never delete Fluent records without deciding whether the deletion should propagate.
 - `docs` — architecture, ADRs, AI workflow notes.
 
 ## Commands

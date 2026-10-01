@@ -63,7 +63,7 @@ flowchart LR
 - **Pipeline:** Lakeflow declarative pipeline (Asset Bundle) with data-quality expectations and PII scrubbing; a refresh job rebuilds RAG sources, syncs the indexes, and derives the major-incident and problem tables.
 - **Routing model:** TF-IDF + logistic regression, time-split evaluation, benchmarked against Claude, served in-process from the registry ([ADR 0002](docs/adr/0002-in-process-routing-model.md)).
 - **Conversational intake and live tickets:** an employee chats with the virtual agent. It asks at most two questions, proposes the ticket, and the ticket is written to a Delta `tickets` table and triaged on creation: auto-assigned when the routing model is confident, otherwise queued for a dispatcher. A view unions live tickets with history, so every page and AI feature works on both ([ADR 0009](docs/adr/0009-conversational-intake-and-live-tickets.md)).
-- **ServiceNow connector:** live tickets sync with a ServiceNow instance through the Table API. Tickets raised in ServiceNow are imported and triaged, and the copilot writes back a work note and the team. App tickets and dispatcher actions flow to ServiceNow, and changes made there flow back ([ADR 0010](docs/adr/0010-servicenow-connector.md)).
+- **ServiceNow connector:** live tickets sync with a ServiceNow instance through the Table API. Tickets raised in ServiceNow are imported and triaged, and the copilot writes back a work note and the team. App tickets and dispatcher actions flow to ServiceNow, and changes made there flow back. A ServiceNow scoped app (`servicenow-app/`, built with the ServiceNow SDK in Fluent) pushes new incidents to the copilot in seconds through a Business Rule and adds a **Copilot** button to the incident form ([ADR 0010](docs/adr/0010-servicenow-connector.md)).
 - **Attachment intake:** screenshots and PDFs are read into structured, reviewable facts (error text, device, site, scope). Files are type-checked by content and never stored ([ADR 0008](docs/adr/0008-attachment-intake.md)).
 - **Lifecycle:** incident queue and ticket pages over the gold tables, with a work-note timeline, SLA clock, breach history, routing check and a cached one-call Claude summary.
 - **Major incidents and problems:** SQL in the refresh job groups outage tickets into major incidents and finds sustained surges as problem candidates, graded by how much one fix explains them. Claude drafts the post-incident review and the problem record on demand.
@@ -82,6 +82,7 @@ Decision records: [docs/adr/](docs/adr/).
 | `pipelines` | Databricks Asset Bundle: medallion pipeline, RAG source tables, Vector Search sync, major-incident and problem detection |
 | `ml` | Routing model training, evaluation vs Claude, MLflow tracking, Unity Catalog registration; SLA-risk estimator comparison |
 | `infra/terraform` | AWS: ECS Fargate API behind an ALB, S3 + CloudFront, Secrets Manager, GitHub OIDC deploy role |
+| `servicenow-app` | ServiceNow scoped app (Fluent): Business Rule event push, outbound REST message, Copilot form button |
 | `docs` | Architecture, decision records, AI workflow, demo script |
 
 ## Quick start
