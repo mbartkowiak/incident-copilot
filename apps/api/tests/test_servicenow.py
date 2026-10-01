@@ -353,3 +353,57 @@ def test_status_endpoint_reports_the_connector(connector: ServiceNowConnector) -
 
     assert body["enabled"] is True
     assert body["instance"] == INSTANCE
+
+
+SECRET_SYS_ID = "a" * 32
+
+
+def test_events_import_one_incident_and_ignore_linked_ones(
+    connector: ServiceNowConnector, sn: FakeServiceNow, tickets: FakeTickets
+) -> None:
+    sn.queries[f"sys_id={SECRET_SYS_ID}"] = [servicenow_incident(sys_id=ref(SECRET_SYS_ID))]
+
+    assert connector.import_one(SECRET_SYS_ID) == "INC1000001"
+    assert connector.import_one(SECRET_SYS_ID) is None  # already linked
+    assert connector.import_one("b" * 32) is None  # unknown or inactive
+    assert len(tickets.rows) == 1
+
+
+def test_event_endpoint_requires_the_shared_secret(
+    connector: ServiceNowConnector, sn: FakeServiceNow, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.config import get_settings
+    from app.deps import get_ticket_rate_limiter
+    from app.services.ratelimit import RateLimiter
+
+    sn.queries[f"sys_id={SECRET_SYS_ID}"] = [servicenow_incident(sys_id=ref(SECRET_SYS_ID))]
+    app = create_app()
+    app.dependency_overrides[get_servicenow_connector] = lambda: connector
+    app.dependency_overrides[get_ticket_rate_limiter] = lambda: RateLimiter(10, 600, 100)
+    client = TestClient(app)
+    body = {"sys_id": SECRET_SYS_ID}
+
+    # No secret configured: events are refused outright.
+    assert client.post("/api/servicenow/events", json=body).status_code == 503
+
+    monkeypatch.setenv("SERVICENOW_WEBHOOK_SECRET", "s3cret")
+    get_settings.cache_clear()
+    try:
+        assert client.post("/api/servicenow/events", json=body).status_code == 401
+        wrong = {"x-copilot-secret": "nope"}
+        assert client.post("/api/servicenow/events", json=body, headers=wrong).status_code == 401
+        ok = client.post(
+            "/api/servicenow/events", json=body, headers={"x-copilot-secret": "s3cret"}
+        )
+        assert ok.status_code == 202
+        assert ok.json() == {"status": "imported", "number": "INC1000001"}
+        bad = {"sys_id": "not-a-sys-id"}
+        assert (
+            client.post(
+                "/api/servicenow/events", json=bad, headers={"x-copilot-secret": "s3cret"}
+            ).status_code
+            == 422
+        )
+    finally:
+        monkeypatch.delenv("SERVICENOW_WEBHOOK_SECRET")
+        get_settings.cache_clear()

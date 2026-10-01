@@ -45,6 +45,10 @@ class Settings(BaseSettings):
         default=None, validation_alias="SERVICENOW_PASSWORD"
     )
     servicenow_poll_seconds: float = 60
+    # Shared secret the ServiceNow Business Rule sends with incident events.
+    servicenow_webhook_secret: SecretStr | None = Field(
+        default=None, validation_alias="SERVICENOW_WEBHOOK_SECRET"
+    )
     # Serverless warehouses auto-stop; warming absorbs the ~20s cold start before users arrive.
     warm_cache_on_startup: bool = False
     load_routing_model_on_startup: bool = True

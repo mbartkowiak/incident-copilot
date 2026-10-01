@@ -211,47 +211,61 @@ class ServiceNowConnector:
             )
 
     def _import_new(self) -> None:
-        assert self.tickets is not None
         query = f"active=true^correlation_idISEMPTY^sys_created_onRELATIVEGT{IMPORT_WINDOW}^ORDERBYsys_created_on"
         for inc in self._sn.incidents(query, limit=20):
-            sys_id = value(inc["sys_id"])
-            if self.tickets.by_servicenow_id(sys_id):
-                continue
-            ticket = TicketFields(
-                caller=display(inc["caller_id"])[:100],
-                location=display(inc["location"])[:100],
-                contact_type=value(inc["contact_type"])[:40],
-                short_description=(value(inc["short_description"]) or "(no short description)")[
-                    :200
-                ],
-                description=value(inc["description"])[:4000],
-                impact=_level(value(inc["impact"])),
-                urgency=_level(value(inc["urgency"])),
+            self._import(inc)
+
+    def import_one(self, sn_sys_id: str) -> str | None:
+        """Import one incident now, as pushed by the ServiceNow Business Rule. Returns the
+        app's ticket number, or None when it is unknown, inactive or already linked."""
+        assert self.tickets is not None
+        if self.tickets.by_servicenow_id(sn_sys_id):
+            return None
+        with self._lock:  # don't race the poller importing the same incident
+            rows = self._sn.incidents(
+                f"sys_id={sn_sys_id}^active=true^correlation_idISEMPTY", limit=1
             )
-            sn_number = value(inc["number"])
-            created = self.tickets.create(
-                ticket, origin="servicenow", sn_sys_id=sys_id, sn_number=sn_number
-            )
-            triage = created.triage
-            fields: dict[str, Any] = {
-                "correlation_id": created.number,
-                "correlation_display": CORRELATION_DISPLAY,
-                "work_notes": self._triage_work_note(triage),
-            }
-            # Only fill what nobody in ServiceNow has chosen: an empty group, the default category.
-            if triage.mode == "auto" and not value(inc["assignment_group"]):
-                fields.update(self._references("", "", triage.suggested_group))
-            if triage.category and value(inc.get("category")) in ("", DEFAULT_CATEGORY):
-                fields["category"] = triage.category
-            self._sn.update_incident(sys_id, fields)
-            self._counts["imported"] += 1
-            telemetry.emit(
-                "servicenow_imported",
-                number=created.number,
-                sn_number=sn_number,
-                mode=triage.mode,
-                confidence=triage.confidence,
-            )
+            return self._import(rows[0]) if rows else None
+
+    def _import(self, inc: dict[str, Any]) -> str | None:
+        assert self.tickets is not None
+        sys_id = value(inc["sys_id"])
+        if self.tickets.by_servicenow_id(sys_id):
+            return None
+        ticket = TicketFields(
+            caller=display(inc["caller_id"])[:100],
+            location=display(inc["location"])[:100],
+            contact_type=value(inc["contact_type"])[:40],
+            short_description=(value(inc["short_description"]) or "(no short description)")[:200],
+            description=value(inc["description"])[:4000],
+            impact=_level(value(inc["impact"])),
+            urgency=_level(value(inc["urgency"])),
+        )
+        sn_number = value(inc["number"])
+        created = self.tickets.create(
+            ticket, origin="servicenow", sn_sys_id=sys_id, sn_number=sn_number
+        )
+        triage = created.triage
+        fields: dict[str, Any] = {
+            "correlation_id": created.number,
+            "correlation_display": CORRELATION_DISPLAY,
+            "work_notes": self._triage_work_note(triage),
+        }
+        # Only fill what nobody in ServiceNow has chosen: an empty group, the default category.
+        if triage.mode == "auto" and not value(inc["assignment_group"]):
+            fields.update(self._references("", "", triage.suggested_group))
+        if triage.category and value(inc.get("category")) in ("", DEFAULT_CATEGORY):
+            fields["category"] = triage.category
+        self._sn.update_incident(sys_id, fields)
+        self._counts["imported"] += 1
+        telemetry.emit(
+            "servicenow_imported",
+            number=created.number,
+            sn_number=sn_number,
+            mode=triage.mode,
+            confidence=triage.confidence,
+        )
+        return created.number
 
     @staticmethod
     def _triage_work_note(triage: TriageOutcome) -> str:

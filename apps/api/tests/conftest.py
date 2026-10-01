@@ -10,5 +10,6 @@ for name in (
     "SERVICENOW_INSTANCE",
     "SERVICENOW_USER",
     "SERVICENOW_PASSWORD",
+    "SERVICENOW_WEBHOOK_SECRET",
 ):
     os.environ[name] = ""
