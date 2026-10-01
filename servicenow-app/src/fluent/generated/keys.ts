@@ -69,6 +69,34 @@ declare global {
                         table: 'sys_module'
                         id: 'aac709955988481aaa045656e060ed6c'
                     }
+                    'priv-properties': {
+                        table: 'sys_scope_privilege'
+                        id: 'a4e6de5383e34318e8035529feaad3a8'
+                    }
+                    'priv-read-incident': {
+                        table: 'sys_scope_privilege'
+                        id: '700b125f83e34318e8035529feaad3e2'
+                    }
+                    'priv-rest-body': {
+                        table: 'sys_scope_privilege'
+                        id: 'd8f6129383e34318e8035529feaad311'
+                    }
+                    'priv-rest-execute': {
+                        table: 'sys_scope_privilege'
+                        id: '38e6de5383e34318e8035529feaad3ec'
+                    }
+                    'priv-rest-param': {
+                        table: 'sys_scope_privilege'
+                        id: 'b4e6de5383e34318e8035529feaad3b3'
+                    }
+                    'priv-rest-status': {
+                        table: 'sys_scope_privilege'
+                        id: '10f6129383e34318e8035529feaad30e'
+                    }
+                    'priv-rest-timeout': {
+                        table: 'sys_scope_privilege'
+                        id: '7ce6de5383e34318e8035529feaad3e8'
+                    }
                 }
                 composite: [
                     {
