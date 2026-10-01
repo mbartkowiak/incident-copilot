@@ -60,6 +60,12 @@ variable "servicenow_password_secret_name" {
   default     = "incident-copilot/servicenow-password"
 }
 
+variable "servicenow_webhook_secret_name" {
+  description = "Secrets Manager secret holding the shared secret ServiceNow sends with incident events"
+  type        = string
+  default     = "incident-copilot/servicenow-webhook-secret"
+}
+
 variable "databricks_client_secret_name" {
   description = "Secrets Manager secret holding the SP OAuth secret (created out-of-band so it never enters state)"
   type        = string

@@ -31,6 +31,10 @@ data "aws_secretsmanager_secret" "servicenow_password" {
   name = var.servicenow_password_secret_name
 }
 
+data "aws_secretsmanager_secret" "servicenow_webhook_secret" {
+  name = var.servicenow_webhook_secret_name
+}
+
 resource "aws_cloudwatch_log_group" "api" {
   name              = "/ecs/${var.project}-api"
   retention_in_days = 14
@@ -73,6 +77,7 @@ resource "aws_iam_role_policy" "task_execution_secrets" {
         data.aws_secretsmanager_secret.databricks_client_secret.arn,
         data.aws_secretsmanager_secret.anthropic_api_key.arn,
         data.aws_secretsmanager_secret.servicenow_password.arn,
+        data.aws_secretsmanager_secret.servicenow_webhook_secret.arn,
       ]
     }]
   })
@@ -119,6 +124,7 @@ resource "aws_ecs_task_definition" "api" {
       { name = "DATABRICKS_CLIENT_SECRET", valueFrom = data.aws_secretsmanager_secret.databricks_client_secret.arn },
       { name = "ANTHROPIC_API_KEY", valueFrom = data.aws_secretsmanager_secret.anthropic_api_key.arn },
       { name = "SERVICENOW_PASSWORD", valueFrom = data.aws_secretsmanager_secret.servicenow_password.arn },
+      { name = "SERVICENOW_WEBHOOK_SECRET", valueFrom = data.aws_secretsmanager_secret.servicenow_webhook_secret.arn },
     ]
     logConfiguration = {
       logDriver = "awslogs"
