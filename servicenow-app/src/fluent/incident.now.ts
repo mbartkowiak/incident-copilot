@@ -23,11 +23,12 @@ UiAction({
     table: 'incident',
     actionName: 'x_67971_copilot_show',
     hint: 'Show Incident Copilot triage and an AI summary',
-    condition: "current.correlation_id.toString().indexOf('INC1') == 0",
+    condition: "String(current.getValue('correlation_id') || '').indexOf('INC1') == 0",
     showUpdate: true,
     showInsert: false,
-    form: { showButton: true, style: 'primary-ai' },
-    client: { isClient: true, isUi16Compatible: true, onClick: 'showCopilot()' },
+    form: { showButton: true, style: 'primary' },
+    // No isUi16Compatible: it maps to "List v3 Compatible", and with it set the classic form hides the button.
+    client: { isClient: true, onClick: 'showCopilot()' },
     script: Now.include('../scripts/copilot-button.client.js'),
     order: 50,
 })
