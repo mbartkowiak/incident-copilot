@@ -11,6 +11,10 @@
 
 ServiceNow being slow or down never blocks the app: tickets are saved first, failures are
 logged, and app tickets that didn't reach ServiceNow are pushed on a later sync.
+
+A quiet pass costs ServiceNow calls only. The Databricks SQL warehouse is queried when there is
+something to do (a failed push to retry, a new or changed incident), so the poller doesn't keep
+the warehouse awake around the clock.
 """
 
 import logging
@@ -55,6 +59,10 @@ class ServiceNowConnector:
         self._last_sync: datetime | None = None
         self._last_error: str | None = None
         self._counts = {"imported": 0, "pushed": 0, "updates_applied": 0}
+        # Unlinked tickets only exist when a push to ServiceNow failed, here or before a restart.
+        self._push_pending = True
+        # sys_updated_on of each recently updated incident already applied, by sys_id.
+        self._seen_updates: dict[str, str] = {}
 
     # --- status -----------------------------------------------------------------------------
 
@@ -128,6 +136,7 @@ class ServiceNowConnector:
             created = self._sn.create_incident(fields)
         except ServiceNowError as e:
             self._failed(f"create {number}", e)
+            self._push_pending = True
             return None
         assert self.tickets is not None
         self.tickets.link(number, created["sys_id"], created["number"])
@@ -183,7 +192,11 @@ class ServiceNowConnector:
 
     def _push_unlinked(self) -> None:
         assert self.tickets is not None
-        for row in self.tickets.unlinked():
+        if not self._push_pending:
+            return
+        rows = self.tickets.unlinked()
+        self._push_pending = False  # a failed push below sets it again
+        for row in rows:
             ticket = TicketFields(
                 caller=row["caller"] or "",
                 location=row["location"] or "",
@@ -277,36 +290,43 @@ class ServiceNowConnector:
         return "\n".join(lines)
 
     def _pull_updates(self) -> None:
-        assert self.tickets is not None
         query = f"correlation_idSTARTSWITHINC1^sys_updated_onRELATIVEGT{UPDATE_WINDOW}"
+        seen: dict[str, str] = {}
         for inc in self._sn.incidents(query, limit=50):
-            local = self.tickets.by_servicenow_id(value(inc["sys_id"]))
-            if local is None:
-                continue
-            state = STATE_NAMES.get(value(inc["state"]), local["state"])
-            group = display(inc["assignment_group"])
-            changes = []
-            if state != local["state"]:
-                changes.append(f"state is now {state}")
-            if group and group != (local["assignment_group"] or ""):
-                changes.append(f"assignment group is now {group}")
-            if not changes:
-                continue  # includes the echo of the app's own updates
-            resolved_now = state in ("Resolved", "Closed") and not local["is_resolved"]
-            self.tickets.apply_external(
-                local["number"],
-                state=state,
-                group=group or (local["assignment_group"] or ""),
-                close_code=display(inc["close_code"])
-                if resolved_now
-                else (local["close_code"] or ""),
-                close_notes=value(inc["close_notes"])
-                if resolved_now
-                else (local["close_notes"] or ""),
-                actor="ServiceNow",
-                text=f"Updated in {value(inc['number'])}: {'; '.join(changes)}.",
-            )
-            self._counts["updates_applied"] += 1
+            sys_id, stamp = value(inc["sys_id"]), value(inc.get("sys_updated_on"))
+            if not stamp or self._seen_updates.get(sys_id) != stamp:
+                self._apply_update(sys_id, inc)
+            if stamp:
+                seen[sys_id] = stamp
+        # Replaced only after the whole pass succeeded, so a failed apply is retried; incidents
+        # that left the window are forgotten.
+        self._seen_updates = seen
+
+    def _apply_update(self, sys_id: str, inc: dict[str, Any]) -> None:
+        assert self.tickets is not None
+        local = self.tickets.by_servicenow_id(sys_id)
+        if local is None:
+            return
+        state = STATE_NAMES.get(value(inc["state"]), local["state"])
+        group = display(inc["assignment_group"])
+        changes = []
+        if state != local["state"]:
+            changes.append(f"state is now {state}")
+        if group and group != (local["assignment_group"] or ""):
+            changes.append(f"assignment group is now {group}")
+        if not changes:
+            return  # includes the echo of the app's own updates
+        resolved_now = state in ("Resolved", "Closed") and not local["is_resolved"]
+        self.tickets.apply_external(
+            local["number"],
+            state=state,
+            group=group or (local["assignment_group"] or ""),
+            close_code=display(inc["close_code"]) if resolved_now else (local["close_code"] or ""),
+            close_notes=value(inc["close_notes"]) if resolved_now else (local["close_notes"] or ""),
+            actor="ServiceNow",
+            text=f"Updated in {value(inc['number'])}: {'; '.join(changes)}.",
+        )
+        self._counts["updates_applied"] += 1
 
 
 class Poller:

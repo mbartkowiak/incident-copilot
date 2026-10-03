@@ -74,14 +74,17 @@ class FakeTickets:
         self.links: list[tuple[str, str, str]] = []
         self.external: list[dict[str, Any]] = []
         self.pending: list[dict[str, Any]] = []
+        self.queries = 0  # warehouse round trips; each one wakes the SQL warehouse
 
     def link(self, number: str, sn_sys_id: str, sn_number: str) -> None:
         self.links.append((number, sn_sys_id, sn_number))
 
     def unlinked(self) -> list[dict[str, Any]]:
+        self.queries += 1
         return self.pending
 
     def by_servicenow_id(self, sn_sys_id: str) -> dict[str, Any] | None:
+        self.queries += 1
         return next((r for r in self.rows.values() if r["sn_sys_id"] == sn_sys_id), None)
 
     def create(
@@ -301,6 +304,72 @@ def test_unlinked_app_tickets_are_pushed_on_the_next_sync(
     assert pushed["assignment_group"] == "grp-netops"
     assert pushed["state"] == "2"
     assert tickets.links[0][0] == "INC1000003"
+
+
+def test_quiet_passes_leave_the_warehouse_asleep(
+    connector: ServiceNowConnector, sn: FakeServiceNow, tickets: FakeTickets
+) -> None:
+    connector.sync_once()  # catch-up after a restart: one look for unlinked tickets
+    assert tickets.queries == 1
+
+    for _ in range(5):
+        connector.sync_once()
+
+    assert tickets.queries == 1
+
+
+def test_a_failed_push_is_retried_on_the_next_pass(
+    connector: ServiceNowConnector, sn: FakeServiceNow, tickets: FakeTickets
+) -> None:
+    connector.sync_once()
+    sn.fail = True
+    connector.created("INC1000003", TICKET, TRIAGE, 3)
+    sn.fail = False
+    tickets.pending = [
+        {
+            "number": "INC1000003", "caller": "Priya Shah", "location": "Remote",
+            "contact_type": "virtual_agent", "short_description": "VPN down", "description": "",
+            "impact": 3, "urgency": 1, "suggested_group": "Network Operations",
+            "triage_confidence": 0.93, "triage_mode": "auto", "category": "network",
+            "subcategory": "vpn", "assignment_group": "Network Operations", "state": "New",
+        }
+    ]  # fmt: skip
+
+    connector.sync_once()
+    tickets.pending = []
+    connector.sync_once()
+
+    assert [c["correlation_id"] for c in sn.created] == ["INC1000003"]
+    assert tickets.queries == 2  # the startup catch-up and the retry
+
+
+def test_an_unchanged_incident_is_looked_up_once_while_in_the_update_window(
+    connector: ServiceNowConnector, sn: FakeServiceNow, tickets: FakeTickets
+) -> None:
+    tickets.rows["INC1000001"] = {
+        "number": "INC1000001", "state": "New", "assignment_group": "Network Operations",
+        "is_resolved": False, "sn_sys_id": "abc123", "close_code": None, "close_notes": None,
+    }  # fmt: skip
+    updated = servicenow_incident(
+        state=ref("2", "In Progress"),
+        assignment_group=ref("grp-netops", "Network Operations"),
+        sys_updated_on=ref("2026-10-03 09:00:00"),
+    )
+    sn.queries["correlation_idSTARTSWITHINC1"] = [updated]
+    connector.sync_once()
+    queries = tickets.queries
+
+    connector.sync_once()
+    connector.sync_once()
+    assert tickets.queries == queries
+
+    sn.queries["correlation_idSTARTSWITHINC1"] = [
+        {**updated, "state": ref("6", "Resolved"), "sys_updated_on": ref("2026-10-03 09:05:00")}
+    ]
+    connector.sync_once()
+
+    assert tickets.queries == queries + 1
+    assert [c["state"] for c in tickets.external] == ["In Progress", "Resolved"]
 
 
 def test_close_codes_map_to_the_labels_the_instance_offers(monkeypatch: pytest.MonkeyPatch) -> None:
