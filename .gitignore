@@ -33,3 +33,6 @@ data/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local Terraform values (alarm email); never committed
+*.tfvars
