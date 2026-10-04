@@ -1474,6 +1474,28 @@ button.link {
   display: none;
 }
 
+.user-menu summary:hover {
+  background: var(--wash);
+}
+
+/* A caret so the name reads as a menu: points down when closed, up when open. */
+.user-menu summary::after {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 8px;
+  vertical-align: middle;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  transition: transform 0.15s;
+}
+
+.user-menu[open] summary::after {
+  transform: rotate(180deg);
+}
+
 .user-menu-panel {
   position: absolute;
   right: 0;
