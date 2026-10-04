@@ -49,3 +49,7 @@ output "cognito_demo_password_secret" {
 output "demo_usernames" {
   value = keys(local.demo_users)
 }
+
+output "alarm_topic_arn" {
+  value = aws_sns_topic.alarms.arn
+}

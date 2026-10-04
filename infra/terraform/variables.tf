@@ -71,3 +71,15 @@ variable "databricks_client_secret_name" {
   type        = string
   default     = "incident-copilot/databricks-client-secret"
 }
+
+variable "alarm_email" {
+  description = "Where alarms are emailed. Pass at apply time (-var alarm_email=...); kept out of the public repo. Empty: alarms fire without notifying anyone."
+  type        = string
+  default     = ""
+}
+
+variable "daily_claude_budget_usd" {
+  description = "Claude spend over 24 hours that triggers the spend alarm"
+  type        = number
+  default     = 5
+}

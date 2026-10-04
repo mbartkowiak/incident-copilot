@@ -126,8 +126,9 @@ resource "aws_cognito_user" "demo" {
   # The password is set by infra/scripts/set-demo-password.sh, so it never enters Terraform state.
 
   attributes = merge(
-    { name = each.value.name, "custom:demo" = "true" },
-    each.value.site == "" ? {} : { "custom:site" = each.value.site },
+    # Custom attributes without their "custom:" prefix, as the provider stores them.
+    { name = each.value.name, demo = "true" },
+    each.value.site == "" ? {} : { site = each.value.site },
   )
 }
 
