@@ -20,6 +20,7 @@ from app.deps import (
 )
 from app.routes import (
     agent,
+    auth,
     incidents,
     knowledge,
     lifecycle,
@@ -137,6 +138,7 @@ def create_app() -> FastAPI:
             routing_model=get_routing_model().status(),
         )
 
+    app.include_router(auth.router)
     app.include_router(metrics.router)
     app.include_router(triage.router)
     app.include_router(agent.router)

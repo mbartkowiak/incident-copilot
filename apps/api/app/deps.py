@@ -9,6 +9,7 @@ from app.agent.tools import ToolExecutor
 from app.config import get_settings
 from app.services.activity import ActivityService
 from app.services.cache import TTLCache
+from app.services.cognito import CognitoDemoSignIn, DemoSignIn
 from app.services.feedback import WarehouseFeedbackStore
 from app.services.incidents import IncidentService
 from app.services.intake import AttachmentReader
@@ -205,6 +206,28 @@ def get_ticket_service() -> TicketService:
     if connector is not None:
         connector.tickets = svc
     return svc
+
+
+@lru_cache
+def get_demo_sign_in() -> DemoSignIn | None:
+    settings = get_settings()
+    password = settings.cognito_demo_password
+    if not settings.cognito_user_pool_id or password is None or not password.get_secret_value():
+        return None
+    return CognitoDemoSignIn(
+        settings.cognito_region, settings.cognito_client_id, password.get_secret_value()
+    )
+
+
+@lru_cache
+def get_demo_rate_limiter() -> RateLimiter:
+    settings = get_settings()
+    return RateLimiter(
+        per_client=settings.demo_signins_per_client,
+        per_client_window_s=settings.demo_signin_window_s,
+        daily=2000,
+        what="demo sign-ins",
+    )
 
 
 @lru_cache

@@ -1,12 +1,13 @@
 import logging
 from collections.abc import Iterator
 from contextlib import contextmanager
-from typing import Annotated, Literal
+from typing import Annotated, Literal, get_args
 
 import anthropic
 from fastapi import APIRouter, Depends, HTTPException, Path, Request
 
 from app import telemetry
+from app.auth import LOCAL_USER, STAFF, Dispatcher, Employee, Principal, require
 from app.deps import (
     get_intake_agent,
     get_intake_rate_limiter,
@@ -17,6 +18,7 @@ from app.models import (
     IntakeChatRequest,
     IntakeTurnResponse,
     LiveTicket,
+    Site,
     TicketAssign,
     TicketCreate,
     TicketCreated,
@@ -40,10 +42,22 @@ def _client(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
 
+def _as_caller[T: (IntakeChatRequest, TicketCreate)](body: T, user: Principal) -> T:
+    """The caller is whoever is signed in, as SSO supplies it, never what the request claims.
+    The site comes from the account too, when it has one."""
+    if user is LOCAL_USER:
+        return body
+    update: dict[str, str] = {"caller": user.name}
+    if user.site in get_args(Site):
+        update["location"] = user.site
+    return body.model_copy(update=update)
+
+
 @router.post("/intake/chat")
 def intake_chat(
     body: IntakeChatRequest,
     request: Request,
+    user: Employee,
     agent: Annotated[IntakeAgent, Depends(get_intake_agent)],
     limiter: Annotated[RateLimiter, Depends(get_intake_rate_limiter)],
 ) -> IntakeTurnResponse:
@@ -51,6 +65,7 @@ def intake_chat(
     if body.messages[0].role != "user" or body.messages[-1].role != "user":
         raise HTTPException(422, "The conversation must start and end with the employee.")
     limiter.check(_client(request))
+    body = _as_caller(body, user)
     try:
         result = agent.turn(body.caller, body.location, body.messages)
     except anthropic.APIError as e:
@@ -76,11 +91,12 @@ def intake_chat(
 
 @router.post("/tickets", status_code=201)
 def create_ticket(
-    body: TicketCreate, request: Request, svc: Tickets, limiter: Writes
+    body: TicketCreate, request: Request, user: Employee, svc: Tickets, limiter: Writes
 ) -> TicketCreated:
     """Create a ticket and triage it: high-confidence routing assigns it, the rest wait for
     a dispatcher."""
     limiter.check(_client(request))
+    body = _as_caller(body, user)
     created = svc.create(body)
     telemetry.emit(
         "ticket_created",
@@ -95,7 +111,7 @@ def create_ticket(
     return created
 
 
-@router.get("/tickets")
+@router.get("/tickets", dependencies=[Depends(require(*STAFF))])
 def list_tickets(svc: Tickets, view: Literal["review", "all"] = "all") -> list[LiveTicket]:
     """Tickets created in the app; `view=review` is the dispatcher's review queue."""
     return svc.list(view)
@@ -116,13 +132,14 @@ def assign_ticket(
     number: Number,
     body: TicketAssign,
     request: Request,
+    user: Dispatcher,
     svc: Tickets,
     limiter: Writes,
 ) -> dict[str, str]:
     limiter.check(_client(request))
     with _ticket_errors(number):
-        svc.assign(number, body.group)
-    telemetry.emit("ticket_assigned", number=number.upper(), group=body.group)
+        svc.assign(number, body.group, actor=user.name)
+    telemetry.emit("ticket_assigned", number=number.upper(), group=body.group, user=user.name)
     return {"status": "assigned", "number": number.upper()}
 
 
@@ -131,12 +148,13 @@ def add_note(
     number: Number,
     body: TicketNote,
     request: Request,
+    user: Dispatcher,
     svc: Tickets,
     limiter: Writes,
 ) -> dict[str, str]:
     limiter.check(_client(request))
     with _ticket_errors(number):
-        svc.add_note(number, body.text)
+        svc.add_note(number, body.text, actor=user.name)
     return {"status": "noted", "number": number.upper()}
 
 
@@ -145,11 +163,14 @@ def resolve_ticket(
     number: Number,
     body: TicketResolve,
     request: Request,
+    user: Dispatcher,
     svc: Tickets,
     limiter: Writes,
 ) -> dict[str, str]:
     limiter.check(_client(request))
     with _ticket_errors(number):
-        svc.resolve(number, body)
-    telemetry.emit("ticket_resolved", number=number.upper(), close_code=body.close_code)
+        svc.resolve(number, body, actor=user.name)
+    telemetry.emit(
+        "ticket_resolved", number=number.upper(), close_code=body.close_code, user=user.name
+    )
     return {"status": "resolved", "number": number.upper()}

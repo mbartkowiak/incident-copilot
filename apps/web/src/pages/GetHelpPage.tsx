@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { postForm, postJson } from '../api'
+import { useAuth } from '../auth'
 import type { AttachmentReadResponse, IntakeTurnResponse, TicketCreated, TicketDraft } from '../api'
 import { SAMPLES } from '../attachments'
 import { IMPACT, PERSONAS, URGENCY, attachmentMessage, priorityLabel, toApiMessages } from '../intake'
@@ -10,6 +11,11 @@ const GREETING = "Hi! I'm the IT virtual agent. Tell me what isn't working, and 
 
 export function GetHelpPage() {
   const [persona, setPersona] = useState<Persona>(PERSONAS[0])
+  const auth = useAuth()
+  // With sign-in on, the caller is whoever is signed in (the API enforces it); the persona
+  // picker is for local development without a user pool.
+  const signedIn = auth.status === 'signed-in' && auth.config.enabled ? auth.user : undefined
+  const caller = signedIn ? { name: signedIn.name, site: signedIn.site || 'Remote' } : persona
   const [turns, setTurns] = useState<Turn[]>([])
   const [text, setText] = useState('')
   const [pending, setPending] = useState<{ names: string[]; content: string; summary: string }>()
@@ -50,8 +56,8 @@ export function GetHelpPage() {
     setError(undefined)
     try {
       const res = await postJson<IntakeTurnResponse>('/api/intake/chat', {
-        caller: persona.name,
-        location: persona.site,
+        caller: caller.name,
+        location: caller.site,
         messages: toApiMessages(next),
       })
       setTurns([...next, { role: 'assistant', content: res.turn.reply }])
@@ -95,8 +101,8 @@ export function GetHelpPage() {
     try {
       setCreated(
         await postJson<TicketCreated>('/api/tickets', {
-          caller: persona.name,
-          location: persona.site,
+          caller: caller.name,
+          location: caller.site,
           contact_type: 'virtual_agent',
           ...draft,
         }),
@@ -115,19 +121,21 @@ export function GetHelpPage() {
           The employee's side: describe a problem in plain words. The virtual agent asks at most two questions, writes
           the ticket and sets its priority, and the ticket is triaged the moment it's submitted.
         </p>
-        <label className="persona">
-          Signed in as
-          <select
-            value={persona.name}
-            onChange={(e) => restart(PERSONAS.find((p) => p.name === e.target.value) ?? PERSONAS[0])}
-          >
-            {PERSONAS.map((p) => (
-              <option key={p.name} value={p.name}>
-                {p.name} · {p.role}, {p.site}
-              </option>
-            ))}
-          </select>
-        </label>
+        {!signedIn && (
+          <label className="persona">
+            Signed in as
+            <select
+              value={persona.name}
+              onChange={(e) => restart(PERSONAS.find((p) => p.name === e.target.value) ?? PERSONAS[0])}
+            >
+              {PERSONAS.map((p) => (
+                <option key={p.name} value={p.name}>
+                  {p.name} · {p.role}, {p.site}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
 
       <div className="help">
@@ -220,7 +228,7 @@ export function GetHelpPage() {
               </p>
               <ul className="questions subtle">
                 <li>
-                  Signed in as {persona.name}, {persona.site}
+                  Signed in as {caller.name}, {caller.site}
                 </li>
                 <li>Caller and site come from sign-on, so you're never asked</li>
               </ul>

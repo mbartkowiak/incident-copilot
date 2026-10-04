@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request
 
 from app.agent.prompt import Group
+from app.auth import STAFF, require
 from app.deps import (
     get_incident_service,
     get_kb_drafter,
@@ -32,7 +33,7 @@ def version(ticket: IncidentDetail) -> str:
     return f"{ticket.number}:{len(ticket.work_notes)}:{ticket.state}"
 
 
-@router.get("")
+@router.get("", dependencies=[Depends(require(*STAFF))])
 def list_incidents(
     svc: Incidents,
     status: Status = "open",
@@ -45,7 +46,8 @@ def list_incidents(
     return svc.list(status, priority, group or "", breached, q, limit)
 
 
-@router.get("/{number}")
+# The ServiceNow app's Copilot button reads tickets and summaries with its shared secret.
+@router.get("/{number}", dependencies=[Depends(require(*STAFF, "servicenow"))])
 def get_incident(svc: Incidents, number: Number) -> IncidentDetail:
     try:
         return svc.get(number)
@@ -53,7 +55,7 @@ def get_incident(svc: Incidents, number: Number) -> IncidentDetail:
         raise HTTPException(status_code=404, detail=f"{number.upper()} not found") from None
 
 
-@router.post("/{number}/summary")
+@router.post("/{number}/summary", dependencies=[Depends(require(*STAFF, "servicenow"))])
 def summarize_incident(
     number: Number,
     request: Request,
@@ -90,7 +92,7 @@ def summarize_incident(
     )
 
 
-@router.post("/{number}/kb-draft")
+@router.post("/{number}/kb-draft", dependencies=[Depends(require(*STAFF))])
 def draft_knowledge(
     number: Number,
     request: Request,

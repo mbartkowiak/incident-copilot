@@ -3,9 +3,11 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
-router = APIRouter(prefix="/api/quality", tags=["quality"])
+from app.auth import STAFF, require
+
+router = APIRouter(prefix="/api/quality", tags=["quality"], dependencies=[Depends(require(*STAFF))])
 
 REPORTS = Path(__file__).resolve().parents[2] / "evals" / "reports"
 

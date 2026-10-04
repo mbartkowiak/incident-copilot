@@ -82,6 +82,9 @@ The baseline showed the agent asking the caller questions on nearly half of the 
 
 Known limit: resolved golden tickets are also in the precedent index, so retrieval is easier than for a truly new ticket. Paraphrased golden tickets would make the set harder.
 
+## Sign-in and roles
+Visitors sign in through Amazon Cognito: a one-click demo account per role (`POST /api/auth/demo`, signed in by the API, so no password reaches the browser) or the hosted OIDC login with PKCE, where a company's Okta or Entra ID would be federated. The API verifies the Cognito ID token on every request and checks the route's roles: employees use Get help, dispatchers triage and work tickets, knowledge managers approve knowledge drafts, and both staff roles read the analytics and queues. The ServiceNow app reads tickets with its shared secret. A ticket's caller comes from the token, not the request, and decisions record who made them. Without a user pool configured (local development, tests), auth is off. See [ADR 0011](adr/0011-sign-in-and-roles.md).
+
 ## Conversational intake and live tickets
 **Get help** is the employee's side. A chat with the virtual agent (`POST /api/intake/chat`, one structured call per turn, about 1¢) asks at most two questions and proposes a ticket. Impact × urgency on the proposed ticket gives the priority. The employee reviews it and submits (`POST /api/tickets`). The ticket is written to the `tickets` Delta table and triaged at once:
 - the routing model at ≥85% confidence assigns it;
@@ -153,7 +156,7 @@ filter event = "kb_decision" | stats count(*) by action, decision
 Dispatcher approve/edit/reject → `POST /api/triage/feedback` → `triage_feedback` → `refresh-lakehouse` merges approved drafts into `incident_docs` as `FB-` precedents → vector index sync. Later triages retrieve the human-corrected answers.
 
 ## Knowledge loop
-Resolved ticket → knowledge check → engineer edits and approves → `POST /api/knowledge/drafts` → `kb_drafts` → `refresh-lakehouse` builds `kb_docs` from source articles + approved new drafts (`KBD-…`), overlaying each article's latest approved revision → KB index sync → the triage agent's knowledge search returns the new text. `tickets`, `triage_feedback` and `kb_drafts` are the only tables the API may write.
+Resolved ticket → knowledge check → a knowledge manager edits and approves → `POST /api/knowledge/drafts` → `kb_drafts` → `refresh-lakehouse` builds `kb_docs` from source articles + approved new drafts (`KBD-…`), overlaying each article's latest approved revision → KB index sync → the triage agent's knowledge search returns the new text. `tickets`, `triage_feedback` and `kb_drafts` are the only tables the API may write.
 
 ## Decisions
 See `docs/adr/`.

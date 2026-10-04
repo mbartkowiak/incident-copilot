@@ -5,9 +5,13 @@ CopilotClient.prototype = {
 
     initialize: function () {},
 
+    _secret: function () {
+        return gs.getProperty('x_67971_copilot.event_secret', '');
+    },
+
     /** Report a new incident for immediate triage. Returns true when the API accepted it. */
     sendEvent: function (sysId) {
-        var secret = gs.getProperty('x_67971_copilot.event_secret', '');
+        var secret = this._secret();
         if (!secret) {
             gs.warn('Incident Copilot: event secret not set; skipping event for ' + sysId);
             return false;
@@ -22,6 +26,7 @@ CopilotClient.prototype = {
     getTicket: function (number) {
         var rm = new sn_ws.RESTMessageV2(this.MESSAGE, 'getTicket');
         rm.setStringParameterNoEscape('number', number);
+        rm.setStringParameterNoEscape('secret', this._secret());
         return this._execute(rm, 'ticket ' + number);
     },
 
@@ -29,6 +34,7 @@ CopilotClient.prototype = {
     summarize: function (number) {
         var rm = new sn_ws.RESTMessageV2(this.MESSAGE, 'summarizeTicket');
         rm.setStringParameterNoEscape('number', number);
+        rm.setStringParameterNoEscape('secret', this._secret());
         return this._execute(rm, 'summary ' + number);
     },
 

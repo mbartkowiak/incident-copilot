@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Request
 
+from app.auth import STAFF, require
 from app.deps import (
     get_lifecycle_service,
     get_lifecycle_writer,
@@ -23,7 +24,7 @@ from app.services.lifecycle import LifecycleService, NotFound
 from app.services.ratelimit import RateLimiter
 from app.services.reviews import LifecycleWriter
 
-router = APIRouter(prefix="/api", tags=["lifecycle"])
+router = APIRouter(prefix="/api", tags=["lifecycle"], dependencies=[Depends(require(*STAFF))])
 
 Lifecycle = Annotated[LifecycleService, Depends(get_lifecycle_service)]
 Writer = Annotated[LifecycleWriter, Depends(get_lifecycle_writer)]

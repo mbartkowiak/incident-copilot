@@ -27,9 +27,11 @@ FEEDBACK: dict[str, Any] = {
 class MemoryStore:
     def __init__(self) -> None:
         self.records: list[TriageFeedback] = []
+        self.decided_by: list[str] = []
 
-    def record(self, feedback: TriageFeedback) -> None:
+    def record(self, feedback: TriageFeedback, decided_by: str) -> None:
         self.records.append(feedback)
+        self.decided_by.append(decided_by)
 
 
 @pytest.fixture
@@ -72,11 +74,12 @@ def test_invalid_feedback_is_rejected(
 def test_warehouse_store_uses_bound_parameters() -> None:
     wh = FakeWarehouse()
 
-    WarehouseFeedbackStore(wh).record(TriageFeedback.model_validate(FEEDBACK))
+    WarehouseFeedbackStore(wh).record(TriageFeedback.model_validate(FEEDBACK), "Sam Rivera")
 
     sql, params = wh.calls[0]
     assert sql == INSERT_SQL
     assert params["citations"] == "KB0010028,INC0017432"
     assert params["run_id"] == FEEDBACK["run_id"]
+    assert params["decided_by"] == "Sam Rivera"
     # Values travel as parameters, never inside the SQL text.
     assert "Handheld" not in sql

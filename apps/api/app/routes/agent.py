@@ -9,6 +9,7 @@ from fastapi.responses import StreamingResponse
 
 from app import telemetry
 from app.agent.runner import TriageAgent
+from app.auth import Dispatcher, require
 from app.deps import (
     get_agent,
     get_agent_rate_limiter,
@@ -27,12 +28,13 @@ log = logging.getLogger(__name__)
 def record_feedback(
     body: TriageFeedback,
     request: Request,
+    user: Dispatcher,
     store: Annotated[FeedbackStore, Depends(get_feedback_store)],
     limiter: Annotated[RateLimiter, Depends(get_feedback_rate_limiter)],
 ) -> dict[str, str]:
     """Record the dispatcher's decision on a draft. Approved drafts become precedents."""
     limiter.check(request.client.host if request.client else "unknown")
-    store.record(body)
+    store.record(body, decided_by=user.name)
     telemetry.emit(
         "triage_feedback",
         run_id=str(body.run_id),
@@ -40,6 +42,7 @@ def record_feedback(
         suggested_group=body.suggested_group,
         final_group=body.final_group,
         team_changed=body.suggested_group != body.final_group,
+        user=user.name,
     )
     return {"status": "recorded", "run_id": str(body.run_id)}
 
@@ -71,7 +74,7 @@ def _record(run: dict[str, Any], event_type: str, data: dict[str, Any]) -> None:
         run.update(data)
 
 
-@router.post("/agent")
+@router.post("/agent", dependencies=[Depends(require("dispatcher"))])
 def run_agent(
     body: TriageRequest,
     request: Request,

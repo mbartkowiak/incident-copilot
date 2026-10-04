@@ -1,3 +1,5 @@
+import { authHeaders, onUnauthorized } from './auth'
+
 export type SseMessage = { event: string; data: string }
 
 /** Splits a Server-Sent Events buffer into complete messages plus the unparsed remainder. */
@@ -27,10 +29,11 @@ export async function postSse(
 ): Promise<void> {
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+    headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream', ...(await authHeaders()) },
     body: JSON.stringify(body),
     signal,
   })
+  if (res.status === 401) onUnauthorized()
   if (!res.ok || !res.body) {
     const detail = (await res.json().catch(() => null)) as { detail?: unknown } | null
     throw new Error(typeof detail?.detail === 'string' ? detail.detail : `Request failed (HTTP ${res.status})`)

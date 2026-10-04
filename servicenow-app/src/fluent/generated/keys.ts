@@ -41,9 +41,25 @@ declare global {
                         table: 'sys_rest_message_fn_parameters'
                         id: '1c45614e446d4e1c9e5f81a33d25ef3e'
                     }
+                    'copilot-api-summary-secret': {
+                        table: 'sys_rest_message_fn_headers'
+                        id: '4fc2ab5987ca4f63a491d7572c2a3053'
+                    }
+                    'copilot-api-summary-secret-var': {
+                        table: 'sys_rest_message_fn_parameters'
+                        id: '4733d2c8f9a848d2ad07dc799ce950f7'
+                    }
                     'copilot-api-ticket-number': {
                         table: 'sys_rest_message_fn_parameters'
                         id: '8bb43aa7126b4849b89c0f7a899ee491'
+                    }
+                    'copilot-api-ticket-secret': {
+                        table: 'sys_rest_message_fn_headers'
+                        id: 'bb1fb46b6a7c4176bf35204cccb6a51e'
+                    }
+                    'copilot-api-ticket-secret-var': {
+                        table: 'sys_rest_message_fn_parameters'
+                        id: '5fa8f4f5d3b848a38296ec947d05e857'
                     }
                     'copilot-client': {
                         table: 'sys_script_include'

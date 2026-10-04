@@ -1,13 +1,14 @@
 import { Property } from '@servicenow/sdk/core'
 
-// Shared secret the Business Rule sends with incident events (X-Copilot-Secret). Installed empty:
+// Shared secret the app sends to the API (X-Copilot-Secret): incident events and the Copilot
+// button. Installed empty:
 // an admin sets it after install, so it never lives in source control or an update set.
 Property({
     $id: Now.ID['event-secret'],
     name: 'x_67971_copilot.event_secret',
     type: 'password2',
     value: '',
-    description: 'Shared secret sent to the Incident Copilot API with incident events. Must match SERVICENOW_WEBHOOK_SECRET on the API.',
+    description: 'Shared secret the app sends to the Incident Copilot API (incident events and the Copilot button). Must match SERVICENOW_WEBHOOK_SECRET on the API.',
     isPrivate: true,
     roles: { read: ['admin'], write: ['admin'] },
 })

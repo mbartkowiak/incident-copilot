@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
 
 from app import telemetry
+from app.auth import STAFF, require
 from app.config import get_settings
 from app.deps import get_servicenow_connector, get_ticket_rate_limiter, get_ticket_service
 from app.models import ServiceNowStatus
@@ -27,12 +28,12 @@ DISABLED = ServiceNowStatus(
 )
 
 
-@router.get("/status")
+@router.get("/status", dependencies=[Depends(require(*STAFF))])
 def status(connector: Connector) -> ServiceNowStatus:
     return connector.status() if connector else DISABLED
 
 
-@router.post("/sync")
+@router.post("/sync", dependencies=[Depends(require("dispatcher"))])
 async def sync_now(
     request: Request,
     connector: Connector,

@@ -1,6 +1,7 @@
-// Production is served behind CloudFront with the API on the same origin under /api.
-export const API_URL: string =
-  import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://127.0.0.1:8000' : '')
+import { API_URL } from './api-url'
+import { authHeaders, onUnauthorized } from './auth'
+
+export { API_URL }
 
 export type PeriodStats = {
   opened: number
@@ -421,6 +422,7 @@ export type KbDecision = {
 export type KbDecisionResult = { status: string; draft_id: string; article: string }
 
 async function parse<T>(res: Response): Promise<T> {
+  if (res.status === 401) onUnauthorized()
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { detail?: unknown } | null
     const detail = typeof body?.detail === 'string' ? body.detail : undefined
@@ -430,18 +432,20 @@ async function parse<T>(res: Response): Promise<T> {
 }
 
 export async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
-  return parse<T>(await fetch(`${API_URL}${path}`, { signal }))
+  return parse<T>(await fetch(`${API_URL}${path}`, { headers: await authHeaders(), signal }))
 }
 
 export async function postForm<T>(path: string, form: FormData, signal?: AbortSignal): Promise<T> {
-  return parse<T>(await fetch(`${API_URL}${path}`, { method: 'POST', body: form, signal }))
+  return parse<T>(
+    await fetch(`${API_URL}${path}`, { method: 'POST', headers: await authHeaders(), body: form, signal }),
+  )
 }
 
 export async function postJson<T>(path: string, body: unknown, signal?: AbortSignal): Promise<T> {
   return parse<T>(
     await fetch(`${API_URL}${path}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
       body: JSON.stringify(body),
       signal,
     }),

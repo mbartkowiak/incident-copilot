@@ -11,5 +11,9 @@ for name in (
     "SERVICENOW_USER",
     "SERVICENOW_PASSWORD",
     "SERVICENOW_WEBHOOK_SECRET",
+    "COGNITO_USER_POOL_ID",
+    "COGNITO_CLIENT_ID",
+    "COGNITO_DOMAIN",
+    "COGNITO_DEMO_PASSWORD",
 ):
     os.environ[name] = ""

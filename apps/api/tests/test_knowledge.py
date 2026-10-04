@@ -65,9 +65,11 @@ class KbRetriever:
 class MemoryDraftStore:
     def __init__(self) -> None:
         self.records: list[tuple[KbDecision, IncidentDetail]] = []
+        self.decided_by: list[str] = []
 
-    def record(self, decision: KbDecision, ticket: IncidentDetail) -> str:
+    def record(self, decision: KbDecision, ticket: IncidentDetail, decided_by: str) -> str:
         self.records.append((decision, ticket))
+        self.decided_by.append(decided_by)
         return "0f9a3c21-7d4e-4b6a-9c1d-2e3f4a5b6c7d"
 
 
@@ -226,13 +228,14 @@ def test_store_renders_the_article_and_binds_every_value(service: IncidentServic
     wh = FakeWarehouse()
 
     draft_id = WarehouseKbDraftStore(wh).record(
-        KbDecision.model_validate(DECISION), service.get("INC0017396")
+        KbDecision.model_validate(DECISION), service.get("INC0017396"), "Alex Morgan"
     )
 
     sql, params = wh.calls[0]
     assert sql == INSERT_SQL
     assert params["draft_id"] == draft_id
     assert params["kb_category"] == "Warehouse Systems"
+    assert params["decided_by"] == "Alex Morgan"
     assert params["text"].startswith("# Warehouse handheld scanners not syncing to WMS\n")
     assert "1. Check certificate expiry in MDM." in params["text"]
     assert "Scanners freeze" not in sql

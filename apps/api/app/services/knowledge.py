@@ -134,16 +134,16 @@ def check_grounding(draft: KbDraft, candidates: list[KbArticle]) -> None:
 INSERT_SQL = """
 INSERT INTO kb_drafts (
   draft_id, created_at, decision, action, source_number, target_kb, title, text,
-  kb_category, category, subcategory, agent_model
+  kb_category, category, subcategory, agent_model, decided_by
 ) VALUES (
   :draft_id, current_timestamp(), :decision, :action, :source_number, :target_kb, :title, :text,
-  :kb_category, :category, :subcategory, :agent_model
+  :kb_category, :category, :subcategory, :agent_model, :decided_by
 )
 """
 
 
 class KbDraftStore(Protocol):
-    def record(self, decision: KbDecision, ticket: IncidentDetail) -> str: ...
+    def record(self, decision: KbDecision, ticket: IncidentDetail, decided_by: str) -> str: ...
 
 
 class WarehouseKbDraftStore:
@@ -153,7 +153,7 @@ class WarehouseKbDraftStore:
     def __init__(self, warehouse: Warehouse) -> None:
         self._wh = warehouse
 
-    def record(self, decision: KbDecision, ticket: IncidentDetail) -> str:
+    def record(self, decision: KbDecision, ticket: IncidentDetail, decided_by: str) -> str:
         draft_id = str(uuid.uuid4())
         self._wh.query(
             INSERT_SQL,
@@ -172,6 +172,7 @@ class WarehouseKbDraftStore:
                 "category": ticket.category or "",
                 "subcategory": ticket.subcategory or "",
                 "agent_model": decision.model,
+                "decided_by": decided_by,
             },
         )
         return draft_id

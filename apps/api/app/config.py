@@ -49,6 +49,19 @@ class Settings(BaseSettings):
     servicenow_webhook_secret: SecretStr | None = Field(
         default=None, validation_alias="SERVICENOW_WEBHOOK_SECRET"
     )
+    # Sign-in with Amazon Cognito. Off (every request acts as a local user with every role)
+    # unless a user pool is configured.
+    cognito_region: str = Field(default="us-east-1", validation_alias="COGNITO_REGION")
+    cognito_user_pool_id: str = Field(default="", validation_alias="COGNITO_USER_POOL_ID")
+    cognito_client_id: str = Field(default="", validation_alias="COGNITO_CLIENT_ID")
+    # Hosted login base URL, e.g. https://<prefix>.auth.us-east-1.amazoncognito.com
+    cognito_domain: str = Field(default="", validation_alias="COGNITO_DOMAIN")
+    # Shared password of the demo accounts behind the one-click sign-in buttons.
+    cognito_demo_password: SecretStr | None = Field(
+        default=None, validation_alias="COGNITO_DEMO_PASSWORD"
+    )
+    demo_signins_per_client: int = 30
+    demo_signin_window_s: float = 600
     # Serverless warehouses auto-stop; warming absorbs the ~20s cold start before users arrive.
     warm_cache_on_startup: bool = False
     load_routing_model_on_startup: bool = True

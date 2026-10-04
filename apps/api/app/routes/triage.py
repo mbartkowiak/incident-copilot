@@ -9,6 +9,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.datastructures import UploadFile
 
 from app import telemetry
+from app.auth import require
 from app.deps import get_attachment_rate_limiter, get_attachment_reader, get_triage_service
 from app.models import AttachmentInfo, AttachmentReadResponse, TriageRequest, TriageSuggestion
 from app.services.intake import (
@@ -30,14 +31,14 @@ log = logging.getLogger(__name__)
 MAX_BODY = MAX_FILES * MAX_BYTES + 64 * 1024
 
 
-@router.post("/suggest")
+@router.post("/suggest", dependencies=[Depends(require("dispatcher"))])
 def suggest(
     request: TriageRequest, svc: Annotated[TriageService, Depends(get_triage_service)]
 ) -> TriageSuggestion:
     return svc.suggest(request)
 
 
-@router.post("/attachments")
+@router.post("/attachments", dependencies=[Depends(require("employee", "dispatcher"))])
 async def read_attachments(
     request: Request,
     reader: Annotated[AttachmentReader, Depends(get_attachment_reader)],

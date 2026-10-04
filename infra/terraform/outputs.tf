@@ -29,3 +29,23 @@ output "ecs_service" {
 output "task_definition_family" {
   value = aws_ecs_task_definition.api.family
 }
+
+output "cognito_user_pool_id" {
+  value = aws_cognito_user_pool.users.id
+}
+
+output "cognito_client_id" {
+  value = aws_cognito_user_pool_client.web.id
+}
+
+output "cognito_hosted_login" {
+  value = "https://${aws_cognito_user_pool_domain.hosted.domain}.auth.${var.region}.amazoncognito.com"
+}
+
+output "cognito_demo_password_secret" {
+  value = aws_secretsmanager_secret.cognito_demo_password.name
+}
+
+output "demo_usernames" {
+  value = keys(local.demo_users)
+}

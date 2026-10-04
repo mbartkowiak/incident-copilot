@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS triage_feedback (
   priority STRING,
   resolution STRING,
   citations STRING,
-  agent_model STRING
+  agent_model STRING,
+  decided_by STRING COMMENT 'Signed-in user who made the decision (added 2026-10 with sign-in)'
 );
 
 -- Live tickets created in the app (conversational intake, then triage and dispatcher work).
@@ -220,7 +221,8 @@ CREATE TABLE IF NOT EXISTS kb_drafts (
   kb_category STRING,
   category STRING,
   subcategory STRING,
-  agent_model STRING
+  agent_model STRING,
+  decided_by STRING COMMENT 'Signed-in user who made the decision (added 2026-10 with sign-in)'
 );
 
 CREATE TABLE IF NOT EXISTS kb_docs (

@@ -78,6 +78,7 @@ resource "aws_iam_role_policy" "task_execution_secrets" {
         data.aws_secretsmanager_secret.anthropic_api_key.arn,
         data.aws_secretsmanager_secret.servicenow_password.arn,
         data.aws_secretsmanager_secret.servicenow_webhook_secret.arn,
+        aws_secretsmanager_secret.cognito_demo_password.arn,
       ]
     }]
   })
@@ -119,12 +120,17 @@ resource "aws_ecs_task_definition" "api" {
       { name = "DATABRICKS_CLIENT_ID", value = var.databricks_client_id },
       { name = "SERVICENOW_INSTANCE", value = var.servicenow_instance },
       { name = "SERVICENOW_USER", value = var.servicenow_user },
+      { name = "COGNITO_REGION", value = var.region },
+      { name = "COGNITO_USER_POOL_ID", value = aws_cognito_user_pool.users.id },
+      { name = "COGNITO_CLIENT_ID", value = aws_cognito_user_pool_client.web.id },
+      { name = "COGNITO_DOMAIN", value = "https://${aws_cognito_user_pool_domain.hosted.domain}.auth.${var.region}.amazoncognito.com" },
     ]
     secrets = [
       { name = "DATABRICKS_CLIENT_SECRET", valueFrom = data.aws_secretsmanager_secret.databricks_client_secret.arn },
       { name = "ANTHROPIC_API_KEY", valueFrom = data.aws_secretsmanager_secret.anthropic_api_key.arn },
       { name = "SERVICENOW_PASSWORD", valueFrom = data.aws_secretsmanager_secret.servicenow_password.arn },
       { name = "SERVICENOW_WEBHOOK_SECRET", valueFrom = data.aws_secretsmanager_secret.servicenow_webhook_secret.arn },
+      { name = "COGNITO_DEMO_PASSWORD", valueFrom = aws_secretsmanager_secret.cognito_demo_password.arn },
     ]
     logConfiguration = {
       logDriver = "awslogs"

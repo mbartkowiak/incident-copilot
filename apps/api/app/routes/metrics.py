@@ -2,11 +2,12 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
+from app.auth import STAFF, require
 from app.deps import get_metrics_service
 from app.models import GroupPerformance, Hotspot, Overview, Trend
 from app.services.metrics import MetricsService
 
-router = APIRouter(prefix="/api/metrics", tags=["metrics"])
+router = APIRouter(prefix="/api/metrics", tags=["metrics"], dependencies=[Depends(require(*STAFF))])
 
 Metrics = Annotated[MetricsService, Depends(get_metrics_service)]
 

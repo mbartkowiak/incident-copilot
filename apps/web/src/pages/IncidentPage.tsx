@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { postJson } from '../api'
+import { useCan } from '../auth'
 import type { IncidentDetail, TicketSummaryResponse, TriageSuggestion, WorkNote } from '../api'
 import { Fact } from '../components/Facts'
 import { KnowledgeCard } from '../components/KnowledgeCard'
@@ -31,6 +32,7 @@ export function IncidentPage({ number }: { number: string }) {
 }
 
 function Ticket({ t, onChanged }: { t: IncidentDetail; onChanged: () => void }) {
+  const canWork = useCan('dispatcher')
   const resolved = t.resolved_at !== null
   return (
     <>
@@ -96,7 +98,7 @@ function Ticket({ t, onChanged }: { t: IncidentDetail; onChanged: () => void }) 
           {resolved && t.close_notes && <KnowledgeCard number={t.number} />}
         </div>
         <aside className="ticket-side">
-          {t.source === 'live' && <TicketActions t={t} onChanged={onChanged} />}
+          {t.source === 'live' && canWork && <TicketActions t={t} onChanged={onChanged} />}
           <SlaCard t={t} resolved={resolved} />
           <RoutingCard t={t} resolved={resolved} />
         </aside>

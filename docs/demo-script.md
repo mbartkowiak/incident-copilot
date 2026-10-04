@@ -5,17 +5,18 @@ The video follows one incident through its lifecycle: an employee reports it, it
 ## Before recording
 - Open the Overview page once so the data warehouse is awake, and run one Triage scenario so the routing model is warm.
 - Sign in to the ServiceNow developer instance in a second browser tab, with the incident list filtered to today. Check that the bar on the Triage tab shows ServiceNow connected and no sync error.
+- The site opens on the sign-in page. Each section below names the demo account to use; switch accounts from the menu at the top right.
 - Rehearse once end to end. The demo creates real tickets in the app and in ServiceNow, and the rehearsal shows which resolved ticket gives the best knowledge-base draft (an `update` or `new` reads better on camera than `none`).
 - Record the live site full-screen at 1080p.
 
 ## 0:00 – 0:20 · The problem
-**Screen:** Overview page; hover the March orange bar.
-> "About a quarter of IT tickets go to the wrong team first, and urgent tickets that are misrouted miss their SLA 70% of the time, against 11% when they go to the right team. I spent years building on ServiceNow, so I built the copilot I wanted as a dispatcher, on the stack this role uses: Databricks, a trained model, Claude, FastAPI and React on AWS."
+**Screen:** the sign-in page, then **Try as dispatcher** → Overview; hover the March orange bar.
+> "Everyone signs in, through Amazon Cognito here or a company's own sign-on, and each role sees only what its job needs; the API enforces it. About a quarter of IT tickets go to the wrong team first, and urgent tickets that are misrouted miss their SLA 70% of the time, against 11% when they go to the right team. I spent years building on ServiceNow, so I built the copilot I wanted as a dispatcher, on the stack this role uses: Databricks, a trained model, Claude, FastAPI and React on AWS."
 
 *Proves:* product thinking, data pipelines, dashboards.
 
 ## 0:20 – 1:00 · An employee reports a problem
-**Screen:** Get help, signed in as Priya Shah. Type "VPN won't connect since this morning" and attach `vpn-error.png`.
+**Screen:** switch to Priya Shah (employee) → Get help. Type "VPN won't connect since this morning" and attach `vpn-error.png`.
 > "Employees just describe the problem. Claude runs the virtual agent: it already knows who and where they are, reads the screenshot for the exact error code, and asks at most two questions. The server enforces that limit."
 
 **Screen:** answer the question, review the ticket, submit. Pause on the number, priority and assignment.
@@ -33,7 +34,7 @@ The video follows one incident through its lifecycle: an employee reports it, it
 *Proves:* enterprise integration, ServiceNow platform depth, event-driven design.
 
 ## 1:30 – 2:15 · Triage and the agent
-**Screen:** Triage → "Scanners down at Memphis".
+**Screen:** switch back to Sam Rivera (dispatcher) → Triage → "Scanners down at Memphis".
 > "Every ticket gets two things instantly. A routing model trained in Databricks and registered in Unity Catalog predicts the team: 95% accurate on months it never saw, against 76% for human dispatchers. Databricks Vector Search finds how similar incidents were fixed."
 
 **Screen:** Draft with AI. Let the timeline stream, then click Save edits & approve.
@@ -45,8 +46,8 @@ The video follows one incident through its lifecycle: an employee reports it, it
 **Screen:** Incidents → the ticket you created. Point at the SLA clock and the routing check, then click Summarize.
 > "The ticket page has what a dispatcher needs: the SLA clock, how often tickets like this one breached, and a routing check that flags a misroute, which is the strongest early sign of a breach. I tested a breach classifier against that and the lookup won, so no classifier ships."
 
-**Screen:** resolve the ticket (or open the rehearsed resolved ticket), then click Check knowledge base and show the draft.
-> "When a ticket is resolved, Claude compares the fix with the knowledge base and proposes nothing, an update or a new article. Almost half of close notes cite no article. Once approved, the next refresh makes the fix searchable for the agent."
+**Screen:** resolve the ticket (or open the rehearsed resolved ticket), then click Check knowledge base and show the draft. Switch to Alex Morgan (knowledge manager) to approve it.
+> "When a ticket is resolved, Claude compares the fix with the knowledge base and proposes nothing, an update or a new article. Almost half of close notes cite no article. Only a knowledge manager can approve, because approved text feeds the agent's search, and the record names who approved it. Once approved, the next refresh makes the fix searchable for the agent."
 
 *Proves:* ITSM lifecycle, measured model decisions, a knowledge loop.
 

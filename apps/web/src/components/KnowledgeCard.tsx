@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { postJson } from '../api'
+import { useCan } from '../auth'
 import type { KbArticle, KbDecision, KbDecisionResult, KbDraftResponse } from '../api'
 import { formatPercent } from '../format'
 
@@ -110,6 +111,8 @@ function DraftEditor({ number, response }: { number: string; response: KbDraftRe
   const [saved, setSaved] = useState<string>()
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string>()
+  // Approved articles feed the agent's search, so only knowledge managers decide.
+  const canApprove = useCan('knowledge_manager')
 
   async function submit(decision: KbDecision['decision']) {
     setSaving(true)
@@ -166,6 +169,8 @@ function DraftEditor({ number, response }: { number: string; response: KbDraftRe
         <div className="banner banner-info" role="status">
           {saved}
         </div>
+      ) : !canApprove ? (
+        <p className="subtle">A knowledge manager reviews and approves drafts before they reach the knowledge base.</p>
       ) : (
         <div className="draft-actions">
           <button type="button" className="primary" disabled={saving} onClick={() => void submit('approved')}>
