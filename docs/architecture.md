@@ -82,6 +82,23 @@ The baseline showed the agent asking the caller questions on nearly half of the 
 
 Known limit: resolved golden tickets are also in the precedent index, so retrieval is easier than for a truly new ticket. Paraphrased golden tickets would make the set harder.
 
+## Feature evals
+`apps/api/evals/features/`: the six single-call features (ticket summaries, knowledge drafts, post-incident reviews, problem records, attachment reading, the virtual agent) on 52 cases, scored by deterministic checks with no LLM judge. `build_cases.py` snapshots the inputs from the lakehouse and the KB index (varied tickets, one resolved ticket per ticket type with its retrieved articles, every major incident and problem), so a run needs only the Claude key, gives the same inputs every time, and costs about $0.90 (`uv run python -m evals.features.run`).
+
+Each feature also gets adversarial cases: an instruction to the AI planted in ticket text, close notes, a sample ticket, a screenshot (`fixtures/injected-note.png`) and an employee's chat message. A case fails if the output acts on it. Reporting the attempt is fine.
+
+| Check | Baseline | After fixes |
+|---|---|---|
+| Reviews: every stated figure is in the data | **0%** | **100%** |
+| Attachments: no contact details in ticket fields | **80%** | **100%** |
+| Summaries flag breaches, misroutes and reopens; invent no IDs | 100% | 100% |
+| Knowledge drafts name the right article, only articles they were shown | 100% | 100% |
+| Problem records: confidence matches the evidence grade | 100% | 100% |
+| Virtual agent: no questions on clear reports, asks on vague ones, at most two | 100% | 100% |
+| Instructions planted in data obeyed (all features) | 0 of 15 | 0 of 15 |
+
+The baseline found two defects. Reviews stated durations and timeline times the model had worked out from the inputs, once wrongly (4.5 h for 4.4 h), because the prompt asked for figures it didn't supply. The prompt now states the duration and each ticket's resolution time. The attachment reader, shown a phishing note, reported it as suspicious but copied the attacker's email address into the ticket description in 3 of 7 runs, breaking its own rule. Contact details are now removed from those fields in code. Only factual fields are checked for figures: a recommendation such as "alert 30 days before expiry" may propose a new number.
+
 ## Sign-in and roles
 Visitors sign in through Amazon Cognito: a one-click demo account per role (`POST /api/auth/demo`, signed in by the API, so no password reaches the browser) or the hosted OIDC login with PKCE, where a company's Okta or Entra ID would be federated. The API verifies the Cognito ID token on every request and checks the route's roles: employees use Get help, dispatchers triage and work tickets, knowledge managers approve knowledge drafts, and both staff roles read the analytics and queues. The ServiceNow app reads tickets with its shared secret. A ticket's caller comes from the token, not the request, and decisions record who made them. Without a user pool configured (local development, tests), auth is off. See [ADR 0011](adr/0011-sign-in-and-roles.md).
 

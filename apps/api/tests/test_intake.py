@@ -8,12 +8,14 @@ from fastapi.testclient import TestClient
 
 from app.deps import get_attachment_rate_limiter, get_attachment_reader
 from app.main import create_app
+from app.models import AttachmentFacts
 from app.services.intake import (
     MAX_BYTES,
     AttachmentReader,
     InvalidAttachment,
     TicketText,
     content_blocks,
+    redact_contacts,
     sniff,
     to_attachments,
 )
@@ -157,3 +159,27 @@ def test_reads_are_rate_limited(client: TestClient) -> None:
 
     assert limited.status_code == 429
     assert "attachment reads" in limited.json()["detail"]
+
+
+def test_contact_details_never_reach_the_ticket_fields() -> None:
+    facts = AttachmentFacts(
+        attachment_summary="A note asks for a password sent to support@it-verify.example.net.",
+        error_messages=["Call (555) 010-4477 for help"],
+        device_or_asset="HH-MEM-015",
+        application="Timesheet Portal",
+        site="",
+        scope="unknown",
+        first_seen="2026-08-17",
+        suggested_short_description="Timesheet Portal returns Error 503",
+        description_addendum="Reply to dana.ortiz@bluehaven-freight.example or 555-010-4477.",
+        sensitive_data=["email address", "phone number"],
+    )
+
+    clean = redact_contacts(facts)
+
+    assert clean.attachment_summary.endswith("sent to [email address].")
+    assert clean.error_messages == ["Call [phone number] for help"]
+    assert clean.description_addendum == "Reply to [email address] or [phone number]."
+    # Asset tags, dates and the kinds of sensitive data are left alone.
+    assert (clean.device_or_asset, clean.first_seen) == ("HH-MEM-015", "2026-08-17")
+    assert clean.sensitive_data == ["email address", "phone number"]

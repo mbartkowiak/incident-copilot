@@ -2,6 +2,7 @@
 and a problem record for each problem candidate. One structured call each; every number in
 the prompt comes from the lakehouse, and the model is told to use only those facts."""
 
+from datetime import timedelta
 from typing import Any
 
 from app.agent.runner import MessagesClient
@@ -17,8 +18,8 @@ from app.services.structured import StructuredResult, call_structured
 REVIEW_SYSTEM = """You write post-incident reviews for Meridian Logistics' IT operations. You get one major incident detected from the ticket stream: its volume, timing, affected sites and teams, the hourly arrival of tickets, and a sample of the tickets with their resolutions.
 
 - headline: one sentence naming the outage, where, and when.
-- impact: two sentences on scale (tickets, sites, duration from first ticket to last resolution) and SLA outcome.
-- timeline: 3-6 short entries in order, each starting with a time (HH:MM), from first report to restoration. Base them on the hourly counts and resolution times given.
+- impact: two sentences on scale (tickets, sites, duration from first ticket to last resolution, as given) and SLA outcome.
+- timeline: 3-6 short entries in order, each starting with a time (HH:MM), from first report to restoration. Use only times that appear in the hourly counts and the tickets' opened and resolved times.
 - root_cause: the cause as stated in the resolutions. If the resolutions don't state one, say so.
 - resolution: what restored service.
 - follow_ups: 2-4 preventive actions that follow directly from the root cause.
@@ -81,9 +82,12 @@ def sample(tickets: list[IncidentRow], n: int = SAMPLE) -> list[IncidentRow]:
 
 
 def _ticket_lines(tickets: list[IncidentRow]) -> list[str]:
+    # The resolution time is stated, not left for the model to add up: the feature evals found
+    # it computing timeline entries from "opened + hours".
     return [
         f"- {t.opened_at:%Y-%m-%d %H:%M} {t.location}: {t.short_description} | "
-        f"resolved in {t.mttr_hours:.1f} h | fix: {t.close_notes or '(not resolved)'}"
+        f"resolved {t.opened_at + timedelta(hours=t.mttr_hours):%Y-%m-%d %H:%M}, "
+        f"in {t.mttr_hours:.1f} h | fix: {t.close_notes or '(not resolved)'}"
         if t.mttr_hours is not None
         else f"- {t.opened_at:%Y-%m-%d %H:%M} {t.location}: {t.short_description} | open"
         for t in sample(tickets)
@@ -98,7 +102,13 @@ def review_prompt(detail: MajorIncidentDetail) -> str:
             f"Scope: {mi.site or 'multiple sites'}; sites reporting: {', '.join(mi.locations)}",
             f"Tickets: {mi.tickets} (normally {mi.baseline_daily:g} a day; {mi.spike_ratio:g}x)",
             f"First ticket: {mi.started_at:%Y-%m-%d %H:%M}; last resolution: "
-            + (f"{mi.restored_at:%Y-%m-%d %H:%M}" if mi.restored_at else "not yet"),
+            + (
+                f"{mi.restored_at:%Y-%m-%d %H:%M} "
+                f"({(mi.restored_at - mi.started_at).total_seconds() / 3600:.1f} h after the "
+                "first ticket)"
+                if mi.restored_at
+                else "not yet"
+            ),
             f"Worst priority: {mi.worst_priority}; SLA breaches: {mi.sla_breaches}; "
             f"average resolution {mi.avg_mttr_hours or 0:.1f} h",
             f"Resolving teams: {', '.join(mi.resolving_groups)}",

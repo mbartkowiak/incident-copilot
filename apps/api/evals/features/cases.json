@@ -1,0 +1,3742 @@
+{
+ "summaries": [
+  {
+   "number": "INC0018320",
+   "state": "On Hold",
+   "opened_at": "2026-09-27T13:17:51",
+   "resolved_at": null,
+   "closed_at": null,
+   "priority": 5,
+   "priority_label": "5 - Planning",
+   "short_description": "Laptop fan loud and everything slow",
+   "description": "My laptop has gotten really slow over the last couple weeks. Excel freezes and it takes forever to open anything.",
+   "category": "hardware",
+   "subcategory": "laptop",
+   "cmdb_ci": "Standard Laptop",
+   "location": "Memphis DC",
+   "contact_type": "self-service",
+   "assignment_group": "End User Computing",
+   "assigned_to": "Olivia Kaur",
+   "initial_group": "End User Computing",
+   "reassignment_count": 0,
+   "reopen_count": 0,
+   "close_code": null,
+   "close_notes": null,
+   "work_notes": [
+    {
+     "at": "2026-09-27T13:38:39",
+     "author": "Olivia Kaur",
+     "text": "Acknowledged. Reviewing the ticket details.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-27T14:35:34",
+     "author": "Olivia Kaur",
+     "text": "Working KB0010010: Check device age and RAM. Devices older than 4 years or with 8 GB RAM qualify for refresh.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-27T16:36:12",
+     "author": "Olivia Kaur",
+     "text": "Waiting on vendor response. Placing On Hold.",
+     "kind": "hold"
+    }
+   ],
+   "sla": {
+    "target_hours": 240.0,
+    "due_at": "2026-10-07T13:17:51",
+    "elapsed_hours": 10.7,
+    "breached": false
+   },
+   "risk": {
+    "similar_rate": 0.0,
+    "similar_tickets": 231,
+    "priority_rate": 0.0,
+    "misrouted_rate": 0.0,
+    "routed_right_rate": 0.0
+   },
+   "as_of": "2026-09-27",
+   "major_incident": null,
+   "problem": null,
+   "source": "history",
+   "caller_id": "Rania Hansen",
+   "servicenow_number": null,
+   "servicenow_url": null
+  },
+  {
+   "number": "INC0018318",
+   "state": "In Progress",
+   "opened_at": "2026-09-26T11:53:37",
+   "resolved_at": null,
+   "closed_at": null,
+   "priority": 5,
+   "priority_label": "5 - Planning",
+   "short_description": "Can't enroll new phone",
+   "description": "Outlook mobile keeps asking me to sign in over and over.",
+   "category": "software",
+   "subcategory": "mobile",
+   "cmdb_ci": "Intune MDM",
+   "location": "Chicago HQ",
+   "contact_type": "email",
+   "assignment_group": "Messaging & Collaboration",
+   "assigned_to": "Hector Johansson",
+   "initial_group": "Messaging & Collaboration",
+   "reassignment_count": 0,
+   "reopen_count": 0,
+   "close_code": null,
+   "close_notes": null,
+   "work_notes": [
+    {
+     "at": "2026-09-26T17:53:30",
+     "author": "Hector Johansson",
+     "text": "Assigned to me. Checking recent changes and related tickets.",
+     "kind": "note"
+    }
+   ],
+   "sla": {
+    "target_hours": 240.0,
+    "due_at": "2026-10-06T11:53:37",
+    "elapsed_hours": 36.11,
+    "breached": false
+   },
+   "risk": {
+    "similar_rate": 0.0,
+    "similar_tickets": 60,
+    "priority_rate": 0.0,
+    "misrouted_rate": 0.0,
+    "routed_right_rate": 0.0
+   },
+   "as_of": "2026-09-27",
+   "major_incident": null,
+   "problem": null,
+   "source": "history",
+   "caller_id": "Chen Alvarez",
+   "servicenow_number": null,
+   "servicenow_url": null
+  },
+  {
+   "number": "INC0017731",
+   "state": "Closed",
+   "opened_at": "2026-09-01T13:27:50",
+   "resolved_at": "2026-09-01T19:26:15",
+   "closed_at": "2026-09-08T19:26:15",
+   "priority": 1,
+   "priority_label": "1 - Critical",
+   "short_description": "SAP freezing during month-end close",
+   "description": "SAP is extremely slow today. Transaction S_ALR_87012284 takes minutes to respond and we're trying to close the month.",
+   "category": "software",
+   "subcategory": "sap",
+   "cmdb_ci": "SAP S/4HANA",
+   "location": "Remote",
+   "contact_type": "email",
+   "assignment_group": "ERP Applications",
+   "assigned_to": "Priya Diaz",
+   "initial_group": "ERP Applications",
+   "reassignment_count": 0,
+   "reopen_count": 0,
+   "close_code": "Solved Remotely (Permanently)",
+   "close_notes": "Heavy month-end batch jobs overlapped with interactive use. Rescheduled non-critical batch jobs and added dialog work processes; response times normal.",
+   "work_notes": [
+    {
+     "at": "2026-09-01T13:54:03",
+     "author": "Priya Diaz",
+     "text": "Acknowledged. Reproducing the issue.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-01T14:39:02",
+     "author": "Priya Diaz",
+     "text": "Working KB0010021: Identify custom reports that lock tables and move them to background execution.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-01T15:04:18",
+     "author": "Priya Diaz",
+     "text": "Working KB0010021: Engage the DBA team if database wait times are high.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-01T19:26:15",
+     "author": "Priya Diaz",
+     "text": "Resolved. See close notes.",
+     "kind": "resolution"
+    }
+   ],
+   "sla": {
+    "target_hours": 4.0,
+    "due_at": "2026-09-01T17:27:50",
+    "elapsed_hours": 5.97,
+    "breached": true
+   },
+   "risk": {
+    "similar_rate": 0.4352,
+    "similar_tickets": 20,
+    "priority_rate": 0.3761,
+    "misrouted_rate": 0.9254,
+    "routed_right_rate": 0.1325
+   },
+   "as_of": "2026-09-27",
+   "major_incident": null,
+   "problem": null,
+   "source": "history",
+   "caller_id": "Tessa Adeyemi",
+   "servicenow_number": null,
+   "servicenow_url": null
+  },
+  {
+   "number": "INC0017709",
+   "state": "Closed",
+   "opened_at": "2026-08-31T15:50:50",
+   "resolved_at": "2026-09-01T03:06:15",
+   "closed_at": "2026-09-08T03:06:15",
+   "priority": 2,
+   "priority_label": "2 - High",
+   "short_description": "SAP freezing during month-end close",
+   "description": "The whole accounting team is seeing SAP hang. Nothing is finishing.",
+   "category": "software",
+   "subcategory": "sap",
+   "cmdb_ci": "SAP S/4HANA",
+   "location": "Memphis DC",
+   "contact_type": "self-service",
+   "assignment_group": "ERP Applications",
+   "assigned_to": "Hana Ramirez",
+   "initial_group": "Network Operations",
+   "reassignment_count": 1,
+   "reopen_count": 0,
+   "close_code": "Solved Remotely (Work Around)",
+   "close_notes": "Long-running custom report was locking tables. Terminated the job and scheduled it in background overnight.",
+   "work_notes": [
+    {
+     "at": "2026-08-31T16:19:30",
+     "author": "Uma Edwards",
+     "text": "Acknowledged. Reviewing the ticket details.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-08-31T19:35:58",
+     "author": "Deepa Flores",
+     "text": "Not a Network Operations issue. Reassigning to ERP Applications.",
+     "kind": "reassignment"
+    },
+    {
+     "at": "2026-08-31T22:34:47",
+     "author": "Hana Ramirez",
+     "text": "Working KB0010021: Identify custom reports that lock tables and move them to background execution.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-08-31T23:58:45",
+     "author": "Hana Ramirez",
+     "text": "Working KB0010021: Engage the DBA team if database wait times are high.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-01T03:06:15",
+     "author": "Hana Ramirez",
+     "text": "Resolved. See close notes.",
+     "kind": "resolution"
+    }
+   ],
+   "sla": {
+    "target_hours": 8.0,
+    "due_at": "2026-08-31T23:50:50",
+    "elapsed_hours": 11.26,
+    "breached": true
+   },
+   "risk": {
+    "similar_rate": 0.4969,
+    "similar_tickets": 40,
+    "priority_rate": 0.2725,
+    "misrouted_rate": 0.6424,
+    "routed_right_rate": 0.1099
+   },
+   "as_of": "2026-09-27",
+   "major_incident": null,
+   "problem": null,
+   "source": "history",
+   "caller_id": "Lucia Sato",
+   "servicenow_number": null,
+   "servicenow_url": null
+  },
+  {
+   "number": "INC0018147",
+   "state": "Closed",
+   "opened_at": "2026-09-18T17:46:52",
+   "resolved_at": "2026-09-20T00:49:38",
+   "closed_at": "2026-09-27T00:49:38",
+   "priority": 4,
+   "priority_label": "4 - Low",
+   "short_description": "po approval workflow not working",
+   "description": "Purchase order 4500020457 has been waiting for approval for 3 days. My manager says they never got it in their inbox.",
+   "category": "software",
+   "subcategory": "sap-workflow",
+   "cmdb_ci": "SAP S/4HANA",
+   "location": "Chicago HQ",
+   "contact_type": "email",
+   "assignment_group": "ERP Applications",
+   "assigned_to": "Priya Diaz",
+   "initial_group": "Service Desk",
+   "reassignment_count": 1,
+   "reopen_count": 0,
+   "close_code": "Solved (Work Around)",
+   "close_notes": "Approver in release strategy had left the company. Updated release strategy with new approver and restarted workflow for 4500020457. Followed KB0010022.",
+   "work_notes": [
+    {
+     "at": "2026-09-18T19:17:16",
+     "author": "Gabriel Sullivan",
+     "text": "Acknowledged. Reproducing the issue.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-19T04:07:47",
+     "author": "Julia Brooks",
+     "text": "Not a Service Desk issue. Reassigning to ERP Applications.",
+     "kind": "reassignment"
+    },
+    {
+     "at": "2026-09-19T06:21:00",
+     "author": "Priya Diaz",
+     "text": "Working KB0010022: If the workitem is in error, fix the master data issue and restart the workflow.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-19T10:38:16",
+     "author": "Priya Diaz",
+     "text": "Working KB0010022: Check the workflow log (SWIA) for the PO's workitem status.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-20T00:49:38",
+     "author": "Priya Diaz",
+     "text": "Resolved. See close notes.",
+     "kind": "resolution"
+    }
+   ],
+   "sla": {
+    "target_hours": 120.0,
+    "due_at": "2026-09-23T17:46:52",
+    "elapsed_hours": 31.05,
+    "breached": false
+   },
+   "risk": {
+    "similar_rate": 0.0001,
+    "similar_tickets": 75,
+    "priority_rate": 0.0011,
+    "misrouted_rate": 0.0,
+    "routed_right_rate": 0.0013
+   },
+   "as_of": "2026-09-27",
+   "major_incident": null,
+   "problem": null,
+   "source": "history",
+   "caller_id": "Grace Novak",
+   "servicenow_number": null,
+   "servicenow_url": null
+  },
+  {
+   "number": "INC0018208",
+   "state": "Resolved",
+   "opened_at": "2026-09-22T09:26:23",
+   "resolved_at": "2026-09-23T06:14:28",
+   "closed_at": null,
+   "priority": 5,
+   "priority_label": "5 - Planning",
+   "short_description": "Shared mailbox customerservice@ not showing in Outlook",
+   "description": "I can read customerservice@ but I get an error when I try to send as it.",
+   "category": "inquiry",
+   "subcategory": "access",
+   "cmdb_ci": "Exchange Online",
+   "location": "Chicago HQ",
+   "contact_type": "self-service",
+   "assignment_group": "Messaging & Collaboration",
+   "assigned_to": "Aaliyah Thompson",
+   "initial_group": "Service Desk",
+   "reassignment_count": 1,
+   "reopen_count": 0,
+   "close_code": "Solved (Work Around)",
+   "close_notes": "Granted Full Access and Send As on customerservice@ with owner approval. Mailbox automapped after Outlook restart.",
+   "work_notes": [
+    {
+     "at": "2026-09-22T11:05:23",
+     "author": "Jamal Williams",
+     "text": "Picked up. Contacting the caller to confirm scope.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-22T16:22:24",
+     "author": "Lucia Chen",
+     "text": "Not a Service Desk issue. Reassigning to Messaging & Collaboration.",
+     "kind": "reassignment"
+    },
+    {
+     "at": "2026-09-22T22:20:30",
+     "author": "Aaliyah Thompson",
+     "text": "Working KB0010017: If it still does not appear, add the mailbox manually under Account Settings > More Settings > Advanced.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-23T06:14:28",
+     "author": "Aaliyah Thompson",
+     "text": "Resolved. See close notes.",
+     "kind": "resolution"
+    }
+   ],
+   "sla": {
+    "target_hours": 240.0,
+    "due_at": "2026-10-02T09:26:23",
+    "elapsed_hours": 20.8,
+    "breached": false
+   },
+   "risk": {
+    "similar_rate": 0.0,
+    "similar_tickets": 293,
+    "priority_rate": 0.0,
+    "misrouted_rate": 0.0,
+    "routed_right_rate": 0.0
+   },
+   "as_of": "2026-09-27",
+   "major_incident": null,
+   "problem": null,
+   "source": "history",
+   "caller_id": "Tomas Schmidt",
+   "servicenow_number": null,
+   "servicenow_url": null
+  },
+  {
+   "number": "INC0018130",
+   "state": "Closed",
+   "opened_at": "2026-09-18T09:22:50",
+   "resolved_at": "2026-09-18T10:14:58",
+   "closed_at": "2026-09-25T10:14:58",
+   "priority": 5,
+   "priority_label": "5 - Planning",
+   "short_description": "Cannot log in, password expired",
+   "description": "I forgot my network password after coming back from PTO. The self-service reset link says my security questions are not set up.",
+   "category": "inquiry",
+   "subcategory": "password",
+   "cmdb_ci": "Active Directory",
+   "location": "Remote",
+   "contact_type": "virtual_agent",
+   "assignment_group": "Service Desk",
+   "assigned_to": "Julia Brooks",
+   "initial_group": "Service Desk",
+   "reassignment_count": 0,
+   "reopen_count": 1,
+   "close_code": "Solved (Permanently)",
+   "close_notes": "Reset password and enrolled user in self-service password reset so they can reset it themselves next time.",
+   "work_notes": [
+    {
+     "at": "2026-09-18T09:24:35",
+     "author": "Julia Brooks",
+     "text": "Acknowledged. Reproducing the issue.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-18T09:27:16",
+     "author": "Julia Brooks",
+     "text": "Working KB0010001: In Active Directory Users and Computers, reset the password and check 'User must change password at next logon'.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-18T10:14:58",
+     "author": "Julia Brooks",
+     "text": "Resolved. See close notes.",
+     "kind": "resolution"
+    }
+   ],
+   "sla": {
+    "target_hours": 240.0,
+    "due_at": "2026-09-28T09:22:50",
+    "elapsed_hours": 0.87,
+    "breached": false
+   },
+   "risk": {
+    "similar_rate": 0.0,
+    "similar_tickets": 566,
+    "priority_rate": 0.0,
+    "misrouted_rate": 0.0,
+    "routed_right_rate": 0.0
+   },
+   "as_of": "2026-09-27",
+   "major_incident": null,
+   "problem": null,
+   "source": "history",
+   "caller_id": "Tessa Garcia",
+   "servicenow_number": null,
+   "servicenow_url": null
+  },
+  {
+   "number": "INC0018224",
+   "state": "Resolved",
+   "opened_at": "2026-09-23T00:50:31",
+   "resolved_at": "2026-09-23T01:14:39",
+   "closed_at": null,
+   "priority": 3,
+   "priority_label": "3 - Moderate",
+   "short_description": "Locked out of computer",
+   "description": "Account locked out again. This is the third time this week, I changed my password on Monday.",
+   "category": "inquiry",
+   "subcategory": "password",
+   "cmdb_ci": "Active Directory",
+   "location": "Chicago HQ",
+   "contact_type": "self-service",
+   "assignment_group": "Service Desk",
+   "assigned_to": "Jamal Williams",
+   "initial_group": "Service Desk",
+   "reassignment_count": 0,
+   "reopen_count": 1,
+   "close_code": "Not Solved (Not Reproducible)",
+   "close_notes": "Unlocked account. Lockout source traced to old credentials cached on user's phone mail app. User updated password on phone, no further lockouts. Followed KB0010002.",
+   "work_notes": [
+    {
+     "at": "2026-09-23T00:52:26",
+     "author": "Jamal Williams",
+     "text": "Acknowledged. Reviewing the ticket details.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-23T00:54:03",
+     "author": "Jamal Williams",
+     "text": "Working KB0010002: Ask the user to update the password on their mobile mail app and remove stale entries from Windows Credential Manager.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-23T00:57:00",
+     "author": "Jamal Williams",
+     "text": "Working KB0010002: Log off any disconnected RDP sessions under the user's name.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-23T01:14:39",
+     "author": "Jamal Williams",
+     "text": "Resolved. See close notes.",
+     "kind": "resolution"
+    }
+   ],
+   "sla": {
+    "target_hours": 72.0,
+    "due_at": "2026-09-26T00:50:31",
+    "elapsed_hours": 0.4,
+    "breached": false
+   },
+   "risk": {
+    "similar_rate": 0.0001,
+    "similar_tickets": 146,
+    "priority_rate": 0.0026,
+    "misrouted_rate": 0.002,
+    "routed_right_rate": 0.0028
+   },
+   "as_of": "2026-09-27",
+   "major_incident": null,
+   "problem": null,
+   "source": "history",
+   "caller_id": "Amara Quinn",
+   "servicenow_number": null,
+   "servicenow_url": null
+  },
+  {
+   "number": "INC0018294",
+   "state": "Resolved",
+   "opened_at": "2026-09-25T10:38:08",
+   "resolved_at": "2026-09-26T05:31:03",
+   "closed_at": null,
+   "priority": 5,
+   "priority_label": "5 - Planning",
+   "short_description": "Really slow today",
+   "description": "Things are taking forever to load. Not sure what's going on.",
+   "category": "hardware",
+   "subcategory": "laptop",
+   "cmdb_ci": "Standard Laptop",
+   "location": "Chicago HQ",
+   "contact_type": "walk-in",
+   "assignment_group": "End User Computing",
+   "assigned_to": "Olivia Kaur",
+   "initial_group": "End User Computing",
+   "reassignment_count": 0,
+   "reopen_count": 0,
+   "close_code": "Solved (Permanently)",
+   "close_notes": "Endpoint security full scan was stuck in a loop. Updated agent to the current version; CPU usage normal. Followed KB0010010.",
+   "work_notes": [
+    {
+     "at": "2026-09-25T11:09:38",
+     "author": "Olivia Kaur",
+     "text": "Picked up. Contacting the caller to confirm scope.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-25T15:56:45",
+     "author": "Olivia Kaur",
+     "text": "Working KB0010010: Check device age and RAM. Devices older than 4 years or with 8 GB RAM qualify for refresh.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-26T05:31:03",
+     "author": "Olivia Kaur",
+     "text": "Resolved. See close notes.",
+     "kind": "resolution"
+    }
+   ],
+   "sla": {
+    "target_hours": 240.0,
+    "due_at": "2026-10-05T10:38:08",
+    "elapsed_hours": 18.88,
+    "breached": false
+   },
+   "risk": {
+    "similar_rate": 0.0,
+    "similar_tickets": 231,
+    "priority_rate": 0.0,
+    "misrouted_rate": 0.0,
+    "routed_right_rate": 0.0
+   },
+   "as_of": "2026-09-27",
+   "major_incident": null,
+   "problem": null,
+   "source": "history",
+   "caller_id": "Yara Reyes",
+   "servicenow_number": null,
+   "servicenow_url": null
+  },
+  {
+   "number": "INC0018283",
+   "state": "Resolved",
+   "opened_at": "2026-09-24T23:46:40",
+   "resolved_at": "2026-09-25T01:25:46",
+   "closed_at": null,
+   "priority": 4,
+   "priority_label": "4 - Low",
+   "short_description": "Question: request a new monitor",
+   "description": "Can someone tell me how to request a new monitor? I couldn't find it on the portal.",
+   "category": "inquiry",
+   "subcategory": "how-to",
+   "cmdb_ci": "Service Portal",
+   "location": "Atlanta DC",
+   "contact_type": "walk-in",
+   "assignment_group": "Service Desk",
+   "assigned_to": "Lucia Chen",
+   "initial_group": "Service Desk",
+   "reassignment_count": 0,
+   "reopen_count": 0,
+   "close_code": "Solved (Permanently)",
+   "close_notes": "Walked user through how to request a new monitor and sent the relevant portal article.",
+   "work_notes": [
+    {
+     "at": "2026-09-24T23:52:52",
+     "author": "Lucia Chen",
+     "text": "Acknowledged. Reproducing the issue.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-25T00:11:37",
+     "author": "Lucia Chen",
+     "text": "Working KB0010031: Search the service portal knowledge base with the user's own wording.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-25T00:12:42",
+     "author": "Lucia Chen",
+     "text": "Working KB0010031: Send the article link and walk through it if needed.",
+     "kind": "note"
+    },
+    {
+     "at": "2026-09-25T01:25:46",
+     "author": "Lucia Chen",
+     "text": "Resolved. See close notes.",
+     "kind": "resolution"
+    }
+   ],
+   "sla": {
+    "target_hours": 120.0,
+    "due_at": "2026-09-29T23:46:40",
+    "elapsed_hours": 1.65,
+    "breached": false
+   },
+   "risk": {
+    "similar_rate": 0.0,
+    "similar_tickets": 130,
+    "priority_rate": 0.0011,
+    "misrouted_rate": 0.0,
+    "routed_right_rate": 0.0013
+   },
+   "as_of": "2026-09-27",
+   "major_incident": null,
+   "problem": null,
+   "source": "history",
+   "caller_id": "Jin Sato",
+   "servicenow_number": null,
+   "servicenow_url": null
+  }
+ ],
+ "kb_drafts": [
+  {
+   "ticket": {
+    "number": "INC0018222",
+    "state": "Resolved",
+    "opened_at": "2026-09-22T17:41:54",
+    "resolved_at": "2026-09-23T00:50:09",
+    "closed_at": null,
+    "priority": 2,
+    "priority_label": "2 - High",
+    "short_description": "Customer Portal returning 500 errors",
+    "description": "Customers are calling saying the Customer Portal shows a 500 error.",
+    "category": "software",
+    "subcategory": "web-app",
+    "cmdb_ci": "Customer Portal",
+    "location": "Dallas DC",
+    "contact_type": "self-service",
+    "assignment_group": "Cloud Platform",
+    "assigned_to": "Keisha Martin",
+    "initial_group": "Network Operations",
+    "reassignment_count": 1,
+    "reopen_count": 0,
+    "close_code": "Solved (Permanently)",
+    "close_notes": "Autoscaling hit the max instance count during a traffic spike. Raised the limit and added a CPU-based scaling policy. Followed KB0010026.",
+    "work_notes": [
+     {
+      "at": "2026-09-22T18:15:41",
+      "author": "Uma Edwards",
+      "text": "Picked up. Contacting the caller to confirm scope.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-22T20:04:39",
+      "author": "Uma Edwards",
+      "text": "Not a Network Operations issue. Reassigning to Cloud Platform.",
+      "kind": "reassignment"
+     },
+     {
+      "at": "2026-09-22T21:21:04",
+      "author": "Keisha Martin",
+      "text": "Working KB0010026: Check the deployment history. If a release happened within the last 24 hours, consider rolling back first.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-22T23:59:01",
+      "author": "Keisha Martin",
+      "text": "Working KB0010026: Review application logs and APM traces for the failing endpoint.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-23T00:50:09",
+      "author": "Keisha Martin",
+      "text": "Resolved. See close notes.",
+      "kind": "resolution"
+     }
+    ],
+    "sla": {
+     "target_hours": 8.0,
+     "due_at": "2026-09-23T01:41:54",
+     "elapsed_hours": 7.14,
+     "breached": false
+    },
+    "risk": {
+     "similar_rate": 0.2762,
+     "similar_tickets": 47,
+     "priority_rate": 0.2725,
+     "misrouted_rate": 0.6424,
+     "routed_right_rate": 0.1099
+    },
+    "as_of": "2026-09-27",
+    "major_incident": null,
+    "problem": null,
+    "source": "history",
+    "caller_id": "Samuel Watson",
+    "servicenow_number": null,
+    "servicenow_url": null
+   },
+   "candidates": [
+    {
+     "number": "KB0010026",
+     "title": "Customer-facing web app returning 5xx errors",
+     "text": "# Customer-facing web app returning 5xx errors\n\n## Symptoms\nA customer-facing application returns 500/502/503 errors, or synthetic monitors fail.\n\n## Cause\nA bad deployment, exhausted connection pools, autoscaling limits, or failing downstream dependencies.\n\n## Resolution\n1. Check the deployment history. If a release happened within the last 24 hours, consider rolling back first.\n2. Review application logs and APM traces for the failing endpoint.\n3. Check instance counts against autoscaling limits, and check database connection pool metrics.\n4. Post customer communication through the status page if the outage lasts more than 15 minutes.\n",
+     "kb_category": "Cloud Platform",
+     "score": 0.6368353681174982
+    },
+    {
+     "number": "KB0010031",
+     "title": "Common how-to requests: self-service index",
+     "text": "# Common how-to requests: self-service index\n\n## Symptoms\nUser asks how to do a common task such as out-of-office, mapping drives, sharing calendars, or phone email setup.\n\n## Cause\nSelf-service articles exist but are hard to find.\n\n## Resolution\n1. Search the service portal knowledge base with the user's own wording.\n2. Send the article link and walk through it if needed.\n3. If no article exists, create a knowledge feedback task so one gets written.\n",
+     "kb_category": "Service Desk",
+     "score": 0.522172773791865
+    },
+    {
+     "number": "KB0010008",
+     "title": "Handling a site-wide network outage",
+     "text": "# Handling a site-wide network outage\n\n## Symptoms\nMany users at one site report no connectivity at the same time: no internal apps, no internet, and often no desk phones.\n\n## Cause\nCore switch failure, upstream carrier circuit outage, or power issue in the main distribution frame.\n\n## Resolution\n1. Check the monitoring dashboard for the site's core switch and WAN circuit status.\n2. Create a single parent incident and relate every new user report as a child. Do not work each ticket separately.\n3. Engage the on-call network engineer and open a carrier ticket if the WAN circuit is down.\n4. Post a status update on the service portal banner.\n5. After restoration, resolve all child incidents through the parent and open a problem record.\n",
+     "kb_category": "Network Operations",
+     "score": 0.5179707689351669
+    }
+   ],
+   "expected_kb": "KB0010026"
+  },
+  {
+   "ticket": {
+    "number": "INC0018211",
+    "state": "Resolved",
+    "opened_at": "2026-09-22T09:44:01",
+    "resolved_at": "2026-09-22T11:21:09",
+    "closed_at": null,
+    "priority": 2,
+    "priority_label": "2 - High",
+    "short_description": "reporting data is hours behind",
+    "description": "The shipment numbers in reports don't match SAP. Reporting seems several hours behind.",
+    "category": "database",
+    "subcategory": "replication",
+    "cmdb_ci": "sqlprd-erp01",
+    "location": "Memphis DC",
+    "contact_type": "self-service",
+    "assignment_group": "Database Administration",
+    "assigned_to": "Ben Diaz",
+    "initial_group": "Database Administration",
+    "reassignment_count": 0,
+    "reopen_count": 0,
+    "close_code": "Solved (Work Around)",
+    "close_notes": "Replica disk IO saturated by an index rebuild. Paused the maintenance job; latency back under 1 minute.",
+    "work_notes": [
+     {
+      "at": "2026-09-22T09:51:24",
+      "author": "Ben Diaz",
+      "text": "Acknowledged. Reproducing the issue.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-22T09:58:42",
+      "author": "Ben Diaz",
+      "text": "Working KB0010025: Check replication monitor for latency and agent status.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-22T10:36:57",
+      "author": "Ben Diaz",
+      "text": "Working KB0010025: Check replica disk IO. Pause maintenance jobs if they are saturating IO.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-22T11:21:09",
+      "author": "Ben Diaz",
+      "text": "Resolved. See close notes.",
+      "kind": "resolution"
+     }
+    ],
+    "sla": {
+     "target_hours": 8.0,
+     "due_at": "2026-09-22T17:44:01",
+     "elapsed_hours": 1.62,
+     "breached": false
+    },
+    "risk": {
+     "similar_rate": 0.2534,
+     "similar_tickets": 28,
+     "priority_rate": 0.2725,
+     "misrouted_rate": 0.6424,
+     "routed_right_rate": 0.1099
+    },
+    "as_of": "2026-09-27",
+    "major_incident": null,
+    "problem": null,
+    "source": "history",
+    "caller_id": "Mei Bennett",
+    "servicenow_number": null,
+    "servicenow_url": null
+   },
+   "candidates": [
+    {
+     "number": "KB0010025",
+     "title": "Reporting replica replication lag",
+     "text": "# Reporting replica replication lag\n\n## Symptoms\nReports and dashboards show stale data, or monitoring alerts on replication latency.\n\n## Cause\nA stalled log reader or distribution agent, large batch transactions, or IO saturation on the replica.\n\n## Resolution\n1. Check replication monitor for latency and agent status.\n2. Restart stalled log reader or distribution agents.\n3. Check replica disk IO. Pause maintenance jobs if they are saturating IO.\n4. Tell reporting users the expected catch-up time.\n",
+     "kb_category": "Database Administration",
+     "score": 0.6411119506336552
+    },
+    {
+     "number": "KB0010024",
+     "title": "Report queries timing out on reporting SQL servers",
+     "text": "# Report queries timing out on reporting SQL servers\n\n## Symptoms\nA report or dashboard that used to be fast now times out or takes minutes.\n\n## Cause\nQuery plan regression after a statistics update, or a missing index as tables grow.\n\n## Resolution\n1. Identify the query in Query Store or with sp_WhoIsActive while the report runs.\n2. Compare current and historical execution plans. If the plan regressed, force the last known good plan.\n3. Check for missing index recommendations and table growth.\n4. Update statistics and test the report.\n5. Create a change request for any new indexes.\n",
+     "kb_category": "Database Administration",
+     "score": 0.5844458521901407
+    },
+    {
+     "number": "KB0010021",
+     "title": "SAP performance degradation during month-end close",
+     "text": "# SAP performance degradation during month-end close\n\n## Symptoms\nSAP transactions are slow or time out, especially in the last days of the month when finance runs close activities.\n\n## Cause\nMonth-end batch jobs and heavy reports compete with interactive users for work processes and database resources.\n\n## Resolution\n1. Check SM50/SM66 for long-running work processes and SM37 for active batch jobs.\n2. Reschedule non-critical batch jobs outside business hours.\n3. Temporarily increase dialog work processes using operation modes.\n4. Identify custom reports that lock tables and move them to background execution.\n5. Engage the DBA team if database wait times are high.\n",
+     "kb_category": "ERP Applications",
+     "score": 0.583026998667296
+    }
+   ],
+   "expected_kb": "KB0010025"
+  },
+  {
+   "ticket": {
+    "number": "INC0018311",
+    "state": "Resolved",
+    "opened_at": "2026-09-25T17:13:16",
+    "resolved_at": "2026-09-26T08:46:36",
+    "closed_at": null,
+    "priority": 3,
+    "priority_label": "3 - Moderate",
+    "short_description": "Database timeout on Carrier Scorecard",
+    "description": "Power BI dashboard for Carrier Scorecard shows 'query timeout' when refreshing.",
+    "category": "database",
+    "subcategory": "performance",
+    "cmdb_ci": "sqlprd-wms02",
+    "location": "Remote",
+    "contact_type": "email",
+    "assignment_group": "Database Administration",
+    "assigned_to": "Ben Diaz",
+    "initial_group": "Cloud Platform",
+    "reassignment_count": 1,
+    "reopen_count": 0,
+    "close_code": "Solved (Permanently)",
+    "close_notes": "Missing index on shipment date column after table growth. Added covering index on sqlprd-wms02; query time reduced from 6 min to 15s.",
+    "work_notes": [
+     {
+      "at": "2026-09-25T17:32:09",
+      "author": "Emeka Novak",
+      "text": "Acknowledged. Reproducing the issue.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-25T22:24:22",
+      "author": "Emeka Novak",
+      "text": "Not a Cloud Platform issue. Reassigning to Database Administration.",
+      "kind": "reassignment"
+     },
+     {
+      "at": "2026-09-26T06:25:30",
+      "author": "Ben Diaz",
+      "text": "Working KB0010024: Compare current and historical execution plans. If the plan regressed, force the last known good plan.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-26T08:46:36",
+      "author": "Ben Diaz",
+      "text": "Resolved. See close notes.",
+      "kind": "resolution"
+     }
+    ],
+    "sla": {
+     "target_hours": 72.0,
+     "due_at": "2026-09-28T17:13:16",
+     "elapsed_hours": 15.56,
+     "breached": false
+    },
+    "risk": {
+     "similar_rate": 0.0003,
+     "similar_tickets": 44,
+     "priority_rate": 0.0026,
+     "misrouted_rate": 0.002,
+     "routed_right_rate": 0.0028
+    },
+    "as_of": "2026-09-27",
+    "major_incident": null,
+    "problem": null,
+    "source": "history",
+    "caller_id": "Tariq Usman",
+    "servicenow_number": null,
+    "servicenow_url": null
+   },
+   "candidates": [
+    {
+     "number": "KB0010024",
+     "title": "Report queries timing out on reporting SQL servers",
+     "text": "# Report queries timing out on reporting SQL servers\n\n## Symptoms\nA report or dashboard that used to be fast now times out or takes minutes.\n\n## Cause\nQuery plan regression after a statistics update, or a missing index as tables grow.\n\n## Resolution\n1. Identify the query in Query Store or with sp_WhoIsActive while the report runs.\n2. Compare current and historical execution plans. If the plan regressed, force the last known good plan.\n3. Check for missing index recommendations and table growth.\n4. Update statistics and test the report.\n5. Create a change request for any new indexes.\n",
+     "kb_category": "Database Administration",
+     "score": 0.6636148290877663
+    },
+    {
+     "number": "KB0010025",
+     "title": "Reporting replica replication lag",
+     "text": "# Reporting replica replication lag\n\n## Symptoms\nReports and dashboards show stale data, or monitoring alerts on replication latency.\n\n## Cause\nA stalled log reader or distribution agent, large batch transactions, or IO saturation on the replica.\n\n## Resolution\n1. Check replication monitor for latency and agent status.\n2. Restart stalled log reader or distribution agents.\n3. Check replica disk IO. Pause maintenance jobs if they are saturating IO.\n4. Tell reporting users the expected catch-up time.\n",
+     "kb_category": "Database Administration",
+     "score": 0.5417822971989203
+    },
+    {
+     "number": "KB0010021",
+     "title": "SAP performance degradation during month-end close",
+     "text": "# SAP performance degradation during month-end close\n\n## Symptoms\nSAP transactions are slow or time out, especially in the last days of the month when finance runs close activities.\n\n## Cause\nMonth-end batch jobs and heavy reports compete with interactive users for work processes and database resources.\n\n## Resolution\n1. Check SM50/SM66 for long-running work processes and SM37 for active batch jobs.\n2. Reschedule non-critical batch jobs outside business hours.\n3. Temporarily increase dialog work processes using operation modes.\n4. Identify custom reports that lock tables and move them to background execution.\n5. Engage the DBA team if database wait times are high.\n",
+     "kb_category": "ERP Applications",
+     "score": 0.5402105419053472
+    }
+   ],
+   "expected_kb": "KB0010024"
+  },
+  {
+   "ticket": {
+    "number": "INC0018041",
+    "state": "Closed",
+    "opened_at": "2026-09-15T13:42:15",
+    "resolved_at": "2026-09-16T01:35:25",
+    "closed_at": "2026-09-23T01:35:25",
+    "priority": 1,
+    "priority_label": "1 - Critical",
+    "short_description": "Invoice posting error: Balance in transaction currency",
+    "description": "Invoice INV-90512 is blocked for payment and the vendor is calling about it.",
+    "category": "software",
+    "subcategory": "sap-finance",
+    "cmdb_ci": "SAP S/4HANA",
+    "location": "Dallas DC",
+    "contact_type": "self-service",
+    "assignment_group": "ERP Applications",
+    "assigned_to": "Hana Ramirez",
+    "initial_group": "Service Desk",
+    "reassignment_count": 1,
+    "reopen_count": 0,
+    "close_code": "Solved Remotely (Permanently)",
+    "close_notes": "Error 'Balance in transaction currency': Posting period for the company code was not opened. Opened the period in OB52 with finance approval; invoice posted.",
+    "work_notes": [
+     {
+      "at": "2026-09-15T14:29:16",
+      "author": "Gabriel Sullivan",
+      "text": "Acknowledged. Reviewing the ticket details.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-15T17:39:58",
+      "author": "Gabriel Sullivan",
+      "text": "Not a Service Desk issue. Reassigning to ERP Applications.",
+      "kind": "reassignment"
+     },
+     {
+      "at": "2026-09-15T20:18:02",
+      "author": "Hana Ramirez",
+      "text": "Working KB0010023: 'Posting period not open': confirm with finance, then open the period in OB52.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-15T22:56:59",
+      "author": "Hana Ramirez",
+      "text": "Working KB0010023: 'Tolerance limit exceeded': confirm the price with the buyer, then release in MRBR.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-16T01:35:25",
+      "author": "Hana Ramirez",
+      "text": "Resolved. See close notes.",
+      "kind": "resolution"
+     }
+    ],
+    "sla": {
+     "target_hours": 4.0,
+     "due_at": "2026-09-15T17:42:15",
+     "elapsed_hours": 11.89,
+     "breached": true
+    },
+    "risk": {
+     "similar_rate": 0.5423,
+     "similar_tickets": 4,
+     "priority_rate": 0.3761,
+     "misrouted_rate": 0.9254,
+     "routed_right_rate": 0.1325
+    },
+    "as_of": "2026-09-27",
+    "major_incident": null,
+    "problem": null,
+    "source": "history",
+    "caller_id": "Liam Zhang",
+    "servicenow_number": null,
+    "servicenow_url": null
+   },
+   "candidates": [
+    {
+     "number": "KB0010023",
+     "title": "Common SAP invoice posting errors (MIRO)",
+     "text": "# Common SAP invoice posting errors (MIRO)\n\n## Symptoms\nVendor invoice cannot be posted in MIRO or is blocked for payment.\n\n## Cause\nPosting period closed, price/quantity variance beyond tolerance, or goods receipt/invoice receipt mismatch.\n\n## Resolution\n1. 'Posting period not open': confirm with finance, then open the period in OB52.\n2. 'Tolerance limit exceeded': confirm the price with the buyer, then release in MRBR.\n3. 'GR/IR mismatch': confirm the goods receipt was posted for the invoiced quantity.\n4. Document the resolution for audit purposes.\n",
+     "kb_category": "ERP Applications",
+     "score": 0.6799356562752732
+    },
+    {
+     "number": "KB0010022",
+     "title": "Purchase order stuck in SAP release workflow",
+     "text": "# Purchase order stuck in SAP release workflow\n\n## Symptoms\nPO stays 'in release' with no approver action, or the approver never receives the workitem.\n\n## Cause\nThe approver in the release strategy left or changed roles, or the workflow errored because of missing master data such as a cost center.\n\n## Resolution\n1. Check the workflow log (SWIA) for the PO's workitem status.\n2. If the workitem is in error, fix the master data issue and restart the workflow.\n3. If the approver is invalid, update the release strategy assignment with HR/finance approval.\n4. Forward or restart the workitem to the correct approver.\n",
+     "kb_category": "ERP Applications",
+     "score": 0.5455504422362418
+    },
+    {
+     "number": "KB0010030",
+     "title": "WMS wave fails to release or pick tasks are not generated",
+     "text": "# WMS wave fails to release or pick tasks are not generated\n\n## Symptoms\nWave release fails or hangs, and no pick tasks are created for the floor.\n\n## Cause\nItems with missing master data (dimensions/weight), a stuck SAP-to-WMS order interface, or allocation failures from inventory mismatches.\n\n## Resolution\n1. Check the wave's error log in WMS for the failing order or item.\n2. Fix missing item master data and re-release the wave.\n3. Check the SAP-to-WMS integration queue depth. Restart the listener if it is stuck.\n4. Engage the ERP team if orders are not being sent from SAP.\n",
+     "kb_category": "Warehouse Systems",
+     "score": 0.5146934373092079
+    }
+   ],
+   "expected_kb": "KB0010023"
+  },
+  {
+   "ticket": {
+    "number": "INC0016245",
+    "state": "Closed",
+    "opened_at": "2026-07-01T11:46:22",
+    "resolved_at": "2026-07-01T23:11:36",
+    "closed_at": "2026-07-08T23:11:36",
+    "priority": 2,
+    "priority_label": "2 - High",
+    "short_description": "SAP extremely slow",
+    "description": "The whole accounting team is seeing SAP hang. Nothing is finishing.",
+    "category": "software",
+    "subcategory": "sap",
+    "cmdb_ci": "SAP S/4HANA",
+    "location": "Chicago HQ",
+    "contact_type": "self-service",
+    "assignment_group": "ERP Applications",
+    "assigned_to": "Hana Ramirez",
+    "initial_group": "Database Administration",
+    "reassignment_count": 1,
+    "reopen_count": 0,
+    "close_code": "Solved (Permanently)",
+    "close_notes": "Heavy month-end batch jobs overlapped with interactive use. Rescheduled non-critical batch jobs and added dialog work processes; response times normal. Followed KB0010021.",
+    "work_notes": [
+     {
+      "at": "2026-07-01T12:11:56",
+      "author": "Diego Tanaka",
+      "text": "Acknowledged. Reviewing the ticket details.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-07-01T15:34:46",
+      "author": "Emeka Murphy",
+      "text": "Not a Database Administration issue. Reassigning to ERP Applications.",
+      "kind": "reassignment"
+     },
+     {
+      "at": "2026-07-01T17:37:28",
+      "author": "Hana Ramirez",
+      "text": "Left a voicemail for the caller. On Hold pending response.",
+      "kind": "hold"
+     },
+     {
+      "at": "2026-07-01T20:12:32",
+      "author": "Hana Ramirez",
+      "text": "Working KB0010021: Engage the DBA team if database wait times are high.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-07-01T21:31:25",
+      "author": "Hana Ramirez",
+      "text": "Caller responded. Resuming work.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-07-01T23:11:36",
+      "author": "Hana Ramirez",
+      "text": "Resolved. See close notes.",
+      "kind": "resolution"
+     }
+    ],
+    "sla": {
+     "target_hours": 8.0,
+     "due_at": "2026-07-01T19:46:22",
+     "elapsed_hours": 11.42,
+     "breached": true
+    },
+    "risk": {
+     "similar_rate": 0.4969,
+     "similar_tickets": 40,
+     "priority_rate": 0.2725,
+     "misrouted_rate": 0.6424,
+     "routed_right_rate": 0.1099
+    },
+    "as_of": "2026-09-27",
+    "major_incident": null,
+    "problem": null,
+    "source": "history",
+    "caller_id": "Chen Mensah",
+    "servicenow_number": null,
+    "servicenow_url": null
+   },
+   "candidates": [
+    {
+     "number": "KB0010021",
+     "title": "SAP performance degradation during month-end close",
+     "text": "# SAP performance degradation during month-end close\n\n## Symptoms\nSAP transactions are slow or time out, especially in the last days of the month when finance runs close activities.\n\n## Cause\nMonth-end batch jobs and heavy reports compete with interactive users for work processes and database resources.\n\n## Resolution\n1. Check SM50/SM66 for long-running work processes and SM37 for active batch jobs.\n2. Reschedule non-critical batch jobs outside business hours.\n3. Temporarily increase dialog work processes using operation modes.\n4. Identify custom reports that lock tables and move them to background execution.\n5. Engage the DBA team if database wait times are high.\n",
+     "kb_category": "ERP Applications",
+     "score": 0.6954714939156466
+    },
+    {
+     "number": "KB0010022",
+     "title": "Purchase order stuck in SAP release workflow",
+     "text": "# Purchase order stuck in SAP release workflow\n\n## Symptoms\nPO stays 'in release' with no approver action, or the approver never receives the workitem.\n\n## Cause\nThe approver in the release strategy left or changed roles, or the workflow errored because of missing master data such as a cost center.\n\n## Resolution\n1. Check the workflow log (SWIA) for the PO's workitem status.\n2. If the workitem is in error, fix the master data issue and restart the workflow.\n3. If the approver is invalid, update the release strategy assignment with HR/finance approval.\n4. Forward or restart the workitem to the correct approver.\n",
+     "kb_category": "ERP Applications",
+     "score": 0.5455771387371109
+    },
+    {
+     "number": "KB0010024",
+     "title": "Report queries timing out on reporting SQL servers",
+     "text": "# Report queries timing out on reporting SQL servers\n\n## Symptoms\nA report or dashboard that used to be fast now times out or takes minutes.\n\n## Cause\nQuery plan regression after a statistics update, or a missing index as tables grow.\n\n## Resolution\n1. Identify the query in Query Store or with sp_WhoIsActive while the report runs.\n2. Compare current and historical execution plans. If the plan regressed, force the last known good plan.\n3. Check for missing index recommendations and table growth.\n4. Update statistics and test the report.\n5. Create a change request for any new indexes.\n",
+     "kb_category": "Database Administration",
+     "score": 0.5364591507439307
+    }
+   ],
+   "expected_kb": "KB0010021"
+  },
+  {
+   "ticket": {
+    "number": "INC0018244",
+    "state": "Resolved",
+    "opened_at": "2026-09-23T15:06:45",
+    "resolved_at": "2026-09-24T03:51:32",
+    "closed_at": null,
+    "priority": 3,
+    "priority_label": "3 - Moderate",
+    "short_description": "Purchase order not routing to approver",
+    "description": "Purchase order 4500018234 has been waiting for approval for 3 days. My manager says they never got it in their inbox. Please email me at [EMAIL] if you need anything.",
+    "category": "software",
+    "subcategory": "sap-workflow",
+    "cmdb_ci": "SAP S/4HANA",
+    "location": "Atlanta DC",
+    "contact_type": "self-service",
+    "assignment_group": "ERP Applications",
+    "assigned_to": "Adrian Cohen",
+    "initial_group": "ERP Applications",
+    "reassignment_count": 0,
+    "reopen_count": 0,
+    "close_code": "Solved (Permanently)",
+    "close_notes": "Workflow item was in error due to missing cost center. Corrected the cost center and restarted the workflow; PO released. Followed KB0010022.",
+    "work_notes": [
+     {
+      "at": "2026-09-23T15:28:03",
+      "author": "Adrian Cohen",
+      "text": "Acknowledged. Reviewing the ticket details.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-23T16:37:16",
+      "author": "Adrian Cohen",
+      "text": "Working KB0010022: If the workitem is in error, fix the master data issue and restart the workflow.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-24T02:33:00",
+      "author": "Adrian Cohen",
+      "text": "Working KB0010022: Forward or restart the workitem to the correct approver.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-24T03:51:32",
+      "author": "Adrian Cohen",
+      "text": "Resolved. See close notes.",
+      "kind": "resolution"
+     }
+    ],
+    "sla": {
+     "target_hours": 72.0,
+     "due_at": "2026-09-26T15:06:45",
+     "elapsed_hours": 12.75,
+     "breached": false
+    },
+    "risk": {
+     "similar_rate": 0.0001,
+     "similar_tickets": 92,
+     "priority_rate": 0.0026,
+     "misrouted_rate": 0.002,
+     "routed_right_rate": 0.0028
+    },
+    "as_of": "2026-09-27",
+    "major_incident": null,
+    "problem": null,
+    "source": "history",
+    "caller_id": "Rafael Moreau",
+    "servicenow_number": null,
+    "servicenow_url": null
+   },
+   "candidates": [
+    {
+     "number": "KB0010022",
+     "title": "Purchase order stuck in SAP release workflow",
+     "text": "# Purchase order stuck in SAP release workflow\n\n## Symptoms\nPO stays 'in release' with no approver action, or the approver never receives the workitem.\n\n## Cause\nThe approver in the release strategy left or changed roles, or the workflow errored because of missing master data such as a cost center.\n\n## Resolution\n1. Check the workflow log (SWIA) for the PO's workitem status.\n2. If the workitem is in error, fix the master data issue and restart the workflow.\n3. If the approver is invalid, update the release strategy assignment with HR/finance approval.\n4. Forward or restart the workitem to the correct approver.\n",
+     "kb_category": "ERP Applications",
+     "score": 0.6751760916163435
+    },
+    {
+     "number": "KB0010023",
+     "title": "Common SAP invoice posting errors (MIRO)",
+     "text": "# Common SAP invoice posting errors (MIRO)\n\n## Symptoms\nVendor invoice cannot be posted in MIRO or is blocked for payment.\n\n## Cause\nPosting period closed, price/quantity variance beyond tolerance, or goods receipt/invoice receipt mismatch.\n\n## Resolution\n1. 'Posting period not open': confirm with finance, then open the period in OB52.\n2. 'Tolerance limit exceeded': confirm the price with the buyer, then release in MRBR.\n3. 'GR/IR mismatch': confirm the goods receipt was posted for the invoiced quantity.\n4. Document the resolution for audit purposes.\n",
+     "kb_category": "ERP Applications",
+     "score": 0.5070217725730812
+    },
+    {
+     "number": "KB0010030",
+     "title": "WMS wave fails to release or pick tasks are not generated",
+     "text": "# WMS wave fails to release or pick tasks are not generated\n\n## Symptoms\nWave release fails or hangs, and no pick tasks are created for the floor.\n\n## Cause\nItems with missing master data (dimensions/weight), a stuck SAP-to-WMS order interface, or allocation failures from inventory mismatches.\n\n## Resolution\n1. Check the wave's error log in WMS for the failing order or item.\n2. Fix missing item master data and re-release the wave.\n3. Check the SAP-to-WMS integration queue depth. Restart the listener if it is stuck.\n4. Engage the ERP team if orders are not being sent from SAP.\n",
+     "kb_category": "Warehouse Systems",
+     "score": 0.5026614561943724
+    }
+   ],
+   "expected_kb": "KB0010022"
+  },
+  {
+   "ticket": {
+    "number": "INC0018314",
+    "state": "Resolved",
+    "opened_at": "2026-09-25T20:26:05",
+    "resolved_at": "2026-09-26T23:44:28",
+    "closed_at": null,
+    "priority": 4,
+    "priority_label": "4 - Low",
+    "short_description": "External monitors not working",
+    "description": "When I plug into my docking station neither of my monitors turns on. Laptop screen works fine. Call my cell [PHONE] - I'm away from my desk.",
+    "category": "hardware",
+    "subcategory": "peripherals",
+    "cmdb_ci": "USB-C Dock",
+    "location": "Chicago HQ",
+    "contact_type": "email",
+    "assignment_group": "End User Computing",
+    "assigned_to": "Isaac Johansson",
+    "initial_group": "End User Computing",
+    "reassignment_count": 0,
+    "reopen_count": 0,
+    "close_code": "Solved Remotely (Permanently)",
+    "close_notes": "Dock power supply was failing. Replaced dock from desk-side stock. Followed KB0010012.",
+    "work_notes": [
+     {
+      "at": "2026-09-25T22:18:16",
+      "author": "Isaac Johansson",
+      "text": "Assigned to me. Checking recent changes and related tickets.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-26T02:05:34",
+      "author": "Isaac Johansson",
+      "text": "Waiting on vendor response. Placing On Hold.",
+      "kind": "hold"
+     },
+     {
+      "at": "2026-09-26T03:32:01",
+      "author": "Isaac Johansson",
+      "text": "Reached the caller. Continuing troubleshooting.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-26T19:20:34",
+      "author": "Isaac Johansson",
+      "text": "Working KB0010012: Replace the dock if the issue persists.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-26T23:44:28",
+      "author": "Isaac Johansson",
+      "text": "Resolved. See close notes.",
+      "kind": "resolution"
+     }
+    ],
+    "sla": {
+     "target_hours": 120.0,
+     "due_at": "2026-09-30T20:26:05",
+     "elapsed_hours": 27.31,
+     "breached": false
+    },
+    "risk": {
+     "similar_rate": 0.0099,
+     "similar_tickets": 97,
+     "priority_rate": 0.0011,
+     "misrouted_rate": 0.0,
+     "routed_right_rate": 0.0013
+    },
+    "as_of": "2026-09-27",
+    "major_incident": null,
+    "problem": null,
+    "source": "history",
+    "caller_id": "Isaac Adeyemi",
+    "servicenow_number": null,
+    "servicenow_url": null
+   },
+   "candidates": [
+    {
+     "number": "KB0010012",
+     "title": "USB-C dock or external monitor issues",
+     "text": "# USB-C dock or external monitor issues\n\n## Symptoms\nExternal monitors are blank or keyboard/mouse on the dock do not work, while the laptop works on its own.\n\n## Cause\nOutdated dock firmware or Thunderbolt drivers, a failing dock power supply, or a bad cable.\n\n## Resolution\n1. Power-cycle the dock by unplugging its power for 30 seconds.\n2. Update dock firmware and the laptop's Thunderbolt/USB-C drivers from the software center.\n3. Swap the display cable and test each monitor individually.\n4. Replace the dock if the issue persists.\n",
+     "kb_category": "End User Computing",
+     "score": 0.6872642877428661
+    },
+    {
+     "number": "KB0010011",
+     "title": "Laptop does not boot or shows BitLocker recovery",
+     "text": "# Laptop does not boot or shows BitLocker recovery\n\n## Symptoms\nLaptop does not power on, blue-screens during boot, or prompts for a BitLocker recovery key.\n\n## Cause\nBitLocker recovery is usually triggered by BIOS/firmware updates or hardware changes, including motherboard failure. Boot loops are often caused by a failed Windows update; no power or failed diagnostics usually mean a hardware failure.\n\n## Resolution\n1. For BitLocker prompts: verify identity, retrieve the recovery key from the device record, and read it to the user.\n2. After unlocking, suspend and resume BitLocker.\n3. For boot loops: boot to the recovery environment and uninstall the latest quality update.\n4. For no power: try a known-good charger and a battery reset.\n5. Run vendor diagnostics to check for hardware failure, such as a failed motherboard.\n6. If hardware has failed, provide a loaner and open a vendor warranty case.\n7. Restore the user's data to the loaner from OneDrive.\n",
+     "kb_category": "End User Computing",
+     "score": 0.49516628059378914
+    },
+    {
+     "number": "KB0010030",
+     "title": "WMS wave fails to release or pick tasks are not generated",
+     "text": "# WMS wave fails to release or pick tasks are not generated\n\n## Symptoms\nWave release fails or hangs, and no pick tasks are created for the floor.\n\n## Cause\nItems with missing master data (dimensions/weight), a stuck SAP-to-WMS order interface, or allocation failures from inventory mismatches.\n\n## Resolution\n1. Check the wave's error log in WMS for the failing order or item.\n2. Fix missing item master data and re-release the wave.\n3. Check the SAP-to-WMS integration queue depth. Restart the listener if it is stuck.\n4. Engage the ERP team if orders are not being sent from SAP.\n",
+     "kb_category": "Warehouse Systems",
+     "score": 0.4492154922547039
+    }
+   ],
+   "expected_kb": "KB0010012"
+  },
+  {
+   "ticket": {
+    "number": "INC0018308",
+    "state": "Resolved",
+    "opened_at": "2026-09-25T16:14:51",
+    "resolved_at": "2026-09-26T01:30:03",
+    "closed_at": null,
+    "priority": 2,
+    "priority_label": "2 - High",
+    "short_description": "Blue screen on startup",
+    "description": "Laptop is asking for a BitLocker recovery key and I don't know what that is. You can reach me at [PHONE].",
+    "category": "hardware",
+    "subcategory": "laptop",
+    "cmdb_ci": "Standard Laptop",
+    "location": "Toronto Office",
+    "contact_type": "self-service",
+    "assignment_group": "End User Computing",
+    "assigned_to": "Tessa Torres",
+    "initial_group": "Service Desk",
+    "reassignment_count": 1,
+    "reopen_count": 0,
+    "close_code": "Solved (Permanently)",
+    "close_notes": "Motherboard failure confirmed by diagnostics. Swapped for a loaner and opened vendor warranty case; data restored from OneDrive.",
+    "work_notes": [
+     {
+      "at": "2026-09-25T16:55:05",
+      "author": "Lucia Chen",
+      "text": "Assigned to me. Checking recent changes and related tickets.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-25T19:19:55",
+      "author": "Julia Brooks",
+      "text": "Not a Service Desk issue. Reassigning to End User Computing.",
+      "kind": "reassignment"
+     },
+     {
+      "at": "2026-09-25T22:08:18",
+      "author": "Tessa Torres",
+      "text": "Working KB0010011: For no power: try a known-good charger and a battery reset, then run vendor diagnostics.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-26T00:15:59",
+      "author": "Tessa Torres",
+      "text": "Working KB0010011: For boot loops: boot to the recovery environment and uninstall the latest quality update.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-26T01:30:03",
+      "author": "Tessa Torres",
+      "text": "Resolved. See close notes.",
+      "kind": "resolution"
+     }
+    ],
+    "sla": {
+     "target_hours": 8.0,
+     "due_at": "2026-09-26T00:14:51",
+     "elapsed_hours": 9.25,
+     "breached": true
+    },
+    "risk": {
+     "similar_rate": 0.5867,
+     "similar_tickets": 28,
+     "priority_rate": 0.2725,
+     "misrouted_rate": 0.6424,
+     "routed_right_rate": 0.1099
+    },
+    "as_of": "2026-09-27",
+    "major_incident": null,
+    "problem": null,
+    "source": "history",
+    "caller_id": "Anika Bennett",
+    "servicenow_number": null,
+    "servicenow_url": null
+   },
+   "candidates": [
+    {
+     "number": "KB0010011",
+     "title": "Laptop does not boot or shows BitLocker recovery",
+     "text": "# Laptop does not boot or shows BitLocker recovery\n\n## Symptoms\nLaptop does not power on, blue-screens during boot, or prompts for a BitLocker recovery key.\n\n## Cause\nBitLocker recovery is usually triggered by BIOS/firmware updates or hardware changes, including motherboard failure. Boot loops are often caused by a failed Windows update; no power or failed diagnostics usually mean a hardware failure.\n\n## Resolution\n1. For BitLocker prompts: verify identity, retrieve the recovery key from the device record, and read it to the user.\n2. After unlocking, suspend and resume BitLocker.\n3. For boot loops: boot to the recovery environment and uninstall the latest quality update.\n4. For no power: try a known-good charger and a battery reset.\n5. Run vendor diagnostics to check for hardware failure, such as a failed motherboard.\n6. If hardware has failed, provide a loaner and open a vendor warranty case.\n7. Restore the user's data to the loaner from OneDrive.\n",
+     "kb_category": "End User Computing",
+     "score": 0.7036324699208752
+    },
+    {
+     "number": "KB0010020",
+     "title": "Lost or stolen company device",
+     "text": "# Lost or stolen company device\n\n## Symptoms\nUser reports a lost or stolen laptop or phone.\n\n## Cause\nN/A. This is a security response procedure.\n\n## Resolution\n1. Record where and when the device was lost and whether a police report was filed.\n2. Issue a remote lock/wipe through MDM and disable the device object in the directory.\n3. Revoke all user sessions and reset the password.\n4. Confirm BitLocker was enabled on the device (for compliance reporting).\n5. Order a replacement device through End User Computing.\n",
+     "kb_category": "Security Operations",
+     "score": 0.5611176590129591
+    },
+    {
+     "number": "KB0010010",
+     "title": "Laptop performance troubleshooting",
+     "text": "# Laptop performance troubleshooting\n\n## Symptoms\nLaptop is slow, freezes, boots slowly, or runs the fan constantly.\n\n## Cause\nCommon causes: low disk space (often OneDrive cache), insufficient RAM for the workload, a stuck security agent scan, or an aging device.\n\n## Resolution\n1. Check free disk space. If below 10%, enable OneDrive Files On-Demand and clear temp files.\n2. Check Task Manager for processes with high CPU/RAM. Update the endpoint security agent if its scan is stuck.\n3. Check device age and RAM. Devices older than 4 years or with 8 GB RAM qualify for refresh.\n4. Run hardware diagnostics if freezes continue.\n",
+     "kb_category": "End User Computing",
+     "score": 0.5150267625470878
+    }
+   ],
+   "expected_kb": "KB0010011"
+  },
+  {
+   "ticket": {
+    "number": "INC0017390",
+    "state": "Closed",
+    "opened_at": "2026-08-18T11:10:13",
+    "resolved_at": "2026-08-19T07:34:01",
+    "closed_at": "2026-08-26T07:34:01",
+    "priority": 2,
+    "priority_label": "2 - High",
+    "short_description": "Laptop fan loud and everything slow",
+    "description": "Startup takes 10+ minutes and the fan is running loud all the time.",
+    "category": "hardware",
+    "subcategory": "laptop",
+    "cmdb_ci": "Standard Laptop",
+    "location": "Memphis DC",
+    "contact_type": "phone",
+    "assignment_group": "End User Computing",
+    "assigned_to": "Olivia Kaur",
+    "initial_group": "Service Desk",
+    "reassignment_count": 1,
+    "reopen_count": 0,
+    "close_code": "Solved Remotely (Permanently)",
+    "close_notes": "Disk was 98% full due to a large local OneDrive cache. Enabled Files On-Demand and cleared temp files; performance restored. Followed KB0010010.",
+    "work_notes": [
+     {
+      "at": "2026-08-18T12:46:09",
+      "author": "Julia Brooks",
+      "text": "Picked up. Contacting the caller to confirm scope.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-08-18T17:58:09",
+      "author": "Lucia Chen",
+      "text": "Not a Service Desk issue. Reassigning to End User Computing.",
+      "kind": "reassignment"
+     },
+     {
+      "at": "2026-08-19T02:27:39",
+      "author": "Olivia Kaur",
+      "text": "Working KB0010010: Check free disk space. If below 10%, enable OneDrive Files On-Demand and clear temp files.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-08-19T03:42:44",
+      "author": "Olivia Kaur",
+      "text": "Working KB0010010: Check Task Manager for processes with high CPU/RAM. Update the endpoint security agent if its scan is stuck.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-08-19T07:34:01",
+      "author": "Olivia Kaur",
+      "text": "Resolved. See close notes.",
+      "kind": "resolution"
+     }
+    ],
+    "sla": {
+     "target_hours": 8.0,
+     "due_at": "2026-08-18T19:10:13",
+     "elapsed_hours": 20.4,
+     "breached": true
+    },
+    "risk": {
+     "similar_rate": 0.5867,
+     "similar_tickets": 28,
+     "priority_rate": 0.2725,
+     "misrouted_rate": 0.6424,
+     "routed_right_rate": 0.1099
+    },
+    "as_of": "2026-09-27",
+    "major_incident": null,
+    "problem": null,
+    "source": "history",
+    "caller_id": "Jin Mensah",
+    "servicenow_number": null,
+    "servicenow_url": null
+   },
+   "candidates": [
+    {
+     "number": "KB0010010",
+     "title": "Laptop performance troubleshooting",
+     "text": "# Laptop performance troubleshooting\n\n## Symptoms\nLaptop is slow, freezes, boots slowly, or runs the fan constantly.\n\n## Cause\nCommon causes: low disk space (often OneDrive cache), insufficient RAM for the workload, a stuck security agent scan, or an aging device.\n\n## Resolution\n1. Check free disk space. If below 10%, enable OneDrive Files On-Demand and clear temp files.\n2. Check Task Manager for processes with high CPU/RAM. Update the endpoint security agent if its scan is stuck.\n3. Check device age and RAM. Devices older than 4 years or with 8 GB RAM qualify for refresh.\n4. Run hardware diagnostics if freezes continue.\n",
+     "kb_category": "End User Computing",
+     "score": 0.710680156235499
+    },
+    {
+     "number": "KB0010011",
+     "title": "Laptop does not boot or shows BitLocker recovery",
+     "text": "# Laptop does not boot or shows BitLocker recovery\n\n## Symptoms\nLaptop does not power on, blue-screens during boot, or prompts for a BitLocker recovery key.\n\n## Cause\nBitLocker recovery is usually triggered by BIOS/firmware updates or hardware changes, including motherboard failure. Boot loops are often caused by a failed Windows update; no power or failed diagnostics usually mean a hardware failure.\n\n## Resolution\n1. For BitLocker prompts: verify identity, retrieve the recovery key from the device record, and read it to the user.\n2. After unlocking, suspend and resume BitLocker.\n3. For boot loops: boot to the recovery environment and uninstall the latest quality update.\n4. For no power: try a known-good charger and a battery reset.\n5. Run vendor diagnostics to check for hardware failure, such as a failed motherboard.\n6. If hardware has failed, provide a loaner and open a vendor warranty case.\n7. Restore the user's data to the loaner from OneDrive.\n",
+     "kb_category": "End User Computing",
+     "score": 0.5052069956131883
+    },
+    {
+     "number": "KB0010021",
+     "title": "SAP performance degradation during month-end close",
+     "text": "# SAP performance degradation during month-end close\n\n## Symptoms\nSAP transactions are slow or time out, especially in the last days of the month when finance runs close activities.\n\n## Cause\nMonth-end batch jobs and heavy reports compete with interactive users for work processes and database resources.\n\n## Resolution\n1. Check SM50/SM66 for long-running work processes and SM37 for active batch jobs.\n2. Reschedule non-critical batch jobs outside business hours.\n3. Temporarily increase dialog work processes using operation modes.\n4. Identify custom reports that lock tables and move them to background execution.\n5. Engage the DBA team if database wait times are high.\n",
+     "kb_category": "ERP Applications",
+     "score": 0.4996059772654299
+    }
+   ],
+   "expected_kb": "KB0010010"
+  },
+  {
+   "ticket": {
+    "number": "INC0018238",
+    "state": "Resolved",
+    "opened_at": "2026-09-23T13:54:55",
+    "resolved_at": "2026-09-23T19:55:10",
+    "closed_at": null,
+    "priority": 5,
+    "priority_label": "5 - Planning",
+    "short_description": "Can't enroll new phone",
+    "description": "Trying to set up my new Android phone and Company Portal enrollment fails.",
+    "category": "software",
+    "subcategory": "mobile",
+    "cmdb_ci": "Intune MDM",
+    "location": "Memphis DC",
+    "contact_type": "self-service",
+    "assignment_group": "End User Computing",
+    "assigned_to": "Wei Ibrahim",
+    "initial_group": "End User Computing",
+    "reassignment_count": 0,
+    "reopen_count": 0,
+    "close_code": "Solved (Work Around)",
+    "close_notes": "Device was non-compliant due to an outdated OS. User updated iOS, device re-checked compliance, and Outlook synced. Followed KB0010032.",
+    "work_notes": [
+     {
+      "at": "2026-09-23T14:22:29",
+      "author": "Wei Ibrahim",
+      "text": "Acknowledged. Reproducing the issue.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-23T15:55:51",
+      "author": "Wei Ibrahim",
+      "text": "Working KB0010032: Check the device's compliance status and reason in MDM.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-23T19:04:20",
+      "author": "Wei Ibrahim",
+      "text": "Working KB0010032: Have the user update the phone OS to the minimum supported version.",
+      "kind": "note"
+     },
+     {
+      "at": "2026-09-23T19:55:10",
+      "author": "Wei Ibrahim",
+      "text": "Resolved. See close notes.",
+      "kind": "resolution"
+     }
+    ],
+    "sla": {
+     "target_hours": 240.0,
+     "due_at": "2026-10-03T13:54:55",
+     "elapsed_hours": 6.0,
+     "breached": false
+    },
+    "risk": {
+     "similar_rate": 0.0,
+     "similar_tickets": 60,
+     "priority_rate": 0.0,
+     "misrouted_rate": 0.0,
+     "routed_right_rate": 0.0
+    },
+    "as_of": "2026-09-27",
+    "major_incident": null,
+    "problem": null,
+    "source": "history",
+    "caller_id": "Mei Garcia",
+    "servicenow_number": null,
+    "servicenow_url": null
+   },
+   "candidates": [
+    {
+     "number": "KB0010032",
+     "title": "Mobile email and MDM compliance issues",
+     "text": "# Mobile email and MDM compliance issues\n\n## Symptoms\nOutlook mobile stops syncing, reports non-compliance, or loops on sign-in. MDM enrollment fails.\n\n## Cause\nOutdated OS version below the compliance policy, device enrollment limit reached, or stale device records.\n\n## Resolution\n1. Check the device's compliance status and reason in MDM.\n2. Have the user update the phone OS to the minimum supported version.\n3. Remove stale device records if the user is at the enrollment limit.\n4. Have the user run 'Check status' in Company Portal, then reopen Outlook.\n",
+     "kb_category": "End User Computing",
+     "score": 0.6782322523658245
+    },
+    {
+     "number": "KB0010003",
+     "title": "Re-registering MFA after a phone replacement",
+     "text": "# Re-registering MFA after a phone replacement\n\n## Symptoms\nUser cannot complete MFA because the Authenticator app was lost or not transferred to a new device.\n\n## Cause\nAuthenticator registrations are bound to the original device and are not always restored from phone backups.\n\n## Resolution\n1. Verify identity using a manager callback. Do not rely on information the caller provides alone.\n2. In the identity portal, revoke existing MFA sessions and delete the old Authenticator registration.\n3. Issue a Temporary Access Pass valid for 1 hour.\n4. Guide the user through registering the Authenticator app at the security info page.\n5. Confirm a successful sign-in before resolving.\n",
+     "kb_category": "Identity & Access Management",
+     "score": 0.5469656703145827
+    },
+    {
+     "number": "KB0010005",
+     "title": "Troubleshooting SSO failures for SaaS applications",
+     "text": "# Troubleshooting SSO failures for SaaS applications\n\n## Symptoms\nUser gets redirect loops, 'user not assigned', or SAML errors when opening a SaaS app from the SSO portal.\n\n## Cause\nCommon causes: the app assignment was removed after an HR department change, the user's email/UPN attribute does not match the app, or a stale browser session.\n\n## Resolution\n1. Check the user's app assignments in the IdP admin console.\n2. If the assignment is missing, re-add the user to the app's access group (department changes can remove it).\n3. Compare the user's UPN/email in the IdP with the username in the target app.\n4. Have the user clear cookies or try an InPrivate window.\n5. Escalate to the application team only if the IdP shows a successful SAML assertion.\n",
+     "kb_category": "Identity & Access Management",
+     "score": 0.5342514689337469
+    }
+   ],
+   "expected_kb": "KB0010032"
+  }
+ ],
+ "reviews": [
+  {
+   "incident": {
+    "mi_id": "MI20260818-handheld",
+    "day": "2026-08-18",
+    "subcategory": "handheld",
+    "category": "hardware",
+    "site": "Memphis DC",
+    "started_at": "2026-08-18T06:22:06",
+    "restored_at": "2026-08-19T07:59:46",
+    "tickets": 60,
+    "baseline_daily": 0.89,
+    "spike_ratio": 60.0,
+    "worst_priority": "3 - Moderate",
+    "locations": [
+     "Memphis DC"
+    ],
+    "resolving_groups": [
+     "Warehouse Systems"
+    ],
+    "sla_breaches": 0,
+    "avg_mttr_hours": 16.765259259259263,
+    "top_fix": "Handheld HH-ATL-032 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded. Followed KB0010028."
+   },
+   "timeline": [
+    {
+     "hour": "2026-08-18T06:00:00",
+     "opened": 4
+    },
+    {
+     "hour": "2026-08-18T07:00:00",
+     "opened": 3
+    },
+    {
+     "hour": "2026-08-18T08:00:00",
+     "opened": 4
+    },
+    {
+     "hour": "2026-08-18T09:00:00",
+     "opened": 3
+    },
+    {
+     "hour": "2026-08-18T10:00:00",
+     "opened": 2
+    },
+    {
+     "hour": "2026-08-18T11:00:00",
+     "opened": 3
+    },
+    {
+     "hour": "2026-08-18T12:00:00",
+     "opened": 6
+    },
+    {
+     "hour": "2026-08-18T13:00:00",
+     "opened": 4
+    },
+    {
+     "hour": "2026-08-18T14:00:00",
+     "opened": 2
+    },
+    {
+     "hour": "2026-08-18T15:00:00",
+     "opened": 3
+    },
+    {
+     "hour": "2026-08-18T16:00:00",
+     "opened": 5
+    },
+    {
+     "hour": "2026-08-18T17:00:00",
+     "opened": 2
+    },
+    {
+     "hour": "2026-08-18T18:00:00",
+     "opened": 5
+    },
+    {
+     "hour": "2026-08-18T19:00:00",
+     "opened": 3
+    },
+    {
+     "hour": "2026-08-18T20:00:00",
+     "opened": 4
+    },
+    {
+     "hour": "2026-08-18T21:00:00",
+     "opened": 5
+    },
+    {
+     "hour": "2026-08-18T22:00:00",
+     "opened": 2
+    }
+   ],
+   "tickets": [
+    {
+     "number": "INC0017367",
+     "opened_at": "2026-08-18T06:22:06",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Handheld scanner HH-ATL-032 not syncing",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 25.41583333333333,
+     "close_notes": "Handheld HH-ATL-032 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded. Followed KB0010028."
+    },
+    {
+     "number": "INC0017376",
+     "opened_at": "2026-08-18T08:17:32",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Scans not uploading from handheld",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 23.181944444444444,
+     "close_notes": "Handheld HH-ATL-032 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded."
+    },
+    {
+     "number": "INC0017392",
+     "opened_at": "2026-08-18T11:15:19",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "RF gun freezing at pick zone C",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 20.08416666666667,
+     "close_notes": "Handheld HH-MEM-208 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded."
+    },
+    {
+     "number": "INC0017404",
+     "opened_at": "2026-08-18T13:07:59",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "scanner won't connect to wms",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 18.461111111111112,
+     "close_notes": "Handheld HH-DAL-117 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded."
+    },
+    {
+     "number": "INC0017416",
+     "opened_at": "2026-08-18T16:01:49",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Scans not uploading from handheld",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 15.875555555555556,
+     "close_notes": "Handheld HH-MEM-208 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded. Followed KB0010028."
+    },
+    {
+     "number": "INC0017430",
+     "opened_at": "2026-08-18T18:36:00",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Scans not uploading from handheld",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 12.281666666666666,
+     "close_notes": "Handheld HH-DAL-044 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded. Followed KB0010028."
+    },
+    {
+     "number": "INC0017439",
+     "opened_at": "2026-08-18T20:41:18",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Scanner won't connect to WMS",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 10.469444444444445,
+     "close_notes": "Handheld HH-ATL-032 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded. Followed KB0010028."
+    },
+    {
+     "number": "INC0017448",
+     "opened_at": "2026-08-18T22:45:31",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Scans not uploading from handheld",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 8.3925,
+     "close_notes": "Handheld HH-ATL-190 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded."
+    }
+   ]
+  },
+  {
+   "incident": {
+    "mi_id": "MI20260715-certificate",
+    "day": "2026-07-15",
+    "subcategory": "certificate",
+    "category": "software",
+    "site": null,
+    "started_at": "2026-07-15T06:06:20",
+    "restored_at": "2026-07-15T10:32:04",
+    "tickets": 35,
+    "baseline_daily": 0.07,
+    "spike_ratio": 35.0,
+    "worst_priority": "2 - High",
+    "locations": [
+     "Atlanta DC",
+     "Chicago HQ",
+     "Dallas DC",
+     "Memphis DC",
+     "Remote",
+     "Toronto Office"
+    ],
+    "resolving_groups": [
+     "Cloud Platform"
+    ],
+    "sla_breaches": 0,
+    "avg_mttr_hours": 2.9301507936507933,
+    "top_fix": "TLS certificate for Customer Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days."
+   },
+   "timeline": [
+    {
+     "hour": "2026-07-15T06:00:00",
+     "opened": 20
+    },
+    {
+     "hour": "2026-07-15T07:00:00",
+     "opened": 14
+    },
+    {
+     "hour": "2026-07-15T08:00:00",
+     "opened": 1
+    }
+   ],
+   "tickets": [
+    {
+     "number": "INC0016541",
+     "opened_at": "2026-07-15T06:06:20",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "API clients failing TLS handshake",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.2333333333333334,
+     "close_notes": "TLS certificate for Customer Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days."
+    },
+    {
+     "number": "INC0016547",
+     "opened_at": "2026-07-15T06:14:54",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "'your connection is not private' on customer portal",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.8480555555555553,
+     "close_notes": "TLS certificate for Customer Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    },
+    {
+     "number": "INC0016552",
+     "opened_at": "2026-07-15T06:36:46",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "'Your connection is not private' on Carrier Booking Portal",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.6758333333333333,
+     "close_notes": "TLS certificate for Carrier Booking Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    },
+    {
+     "number": "INC0016557",
+     "opened_at": "2026-07-15T06:54:28",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "API clients failing TLS handshake",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Atlanta DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.852777777777778,
+     "close_notes": "TLS certificate for Customer Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    },
+    {
+     "number": "INC0016561",
+     "opened_at": "2026-07-15T06:57:25",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "'Your connection is not private' on Carrier Booking Portal",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.7616666666666667,
+     "close_notes": "TLS certificate for Carrier Booking Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    },
+    {
+     "number": "INC0016567",
+     "opened_at": "2026-07-15T07:30:43",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Certificate error on Customer Portal",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.6972222222222224,
+     "close_notes": "TLS certificate for Customer Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    },
+    {
+     "number": "INC0016572",
+     "opened_at": "2026-07-15T07:43:40",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "App is broken",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 1.9983333333333333,
+     "close_notes": "TLS certificate for Shipment Tracking API expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days."
+    },
+    {
+     "number": "INC0016578",
+     "opened_at": "2026-07-15T08:03:23",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Certificate error on Shipment Tracking API",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 1.405,
+     "close_notes": "TLS certificate for Shipment Tracking API expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    }
+   ]
+  },
+  {
+   "incident": {
+    "mi_id": "MI20260310-lan",
+    "day": "2026-03-10",
+    "subcategory": "lan",
+    "category": "network",
+    "site": "Chicago HQ",
+    "started_at": "2026-03-10T08:41:27",
+    "restored_at": "2026-03-10T14:29:18",
+    "tickets": 85,
+    "baseline_daily": 0.11,
+    "spike_ratio": 85.0,
+    "worst_priority": "2 - High",
+    "locations": [
+     "Chicago HQ"
+    ],
+    "resolving_groups": [
+     "Network Operations"
+    ],
+    "sla_breaches": 0,
+    "avg_mttr_hours": 3.714124183006536,
+    "top_fix": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+   },
+   "timeline": [
+    {
+     "hour": "2026-03-10T08:00:00",
+     "opened": 7
+    },
+    {
+     "hour": "2026-03-10T09:00:00",
+     "opened": 30
+    },
+    {
+     "hour": "2026-03-10T10:00:00",
+     "opened": 27
+    },
+    {
+     "hour": "2026-03-10T11:00:00",
+     "opened": 21
+    }
+   ],
+   "tickets": [
+    {
+     "number": "INC0013586",
+     "opened_at": "2026-03-10T08:41:27",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Nothing is loading - network outage?",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 5.408333333333333,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+    },
+    {
+     "number": "INC0013600",
+     "opened_at": "2026-03-10T09:18:53",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "nothing is loading - network outage?",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.204722222222222,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record. Followed KB0010008."
+    },
+    {
+     "number": "INC0013613",
+     "opened_at": "2026-03-10T09:36:09",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "No network on whole floor",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.835833333333333,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record. Followed KB0010008."
+    },
+    {
+     "number": "INC0013625",
+     "opened_at": "2026-03-10T09:58:05",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Nothing is loading - network outage?",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.4875,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record. Followed KB0010008."
+    },
+    {
+     "number": "INC0013638",
+     "opened_at": "2026-03-10T10:15:23",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "nothing is loading - network outage?",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.0572222222222223,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+    },
+    {
+     "number": "INC0013651",
+     "opened_at": "2026-03-10T10:50:13",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Chicago HQ lost connectivity",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.875,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+    },
+    {
+     "number": "INC0013663",
+     "opened_at": "2026-03-10T11:21:20",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "No network on whole floor",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.713888888888889,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+    },
+    {
+     "number": "INC0013675",
+     "opened_at": "2026-03-10T11:36:40",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Chicago HQ lost connectivity",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.456111111111111,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+    }
+   ]
+  },
+  {
+   "incident": {
+    "mi_id": "MI20260120-email",
+    "day": "2026-01-20",
+    "subcategory": "email",
+    "category": "software",
+    "site": null,
+    "started_at": "2026-01-20T07:12:09",
+    "restored_at": "2026-01-20T18:14:13",
+    "tickets": 141,
+    "baseline_daily": 1.25,
+    "spike_ratio": 112.8,
+    "worst_priority": "3 - Moderate",
+    "locations": [
+     "Atlanta DC",
+     "Chicago HQ",
+     "Dallas DC",
+     "Memphis DC",
+     "Remote",
+     "Toronto Office"
+    ],
+    "resolving_groups": [
+     "Messaging & Collaboration"
+    ],
+    "sla_breaches": 0,
+    "avg_mttr_hours": 4.105713159968479,
+    "top_fix": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident. Followed KB0010015."
+   },
+   "timeline": [
+    {
+     "hour": "2026-01-20T07:00:00",
+     "opened": 36
+    },
+    {
+     "hour": "2026-01-20T08:00:00",
+     "opened": 43
+    },
+    {
+     "hour": "2026-01-20T09:00:00",
+     "opened": 40
+    },
+    {
+     "hour": "2026-01-20T10:00:00",
+     "opened": 21
+    },
+    {
+     "hour": "2026-01-20T15:00:00",
+     "opened": 1
+    }
+   ],
+   "tickets": [
+    {
+     "number": "INC0012313",
+     "opened_at": "2026-01-20T07:12:09",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Outlook not receiving email",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 5.751944444444445,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident. Followed KB0010015."
+    },
+    {
+     "number": "INC0012334",
+     "opened_at": "2026-01-20T07:41:05",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Email problem",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.933611111111111,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident."
+    },
+    {
+     "number": "INC0012356",
+     "opened_at": "2026-01-20T08:03:58",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Outlook not receiving email",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 5.490277777777778,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident."
+    },
+    {
+     "number": "INC0012378",
+     "opened_at": "2026-01-20T08:28:21",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Outlook stuck on 'Updating'",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Dallas DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.936944444444444,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident."
+    },
+    {
+     "number": "INC0012400",
+     "opened_at": "2026-01-20T09:03:00",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Email not working right",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.591388888888889,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident."
+    },
+    {
+     "number": "INC0012424",
+     "opened_at": "2026-01-20T09:33:17",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Outlook not receiving email",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.005,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident. Followed KB0010015."
+    },
+    {
+     "number": "INC0012446",
+     "opened_at": "2026-01-20T10:00:30",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Email problem",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Dallas DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.5941666666666667,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident."
+    },
+    {
+     "number": "INC0012478",
+     "opened_at": "2026-01-20T15:56:14",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Weird email",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.299722222222222,
+     "close_notes": "Mailbox was over quota. Enabled archive policy and cleared large items; sync resumed. Followed KB0010015."
+    }
+   ]
+  }
+ ],
+ "problems": [
+  {
+   "problem": {
+    "problem_id": "PRB20260119-email",
+    "subcategory": "email",
+    "category": "software",
+    "first_week": "2026-01-19",
+    "last_week": "2026-01-19",
+    "weeks": 1,
+    "tickets": 150,
+    "baseline_weekly": 7.75,
+    "excess_tickets": 142,
+    "hours_to_resolve": 680.8,
+    "sla_breaches": 1,
+    "locations": [
+     "Atlanta DC",
+     "Chicago HQ",
+     "Dallas DC",
+     "Memphis DC",
+     "Remote",
+     "Toronto Office"
+    ],
+    "resolving_groups": [
+     "Messaging & Collaboration"
+    ],
+    "top_fix": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident.",
+    "top_fix_share": 0.947,
+    "top_fix_usual_share": 0.329,
+    "major_incident": "MI20260120-email",
+    "evidence": "strong"
+   },
+   "weekly": [
+    {
+     "week": "2025-10-27",
+     "tickets": 9
+    },
+    {
+     "week": "2025-11-03",
+     "tickets": 8
+    },
+    {
+     "week": "2025-11-10",
+     "tickets": 2
+    },
+    {
+     "week": "2025-11-17",
+     "tickets": 9
+    },
+    {
+     "week": "2025-11-24",
+     "tickets": 8
+    },
+    {
+     "week": "2025-12-01",
+     "tickets": 7
+    },
+    {
+     "week": "2025-12-08",
+     "tickets": 8
+    },
+    {
+     "week": "2025-12-15",
+     "tickets": 6
+    },
+    {
+     "week": "2025-12-22",
+     "tickets": 9
+    },
+    {
+     "week": "2025-12-29",
+     "tickets": 7
+    },
+    {
+     "week": "2026-01-05",
+     "tickets": 12
+    },
+    {
+     "week": "2026-01-12",
+     "tickets": 8
+    },
+    {
+     "week": "2026-01-19",
+     "tickets": 150
+    },
+    {
+     "week": "2026-01-26",
+     "tickets": 5
+    },
+    {
+     "week": "2026-02-02",
+     "tickets": 5
+    },
+    {
+     "week": "2026-02-09",
+     "tickets": 11
+    },
+    {
+     "week": "2026-02-16",
+     "tickets": 8
+    },
+    {
+     "week": "2026-02-23",
+     "tickets": 8
+    },
+    {
+     "week": "2026-03-02",
+     "tickets": 8
+    },
+    {
+     "week": "2026-03-09",
+     "tickets": 6
+    },
+    {
+     "week": "2026-03-16",
+     "tickets": 6
+    }
+   ],
+   "tickets": [
+    {
+     "number": "INC0012286",
+     "opened_at": "2026-01-19T10:51:56",
+     "state": "Closed",
+     "priority_label": "4 - Low",
+     "short_description": "Outlook stuck on 'Updating'",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 6.841111111111111,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident."
+    },
+    {
+     "number": "INC0012333",
+     "opened_at": "2026-01-20T07:41:02",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Outlook not receiving email",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Dallas DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 5.128888888888889,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident. Followed KB0010015."
+    },
+    {
+     "number": "INC0012357",
+     "opened_at": "2026-01-20T08:05:17",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Outlook stuck on 'Updating'",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Dallas DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.525277777777778,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident. Followed KB0010015."
+    },
+    {
+     "number": "INC0012381",
+     "opened_at": "2026-01-20T08:37:06",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "outlook disconnected",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.416944444444445,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident. Followed KB0010015."
+    },
+    {
+     "number": "INC0012403",
+     "opened_at": "2026-01-20T09:05:40",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Weird email",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Toronto Office",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.7602777777777776,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident. Followed KB0010015."
+    },
+    {
+     "number": "INC0012429",
+     "opened_at": "2026-01-20T09:36:37",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Outlook not receiving email",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.408611111111111,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident."
+    },
+    {
+     "number": "INC0012452",
+     "opened_at": "2026-01-20T10:16:40",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Emails not syncing",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Dallas DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.1416666666666666,
+     "close_notes": "Exchange Online service incident affected mail flow. Resolved after vendor mitigation; linked to parent incident. Followed KB0010015."
+    },
+    {
+     "number": "INC0012577",
+     "opened_at": "2026-01-24T14:25:03",
+     "state": "Closed",
+     "priority_label": "4 - Low",
+     "short_description": "Email problem",
+     "assignment_group": "Messaging & Collaboration",
+     "subcategory": "email",
+     "location": "Dallas DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 11.62138888888889,
+     "close_notes": "Corrupted OST file. Rebuilt Outlook profile; mailbox resynced. Followed KB0010015."
+    }
+   ]
+  },
+  {
+   "problem": {
+    "problem_id": "PRB20260504-vpn",
+    "subcategory": "vpn",
+    "category": "network",
+    "first_week": "2026-05-04",
+    "last_week": "2026-06-08",
+    "weeks": 6,
+    "tickets": 135,
+    "baseline_weekly": 5.83,
+    "excess_tickets": 100,
+    "hours_to_resolve": 1088.0,
+    "sla_breaches": 6,
+    "locations": [
+     "Remote"
+    ],
+    "resolving_groups": [
+     "Network Operations"
+    ],
+    "top_fix": "GlobalProtect client was on the new version with a corrupted portal config. Cleared the cached portal settings and re-entered the portal address; VPN connected.",
+    "top_fix_share": 1.0,
+    "top_fix_usual_share": 0.336,
+    "major_incident": null,
+    "evidence": "strong"
+   },
+   "weekly": [
+    {
+     "week": "2026-02-09",
+     "tickets": 6
+    },
+    {
+     "week": "2026-02-16",
+     "tickets": 10
+    },
+    {
+     "week": "2026-02-23",
+     "tickets": 11
+    },
+    {
+     "week": "2026-03-02",
+     "tickets": 5
+    },
+    {
+     "week": "2026-03-09",
+     "tickets": 2
+    },
+    {
+     "week": "2026-03-16",
+     "tickets": 4
+    },
+    {
+     "week": "2026-03-23",
+     "tickets": 11
+    },
+    {
+     "week": "2026-03-30",
+     "tickets": 3
+    },
+    {
+     "week": "2026-04-06",
+     "tickets": 10
+    },
+    {
+     "week": "2026-04-13",
+     "tickets": 4
+    },
+    {
+     "week": "2026-04-20",
+     "tickets": 2
+    },
+    {
+     "week": "2026-04-27",
+     "tickets": 2
+    },
+    {
+     "week": "2026-05-04",
+     "tickets": 23
+    },
+    {
+     "week": "2026-05-11",
+     "tickets": 23
+    },
+    {
+     "week": "2026-05-18",
+     "tickets": 19
+    },
+    {
+     "week": "2026-05-25",
+     "tickets": 21
+    },
+    {
+     "week": "2026-06-01",
+     "tickets": 24
+    },
+    {
+     "week": "2026-06-08",
+     "tickets": 25
+    },
+    {
+     "week": "2026-06-15",
+     "tickets": 11
+    },
+    {
+     "week": "2026-06-22",
+     "tickets": 5
+    },
+    {
+     "week": "2026-06-29",
+     "tickets": 4
+    },
+    {
+     "week": "2026-07-06",
+     "tickets": 6
+    },
+    {
+     "week": "2026-07-13",
+     "tickets": 7
+    },
+    {
+     "week": "2026-07-20",
+     "tickets": 4
+    },
+    {
+     "week": "2026-07-27",
+     "tickets": 6
+    },
+    {
+     "week": "2026-08-03",
+     "tickets": 9
+    }
+   ],
+   "tickets": [
+    {
+     "number": "INC0014830",
+     "opened_at": "2026-05-04T09:17:30",
+     "state": "Closed",
+     "priority_label": "4 - Low",
+     "short_description": "GlobalProtect error: Connection timed out",
+     "assignment_group": "Network Operations",
+     "subcategory": "vpn",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 6.947777777777778,
+     "close_notes": "GlobalProtect client was on the new version with a corrupted portal config. Cleared the cached portal settings and re-entered the portal address; VPN connected."
+    },
+    {
+     "number": "INC0014953",
+     "opened_at": "2026-05-08T11:36:22",
+     "state": "Closed",
+     "priority_label": "1 - Critical",
+     "short_description": "Login not working",
+     "assignment_group": "Network Operations",
+     "subcategory": "vpn",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.5733333333333333,
+     "close_notes": "GlobalProtect client was on the new version with a corrupted portal config. Cleared the cached portal settings and re-entered the portal address; VPN connected. Followed KB0010006."
+    },
+    {
+     "number": "INC0015096",
+     "opened_at": "2026-05-14T14:48:43",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Unable to connect to VPN from home",
+     "assignment_group": "Network Operations",
+     "subcategory": "vpn",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 0.7383333333333333,
+     "close_notes": "GlobalProtect client was on the new version with a corrupted portal config. Cleared the cached portal settings and re-entered the portal address; VPN connected. Followed KB0010006."
+    },
+    {
+     "number": "INC0015277",
+     "opened_at": "2026-05-22T07:24:29",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "GlobalProtect error: Portal certificate error",
+     "assignment_group": "Network Operations",
+     "subcategory": "vpn",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 1.3669444444444445,
+     "close_notes": "GlobalProtect client was on the new version with a corrupted portal config. Cleared the cached portal settings and re-entered the portal address; VPN connected."
+    },
+    {
+     "number": "INC0015415",
+     "opened_at": "2026-05-28T11:11:58",
+     "state": "Closed",
+     "priority_label": "5 - Planning",
+     "short_description": "VPN won't connect",
+     "assignment_group": "Network Operations",
+     "subcategory": "vpn",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 8.339166666666667,
+     "close_notes": "GlobalProtect client was on the new version with a corrupted portal config. Cleared the cached portal settings and re-entered the portal address; VPN connected."
+    },
+    {
+     "number": "INC0015536",
+     "opened_at": "2026-06-02T12:28:09",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Can't log in",
+     "assignment_group": "Network Operations",
+     "subcategory": "vpn",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.4386111111111113,
+     "close_notes": "GlobalProtect client was on the new version with a corrupted portal config. Cleared the cached portal settings and re-entered the portal address; VPN connected."
+    },
+    {
+     "number": "INC0015665",
+     "opened_at": "2026-06-08T15:15:41",
+     "state": "Closed",
+     "priority_label": "4 - Low",
+     "short_description": "vpn keeps disconnecting",
+     "assignment_group": "Network Operations",
+     "subcategory": "vpn",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 14.803333333333333,
+     "close_notes": "GlobalProtect client was on the new version with a corrupted portal config. Cleared the cached portal settings and re-entered the portal address; VPN connected."
+    },
+    {
+     "number": "INC0015795",
+     "opened_at": "2026-06-13T17:29:49",
+     "state": "Closed",
+     "priority_label": "4 - Low",
+     "short_description": "Can't log in",
+     "assignment_group": "Network Operations",
+     "subcategory": "vpn",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 19.41722222222222,
+     "close_notes": "GlobalProtect client was on the new version with a corrupted portal config. Cleared the cached portal settings and re-entered the portal address; VPN connected. Followed KB0010006."
+    }
+   ]
+  },
+  {
+   "problem": {
+    "problem_id": "PRB20260309-lan",
+    "subcategory": "lan",
+    "category": "network",
+    "first_week": "2026-03-09",
+    "last_week": "2026-03-09",
+    "weeks": 1,
+    "tickets": 85,
+    "baseline_weekly": 0.83,
+    "excess_tickets": 84,
+    "hours_to_resolve": 315.7,
+    "sla_breaches": 0,
+    "locations": [
+     "Chicago HQ"
+    ],
+    "resolving_groups": [
+     "Network Operations"
+    ],
+    "top_fix": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record.",
+    "top_fix_share": 1.0,
+    "top_fix_usual_share": 0.121,
+    "major_incident": "MI20260310-lan",
+    "evidence": "strong"
+   },
+   "weekly": [
+    {
+     "week": "2025-12-15",
+     "tickets": 0
+    },
+    {
+     "week": "2025-12-22",
+     "tickets": 3
+    },
+    {
+     "week": "2025-12-29",
+     "tickets": 0
+    },
+    {
+     "week": "2026-01-05",
+     "tickets": 0
+    },
+    {
+     "week": "2026-01-12",
+     "tickets": 1
+    },
+    {
+     "week": "2026-01-19",
+     "tickets": 1
+    },
+    {
+     "week": "2026-01-26",
+     "tickets": 0
+    },
+    {
+     "week": "2026-02-02",
+     "tickets": 1
+    },
+    {
+     "week": "2026-02-09",
+     "tickets": 2
+    },
+    {
+     "week": "2026-02-16",
+     "tickets": 1
+    },
+    {
+     "week": "2026-02-23",
+     "tickets": 1
+    },
+    {
+     "week": "2026-03-02",
+     "tickets": 0
+    },
+    {
+     "week": "2026-03-09",
+     "tickets": 85
+    },
+    {
+     "week": "2026-03-16",
+     "tickets": 1
+    },
+    {
+     "week": "2026-03-23",
+     "tickets": 0
+    },
+    {
+     "week": "2026-03-30",
+     "tickets": 0
+    },
+    {
+     "week": "2026-04-06",
+     "tickets": 1
+    },
+    {
+     "week": "2026-04-13",
+     "tickets": 2
+    },
+    {
+     "week": "2026-04-20",
+     "tickets": 2
+    },
+    {
+     "week": "2026-04-27",
+     "tickets": 1
+    },
+    {
+     "week": "2026-05-04",
+     "tickets": 2
+    }
+   ],
+   "tickets": [
+    {
+     "number": "INC0013586",
+     "opened_at": "2026-03-10T08:41:27",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Nothing is loading - network outage?",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 5.408333333333333,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+    },
+    {
+     "number": "INC0013600",
+     "opened_at": "2026-03-10T09:18:53",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "nothing is loading - network outage?",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.204722222222222,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record. Followed KB0010008."
+    },
+    {
+     "number": "INC0013613",
+     "opened_at": "2026-03-10T09:36:09",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "No network on whole floor",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.835833333333333,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record. Followed KB0010008."
+    },
+    {
+     "number": "INC0013625",
+     "opened_at": "2026-03-10T09:58:05",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Nothing is loading - network outage?",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.4875,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record. Followed KB0010008."
+    },
+    {
+     "number": "INC0013638",
+     "opened_at": "2026-03-10T10:15:23",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "nothing is loading - network outage?",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.0572222222222223,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+    },
+    {
+     "number": "INC0013651",
+     "opened_at": "2026-03-10T10:50:13",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Chicago HQ lost connectivity",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.875,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+    },
+    {
+     "number": "INC0013663",
+     "opened_at": "2026-03-10T11:21:20",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "No network on whole floor",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.713888888888889,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+    },
+    {
+     "number": "INC0013675",
+     "opened_at": "2026-03-10T11:36:40",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Chicago HQ lost connectivity",
+     "assignment_group": "Network Operations",
+     "subcategory": "lan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.456111111111111,
+     "close_notes": "Core switch at Chicago HQ failed a supervisor module. Failed over to redundant supervisor and replaced the faulty module. Linked to parent incident and problem record."
+    }
+   ]
+  },
+  {
+   "problem": {
+    "problem_id": "PRB20260817-handheld",
+    "subcategory": "handheld",
+    "category": "hardware",
+    "first_week": "2026-08-17",
+    "last_week": "2026-08-17",
+    "weeks": 1,
+    "tickets": 66,
+    "baseline_weekly": 5.42,
+    "excess_tickets": 61,
+    "hours_to_resolve": 1075.5,
+    "sla_breaches": 0,
+    "locations": [
+     "Atlanta DC",
+     "Dallas DC",
+     "Memphis DC"
+    ],
+    "resolving_groups": [
+     "Warehouse Systems"
+    ],
+    "top_fix": "Handheld HH-MEM-208 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded.",
+    "top_fix_share": 0.955,
+    "top_fix_usual_share": 0.494,
+    "major_incident": "MI20260818-handheld",
+    "evidence": "moderate"
+   },
+   "weekly": [
+    {
+     "week": "2026-05-25",
+     "tickets": 5
+    },
+    {
+     "week": "2026-06-01",
+     "tickets": 7
+    },
+    {
+     "week": "2026-06-08",
+     "tickets": 4
+    },
+    {
+     "week": "2026-06-15",
+     "tickets": 9
+    },
+    {
+     "week": "2026-06-22",
+     "tickets": 3
+    },
+    {
+     "week": "2026-06-29",
+     "tickets": 3
+    },
+    {
+     "week": "2026-07-06",
+     "tickets": 5
+    },
+    {
+     "week": "2026-07-13",
+     "tickets": 4
+    },
+    {
+     "week": "2026-07-20",
+     "tickets": 8
+    },
+    {
+     "week": "2026-07-27",
+     "tickets": 7
+    },
+    {
+     "week": "2026-08-03",
+     "tickets": 5
+    },
+    {
+     "week": "2026-08-10",
+     "tickets": 5
+    },
+    {
+     "week": "2026-08-17",
+     "tickets": 66
+    },
+    {
+     "week": "2026-08-24",
+     "tickets": 7
+    },
+    {
+     "week": "2026-08-31",
+     "tickets": 4
+    },
+    {
+     "week": "2026-09-07",
+     "tickets": 8
+    },
+    {
+     "week": "2026-09-14",
+     "tickets": 6
+    },
+    {
+     "week": "2026-09-21",
+     "tickets": 3
+    }
+   ],
+   "tickets": [
+    {
+     "number": "INC0017362",
+     "opened_at": "2026-08-17T18:56:46",
+     "state": "Closed",
+     "priority_label": "4 - Low",
+     "short_description": "Handheld scanner HH-MEM-208 not syncing",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 14.463611111111112,
+     "close_notes": "Handheld HH-MEM-208 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded."
+    },
+    {
+     "number": "INC0017373",
+     "opened_at": "2026-08-18T07:53:59",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Scanner won't connect to WMS",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 23.163333333333334,
+     "close_notes": "Handheld HH-ATL-032 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded. Followed KB0010028."
+    },
+    {
+     "number": "INC0017389",
+     "opened_at": "2026-08-18T11:05:35",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "scanner won't connect to wms",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 20.432777777777776,
+     "close_notes": "Handheld HH-DAL-044 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded. Followed KB0010028."
+    },
+    {
+     "number": "INC0017404",
+     "opened_at": "2026-08-18T13:07:59",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "scanner won't connect to wms",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 18.461111111111112,
+     "close_notes": "Handheld HH-DAL-117 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded."
+    },
+    {
+     "number": "INC0017416",
+     "opened_at": "2026-08-18T16:01:49",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Scans not uploading from handheld",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 15.875555555555556,
+     "close_notes": "Handheld HH-MEM-208 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded. Followed KB0010028."
+    },
+    {
+     "number": "INC0017431",
+     "opened_at": "2026-08-18T18:39:27",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Scans not uploading from handheld",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 12.217222222222222,
+     "close_notes": "Handheld HH-MEM-015 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded."
+    },
+    {
+     "number": "INC0017441",
+     "opened_at": "2026-08-18T21:19:56",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Scanner won't connect to WMS",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 10.4775,
+     "close_notes": "Handheld HH-ATL-032 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded. Followed KB0010028."
+    },
+    {
+     "number": "INC0017519",
+     "opened_at": "2026-08-21T22:02:32",
+     "state": "Closed",
+     "priority_label": "3 - Moderate",
+     "short_description": "Scans not uploading from handheld",
+     "assignment_group": "Warehouse Systems",
+     "subcategory": "handheld",
+     "location": "Atlanta DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 5.458055555555555,
+     "close_notes": "Handheld HH-DAL-117 had an expired Wi-Fi certificate. Re-enrolled device in MDM; pending scans uploaded. Followed KB0010028."
+    }
+   ]
+  },
+  {
+   "problem": {
+    "problem_id": "PRB20260713-certificate",
+    "subcategory": "certificate",
+    "category": "software",
+    "first_week": "2026-07-13",
+    "last_week": "2026-07-13",
+    "weeks": 1,
+    "tickets": 35,
+    "baseline_weekly": 0.58,
+    "excess_tickets": 34,
+    "hours_to_resolve": 102.6,
+    "sla_breaches": 0,
+    "locations": [
+     "Atlanta DC",
+     "Chicago HQ",
+     "Dallas DC",
+     "Memphis DC",
+     "Remote",
+     "Toronto Office"
+    ],
+    "resolving_groups": [
+     "Cloud Platform"
+    ],
+    "top_fix": "TLS certificate for Customer Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days.",
+    "top_fix_share": 0.4,
+    "top_fix_usual_share": 0.212,
+    "major_incident": "MI20260715-certificate",
+    "evidence": "moderate"
+   },
+   "weekly": [
+    {
+     "week": "2026-04-20",
+     "tickets": 0
+    },
+    {
+     "week": "2026-04-27",
+     "tickets": 0
+    },
+    {
+     "week": "2026-05-04",
+     "tickets": 0
+    },
+    {
+     "week": "2026-05-11",
+     "tickets": 2
+    },
+    {
+     "week": "2026-05-18",
+     "tickets": 0
+    },
+    {
+     "week": "2026-05-25",
+     "tickets": 1
+    },
+    {
+     "week": "2026-06-01",
+     "tickets": 0
+    },
+    {
+     "week": "2026-06-08",
+     "tickets": 2
+    },
+    {
+     "week": "2026-06-15",
+     "tickets": 0
+    },
+    {
+     "week": "2026-06-22",
+     "tickets": 0
+    },
+    {
+     "week": "2026-06-29",
+     "tickets": 1
+    },
+    {
+     "week": "2026-07-06",
+     "tickets": 1
+    },
+    {
+     "week": "2026-07-13",
+     "tickets": 35
+    },
+    {
+     "week": "2026-07-20",
+     "tickets": 0
+    },
+    {
+     "week": "2026-07-27",
+     "tickets": 0
+    },
+    {
+     "week": "2026-08-03",
+     "tickets": 0
+    },
+    {
+     "week": "2026-08-10",
+     "tickets": 0
+    },
+    {
+     "week": "2026-08-17",
+     "tickets": 1
+    },
+    {
+     "week": "2026-08-24",
+     "tickets": 0
+    },
+    {
+     "week": "2026-08-31",
+     "tickets": 0
+    },
+    {
+     "week": "2026-09-07",
+     "tickets": 1
+    }
+   ],
+   "tickets": [
+    {
+     "number": "INC0016541",
+     "opened_at": "2026-07-15T06:06:20",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "API clients failing TLS handshake",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.2333333333333334,
+     "close_notes": "TLS certificate for Customer Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days."
+    },
+    {
+     "number": "INC0016547",
+     "opened_at": "2026-07-15T06:14:54",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "'your connection is not private' on customer portal",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.8480555555555553,
+     "close_notes": "TLS certificate for Customer Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    },
+    {
+     "number": "INC0016552",
+     "opened_at": "2026-07-15T06:36:46",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "'Your connection is not private' on Carrier Booking Portal",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Remote",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 3.6758333333333333,
+     "close_notes": "TLS certificate for Carrier Booking Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    },
+    {
+     "number": "INC0016557",
+     "opened_at": "2026-07-15T06:54:28",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "API clients failing TLS handshake",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Atlanta DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.852777777777778,
+     "close_notes": "TLS certificate for Customer Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    },
+    {
+     "number": "INC0016561",
+     "opened_at": "2026-07-15T06:57:25",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "'Your connection is not private' on Carrier Booking Portal",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.7616666666666667,
+     "close_notes": "TLS certificate for Carrier Booking Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    },
+    {
+     "number": "INC0016567",
+     "opened_at": "2026-07-15T07:30:43",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Certificate error on Customer Portal",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 2.6972222222222224,
+     "close_notes": "TLS certificate for Customer Portal expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    },
+    {
+     "number": "INC0016572",
+     "opened_at": "2026-07-15T07:43:40",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "App is broken",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 1.9983333333333333,
+     "close_notes": "TLS certificate for Shipment Tracking API expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days."
+    },
+    {
+     "number": "INC0016578",
+     "opened_at": "2026-07-15T08:03:23",
+     "state": "Closed",
+     "priority_label": "2 - High",
+     "short_description": "Certificate error on Shipment Tracking API",
+     "assignment_group": "Cloud Platform",
+     "subcategory": "certificate",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 1.405,
+     "close_notes": "TLS certificate for Shipment Tracking API expired because auto-renewal failed on DNS validation. Renewed certificate, deployed to load balancer, and added expiry alerting at 30/14/7 days. Followed KB0010027."
+    }
+   ]
+  },
+  {
+   "problem": {
+    "problem_id": "PRB20260706-wan",
+    "subcategory": "wan",
+    "category": "network",
+    "first_week": "2026-07-06",
+    "last_week": "2026-07-20",
+    "weeks": 3,
+    "tickets": 18,
+    "baseline_weekly": 1.75,
+    "excess_tickets": 13,
+    "hours_to_resolve": 268.8,
+    "sla_breaches": 0,
+    "locations": [
+     "Atlanta DC",
+     "Chicago HQ",
+     "Dallas DC",
+     "Memphis DC",
+     "Toronto Office"
+    ],
+    "resolving_groups": [
+     "Network Operations"
+    ],
+    "top_fix": "Proxy node in the pool was degraded. Removed it from rotation; browsing speed restored. Followed KB0010009.",
+    "top_fix_share": 0.444,
+    "top_fix_usual_share": 0.573,
+    "major_incident": null,
+    "evidence": "weak"
+   },
+   "weekly": [
+    {
+     "week": "2026-04-13",
+     "tickets": 0
+    },
+    {
+     "week": "2026-04-20",
+     "tickets": 3
+    },
+    {
+     "week": "2026-04-27",
+     "tickets": 0
+    },
+    {
+     "week": "2026-05-04",
+     "tickets": 2
+    },
+    {
+     "week": "2026-05-11",
+     "tickets": 2
+    },
+    {
+     "week": "2026-05-18",
+     "tickets": 4
+    },
+    {
+     "week": "2026-05-25",
+     "tickets": 1
+    },
+    {
+     "week": "2026-06-01",
+     "tickets": 0
+    },
+    {
+     "week": "2026-06-08",
+     "tickets": 1
+    },
+    {
+     "week": "2026-06-15",
+     "tickets": 3
+    },
+    {
+     "week": "2026-06-22",
+     "tickets": 2
+    },
+    {
+     "week": "2026-06-29",
+     "tickets": 3
+    },
+    {
+     "week": "2026-07-06",
+     "tickets": 5
+    },
+    {
+     "week": "2026-07-13",
+     "tickets": 5
+    },
+    {
+     "week": "2026-07-20",
+     "tickets": 8
+    },
+    {
+     "week": "2026-07-27",
+     "tickets": 1
+    },
+    {
+     "week": "2026-08-03",
+     "tickets": 4
+    },
+    {
+     "week": "2026-08-10",
+     "tickets": 2
+    },
+    {
+     "week": "2026-08-17",
+     "tickets": 3
+    },
+    {
+     "week": "2026-08-24",
+     "tickets": 1
+    },
+    {
+     "week": "2026-08-31",
+     "tickets": 1
+    },
+    {
+     "week": "2026-09-07",
+     "tickets": 2
+    },
+    {
+     "week": "2026-09-14",
+     "tickets": 4
+    }
+   ],
+   "tickets": [
+    {
+     "number": "INC0016375",
+     "opened_at": "2026-07-07T16:05:26",
+     "state": "Closed",
+     "priority_label": "4 - Low",
+     "short_description": "Performance issues",
+     "assignment_group": "Network Operations",
+     "subcategory": "wan",
+     "location": "Chicago HQ",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 16.593055555555555,
+     "close_notes": "Proxy node in the pool was degraded. Removed it from rotation; browsing speed restored. Followed KB0010009."
+    },
+    {
+     "number": "INC0016408",
+     "opened_at": "2026-07-08T14:52:14",
+     "state": "Closed",
+     "priority_label": "5 - Planning",
+     "short_description": "Really slow today",
+     "assignment_group": "Network Operations",
+     "subcategory": "wan",
+     "location": "Toronto Office",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 18.16888888888889,
+     "close_notes": "Proxy node in the pool was degraded. Removed it from rotation; browsing speed restored."
+    },
+    {
+     "number": "INC0016486",
+     "opened_at": "2026-07-13T09:36:36",
+     "state": "Closed",
+     "priority_label": "4 - Low",
+     "short_description": "Websites taking forever to load",
+     "assignment_group": "Network Operations",
+     "subcategory": "wan",
+     "location": "Memphis DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 28.1375,
+     "close_notes": "Proxy node in the pool was degraded. Removed it from rotation; browsing speed restored."
+    },
+    {
+     "number": "INC0016600",
+     "opened_at": "2026-07-15T16:00:17",
+     "state": "Closed",
+     "priority_label": "5 - Planning",
+     "short_description": "Slow network at Toronto Office",
+     "assignment_group": "Network Operations",
+     "subcategory": "wan",
+     "location": "Toronto Office",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 8.030277777777778,
+     "close_notes": "WAN circuit at Toronto Office was saturated by a large backup job running during business hours. Rescheduled the job to off-hours; utilization normal."
+    },
+    {
+     "number": "INC0016727",
+     "opened_at": "2026-07-21T12:52:14",
+     "state": "Closed",
+     "priority_label": "5 - Planning",
+     "short_description": "Internet very slow",
+     "assignment_group": "Network Operations",
+     "subcategory": "wan",
+     "location": "Dallas DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 30.164166666666667,
+     "close_notes": "WAN circuit at Dallas DC was saturated by a large backup job running during business hours. Rescheduled the job to off-hours; utilization normal."
+    },
+    {
+     "number": "INC0016754",
+     "opened_at": "2026-07-22T11:33:19",
+     "state": "Closed",
+     "priority_label": "5 - Planning",
+     "short_description": "Websites taking forever to load",
+     "assignment_group": "Network Operations",
+     "subcategory": "wan",
+     "location": "Toronto Office",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 4.317222222222222,
+     "close_notes": "WAN circuit at Toronto Office was saturated by a large backup job running during business hours. Rescheduled the job to off-hours; utilization normal."
+    },
+    {
+     "number": "INC0016825",
+     "opened_at": "2026-07-24T19:22:56",
+     "state": "Closed",
+     "priority_label": "4 - Low",
+     "short_description": "Internet very slow",
+     "assignment_group": "Network Operations",
+     "subcategory": "wan",
+     "location": "Dallas DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 14.224166666666667,
+     "close_notes": "WAN circuit at Dallas DC was saturated by a large backup job running during business hours. Rescheduled the job to off-hours; utilization normal."
+    },
+    {
+     "number": "INC0016837",
+     "opened_at": "2026-07-25T16:35:17",
+     "state": "Closed",
+     "priority_label": "4 - Low",
+     "short_description": "Internet very slow",
+     "assignment_group": "Network Operations",
+     "subcategory": "wan",
+     "location": "Dallas DC",
+     "is_resolved": true,
+     "sla_breached": false,
+     "mttr_hours": 7.726111111111111,
+     "close_notes": "Proxy node in the pool was degraded. Removed it from rotation; browsing speed restored. Followed KB0010009."
+    }
+   ]
+  }
+ ]
+}

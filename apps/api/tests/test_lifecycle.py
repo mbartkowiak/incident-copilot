@@ -241,3 +241,15 @@ def test_review_prompt_handles_open_tickets(service: LifecycleService) -> None:
     assert "Scope: Chicago HQ" in prompt
     assert "First ticket: 2026-03-10 08:41" in prompt
     assert "| open" in prompt  # the last, unresolved member is described, not crashed on
+
+
+def test_review_prompt_states_figures_the_model_would_otherwise_compute(
+    service: LifecycleService,
+) -> None:
+    prompt = review_prompt(service.major_incident("MI20260310-lan"))
+
+    assert "last resolution: 2026-03-10 14:29 (5.8 h after the first ticket)" in prompt
+    assert (
+        "- 2026-03-10 08:00 Chicago HQ: Network down on floor 3 | "
+        "resolved 2026-03-10 11:30, in 3.5 h" in prompt
+    )

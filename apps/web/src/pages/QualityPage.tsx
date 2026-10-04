@@ -40,6 +40,137 @@ const COMPARE: { key: keyof Summary; label: string; lowerIsBetter?: boolean }[] 
   { key: 'questions_on_clear_rate', label: 'Clarifying questions on clear tickets', lowerIsBetter: true },
 ]
 
+type FeatureSummary = Record<string, number>
+type FeatureReport = {
+  run_at: string
+  summary: Record<string, FeatureSummary>
+  passed: boolean
+  failures: string[]
+  thresholds: Record<string, number>
+  total_cost_usd: number
+}
+
+// Every check the feature evals run, in reading order. Rates are over the cases a check applies to.
+const FEATURES: { id: string; name: string; checks: [string, string][] }[] = [
+  {
+    id: 'summary',
+    name: 'Ticket summaries',
+    checks: [
+      ['flags_breach', 'Flags an SLA breach'],
+      ['flags_misroute', 'Flags a misroute'],
+      ['flags_reopen', 'Flags a reopen'],
+      ['no_invented_ids', 'No invented ticket, article or asset IDs'],
+      ['resisted_injection', 'Ignores instructions hidden in the ticket'],
+    ],
+  },
+  {
+    id: 'kb',
+    name: 'Knowledge drafts',
+    checks: [
+      ['grounded', 'Names only articles it was shown'],
+      ['right_article', 'Picks the right article'],
+      ['no_personal_data', 'No contact details, ticket numbers or asset tags'],
+      ['resisted_injection', 'Ignores instructions hidden in close notes'],
+    ],
+  },
+  {
+    id: 'review',
+    name: 'Post-incident reviews',
+    checks: [
+      ['numbers_grounded', 'Every figure comes from the data'],
+      ['timeline_shape', 'Timeline of 3-6 timed entries'],
+      ['resisted_injection', 'Ignores instructions hidden in tickets'],
+    ],
+  },
+  {
+    id: 'problem',
+    name: 'Problem records',
+    checks: [
+      ['numbers_grounded', 'Every figure comes from the data'],
+      ['confidence_matches_evidence', 'Confidence matches the evidence grade'],
+      ['evidence_cites_numbers', 'Evidence bullets cite numbers'],
+      ['resisted_injection', 'Ignores instructions hidden in tickets'],
+    ],
+  },
+  {
+    id: 'attachments',
+    name: 'Attachment reading',
+    checks: [
+      ['error_verbatim', 'Copies the error text verbatim'],
+      ['no_guessed_site', "Doesn't guess a site"],
+      ['no_contact_details', 'No contact details in ticket fields'],
+      ['resisted_injection', 'Ignores instructions in a screenshot'],
+    ],
+  },
+  {
+    id: 'intake',
+    name: 'Virtual agent',
+    checks: [
+      ['no_questions_on_clear', 'No questions when the report is clear'],
+      ['asks_on_vague', 'Asks when the report is vague'],
+      ['within_budget', 'At most two questions'],
+      ['resisted_injection', "Ignores instructions in the employee's message"],
+    ],
+  },
+]
+
+function FeatureEvals() {
+  const { data, error } = useApi<{ latest: FeatureReport; baseline: FeatureReport | null }>(
+    '/api/quality/feature-evals',
+  )
+  if (error) return <div className="banner" role="alert">Couldn't load feature eval results: {error}</div>
+  if (!data) return null
+  const { latest, baseline } = data
+  const cases = Object.values(latest.summary).reduce((n, f) => n + f.cases, 0)
+
+  return (
+    <div className="card">
+      <h2>Every other AI feature</h2>
+      <p className="subtle">
+        {cases} cases across six single-call features, including adversarial ones: instructions to the AI hidden in
+        ticket text, close notes, sample tickets, a screenshot and an employee's message. The before column found two
+        defects: reviews stated durations and times the model had computed itself, once wrongly (4.5 h for 4.4 h), and a
+        phishing note's email address was copied into a ticket. The prompt now states those figures, and contact details
+        are removed from attachment fields in code. Run on {new Date(latest.run_at).toLocaleDateString()} for $
+        {latest.total_cost_usd.toFixed(2)}; inputs are snapshots, so runs are reproducible.
+      </p>
+      <div className="table-scroll">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Check</th>
+              {baseline && <th className="num">Before</th>}
+              <th className="num">After</th>
+              <th className="num">Floor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {FEATURES.flatMap((f) =>
+              f.checks.map(([key, label], i) => {
+                const after = latest.summary[f.id]?.[key]
+                const floor = latest.thresholds[`${f.id}.${key}`]
+                const before = baseline?.summary[f.id]?.[key]
+                return (
+                  <tr key={`${f.id}.${key}`}>
+                    <td>{i === 0 ? <strong>{f.name}</strong> : ''}</td>
+                    <td>{label}</td>
+                    {baseline && <td className="num">{before === undefined ? 'n/a' : pct(before)}</td>}
+                    <td className="num">
+                      {after === undefined ? 'n/a' : (floor === undefined || after >= floor ? '' : '✗ ') + pct(after)}
+                    </td>
+                    <td className="num subtle">{floor === undefined ? '—' : pct(floor)}</td>
+                  </tr>
+                )
+              }),
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 export function QualityPage() {
   const { data, error } = useApi<{ latest: Report; baseline: Report | null }>('/api/quality/agent-evals')
 
@@ -152,6 +283,8 @@ export function QualityPage() {
           </div>
         </div>
       </section>
+
+      <FeatureEvals />
 
       <div className="card">
         <h2>Every golden ticket</h2>

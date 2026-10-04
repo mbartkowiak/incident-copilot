@@ -6,6 +6,7 @@ the ticket; nothing it reads changes the ticket by itself.
 """
 
 import base64
+import re
 from dataclasses import dataclass
 from typing import Any, get_args
 
@@ -18,6 +19,9 @@ MAX_BYTES = 5 * 1024 * 1024
 
 SITES: list[str] = list(get_args(Site))
 SCOPES: list[str] = list(get_args(Scope))
+
+EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+PHONE = re.compile(r"\(?\b\d{3}\)?[ .-]?\d{3}[ .-]\d{4}\b")
 
 SYSTEM = f"""You read the attachments on new IT incident tickets for Meridian Logistics' service desk: screenshots of error dialogs and device screens, photos, and PDFs such as customer emails or vendor notices. Extract the facts a dispatcher needs to route and prioritize the ticket.
 
@@ -143,7 +147,7 @@ class AttachmentReader:
     def read(
         self, ticket: TicketText, attachments: list[Attachment]
     ) -> StructuredResult[AttachmentFacts]:
-        return call_structured(
+        result = call_structured(
             self._messages,
             model=self._model,
             effort=self._effort,
@@ -152,3 +156,23 @@ class AttachmentReader:
             prompt=content_blocks(ticket, attachments),
             output=AttachmentFacts,
         )
+        result.value = redact_contacts(result.value)
+        return result
+
+
+def redact(text: str) -> str:
+    return PHONE.sub("[phone number]", EMAIL.sub("[email address]", text))
+
+
+def redact_contacts(facts: AttachmentFacts) -> AttachmentFacts:
+    """Contact details never reach the ticket, even when the model copies one: the feature
+    evals caught it quoting an email address from a phishing note in 3 of 7 runs."""
+    data = facts.model_dump()
+    for key, value in data.items():
+        if key == "sensitive_data":
+            continue  # kinds of data, not values
+        if isinstance(value, str):
+            data[key] = redact(value)
+        elif isinstance(value, list):
+            data[key] = [redact(v) for v in value]
+    return AttachmentFacts.model_validate(data)
